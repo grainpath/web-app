@@ -1,13 +1,16 @@
 import { LatLng } from 'leaflet';
-import { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
+import { setMap } from '../features/mapperSlice';
 
 const cnt = new LatLng(50.088349, 14.403679);
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 function MapExtractor(): JSX.Element {
-  return (<></>);
+
+  useDispatch()(setMap(useMap()));
+  return(<></>)
 }
 
 export default function Map(): JSX.Element {

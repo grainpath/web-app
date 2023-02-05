@@ -1,11 +1,11 @@
+import { Provider } from 'react-redux';
+import store from './features/store';
 import Map from './components/Map';
 
 export default function App() {
   return (
-    <main>
-      <>
-        <Map />
-      </>
-    </main>
+    <Provider store={store}>
+      <Map />
+    </Provider>
   );
 }
