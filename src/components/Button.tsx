@@ -1,15 +1,36 @@
 import React from 'react';
-import { BsSearch } from 'react-icons/bs';
+import {
+  Search,
+  DeleteSweep,
+  InsertDriveFileOutlined,
+} from '@mui/icons-material';
 
-type SearchButtonProps = {
+type SimpleButtonProps = {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export function SearchButton({ onClick }: SearchButtonProps) {
+export function SearchButton({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
     <button id='search-button' className='standard-button control-button' onClick={onClick}>
-      <BsSearch fontSize='1.5rem' />
+      <Search fontSize='large' />
+    </button>
+  );
+}
+
+export function EraseButton({ onClick }: SimpleButtonProps): JSX.Element {
+
+  return (
+    <button className='standard-button' onClick={onClick}>
+      <DeleteSweep fontSize='large' />
+    </button>
+  );
+}
+
+export function ListButton({ onClick }: SimpleButtonProps): JSX.Element {
+  return (
+    <button className="standard-button" onClick={onClick}>
+      <InsertDriveFileOutlined fontSize="large" />
     </button>
   );
 }
