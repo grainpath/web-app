@@ -1,7 +1,8 @@
-function App() {
+export default function App() {
   return (
-    <main></main>
+    <main>
+      <>
+      </>
+    </main>
   );
 }
-
-export default App;
