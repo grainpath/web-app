@@ -1,6 +1,19 @@
-import { Marker } from "leaflet";
+export enum PanelView {
+  Search,
+  Result,
+  Remote,
+};
 
-export type Boundary = {
-  source?: Marker;
-  target?: Marker;
+export interface Point {
+  lon: number;
+  lat: number;
+};
+
+export interface UidPoint extends Point {
+  uid: number;
 }
+
+export interface Boundary {
+  source?: UidPoint;
+  target?: UidPoint;
+};

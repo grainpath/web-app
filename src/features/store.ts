@@ -1,18 +1,13 @@
+import { configureStore } from '@reduxjs/toolkit';
 import mapperReducer from './mapperSlice';
+import panelsReducer from './panelsSlice';
 import searchReducer from './searchSlice';
 import resultReducer from './resultSlice';
-import { configureStore } from '@reduxjs/toolkit';
 
-/**
- * https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
- *   Redux raise an exception when working with classes, functions, etc.
- *   However, such data arise in practice very often, e.g. an instance of
- *   a leaflet map.
- */
-
-export default configureStore({
+export const store = configureStore({
   reducer: {
     mapper: mapperReducer,
+    panels: panelsReducer,
     search: searchReducer,
     result: resultReducer,
   },
@@ -30,3 +25,6 @@ export default configureStore({
     }
   })
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

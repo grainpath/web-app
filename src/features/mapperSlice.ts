@@ -1,29 +1,33 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Map as LeafletMap, Marker } from 'leaflet';
+import { Map, Marker } from 'leaflet';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type MapperState = {
+interface MapperState {
   cnt: number;
-  map?: LeafletMap;
+  map?: Map;
   markers: { [key: number]: Marker; };
 };
 
-const initialState: MapperState = {
-  cnt: 0,
-  markers: {},
-};
+const initialState = (): MapperState => {
+  return { cnt: 0, markers: {}, };
+}
 
 export const mapperSlice = createSlice({
   name: 'mapper',
-  initialState,
+  initialState: initialState(),
   reducers: {
-    setMap: (state, action) => { state.map = action.payload; },
+    setMap: (state, action: PayloadAction<Map>) => { state.map = action.payload; },
     appendMarker: (state, action) => {
       state.markers[state.cnt] = action.payload;
       state.cnt += 1;
     },
-    deleteMarker: (state, action) => { delete state.markers[action.payload]; },
+    deleteMarker: (state, action: PayloadAction<number>) => { delete state.markers[action.payload]; },
   },
 });
 
+export const {
+  setMap,
+  appendMarker,
+  deleteMarker
+} = mapperSlice.actions;
+
 export default mapperSlice.reducer;
-export const { setMap, appendMarker, deleteMarker } = mapperSlice.actions;

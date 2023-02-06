@@ -1,32 +1,33 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Boundary, UidPoint } from '../utils/types';
 
-import { Boundary } from "../utils/types";
-
-export type SearchState = Boundary & {
+export interface SearchState extends Boundary {
   count: number;
   distance: number;
 };
 
-const initialState = {
-  count: 100,
-  distance: 3.0,
-} as SearchState;
+const initialState = () => {
+  return { count: 100, distance: 3.0, } as SearchState;
+}
 
 export const searchSlice = createSlice({
   name: 'search',
-  initialState,
+  initialState: initialState(),
   reducers: {
-    setSource: (state, action) => { state.source = action.payload; },
-    setTarget: (state, action) => { state.target = action.payload; },
-    setCount: (state, action) => { state.count = action.payload; },
-    setDistance: (state, action) => { state.distance = action.payload; }
+    erase: state => { state = initialState(); },
+    setSource: (state, action: PayloadAction<UidPoint>) => { state.source = action.payload; },
+    setTarget: (state, action: PayloadAction<UidPoint>) => { state.target = action.payload; },
+    setCount: (state, action: PayloadAction<number>) => { state.count = action.payload; },
+    setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; }
   }
 });
 
-export default searchSlice.reducer;
 export const {
+  erase,
   setSource,
   setTarget,
   setCount,
   setDistance,
 } = searchSlice.actions;
+
+export default searchSlice.reducer;
