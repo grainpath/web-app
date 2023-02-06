@@ -9,6 +9,7 @@ import { erase, setSource, setTarget, } from '../features/searchSlice';
 import { useAppDispatch, useAppSelector } from '../features/hooks';
 import { SteadyMarkerLine } from './MarkerLine';
 import { RemoteButton, EraseButton } from './Button';
+import { TabsBoard } from './Search/TabsBoard';
 
 export function SearchHeader(): JSX.Element {
 
@@ -58,6 +59,7 @@ export function SearchBody(): JSX.Element {
     <>
       <SteadyMarkerLine kind={'source'} point={source} onClick={() => handlePoint(source, 'source', (point: UidPoint) => { dispatch(setSource(point)) })} />
       <SteadyMarkerLine kind={'target'} point={target} onClick={() => handlePoint(target, 'target', (point: UidPoint) => { dispatch(setTarget(point)) })} />
+      <TabsBoard />
     </>
   );
 }
