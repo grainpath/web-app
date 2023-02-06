@@ -5,7 +5,7 @@ import { useContext } from 'react';
 
 const cnt = new LatLng(50.088349, 14.403679);
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="" target="_blank">Help</a>';
 
 function MapExtractor(): JSX.Element {
 
