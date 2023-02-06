@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import L, { LatLng } from 'leaflet';
+import { AppContext } from '../App';
 import { icons } from '../utils/icons';
 import { UidPoint } from '../utils/types';
-import { AppContext } from '../App';
+import { marker2point } from '../utils/convs';
 import { setRemote } from '../features/panelsSlice';
 import { erase, setSource, setTarget, } from '../features/searchSlice';
 import { useAppDispatch, useAppSelector } from '../features/hooks';
@@ -42,10 +43,6 @@ export function SearchBody(): JSX.Element {
 
       const c = leaflet.count++;
       const m = L.marker(leaflet.map!.getCenter(), { icon: (icons as any)[view], draggable: true }).addTo(leaflet.map!);
-
-      const marker2point = (m: L.Marker<any>, c: number): UidPoint => {
-        return { uid: c, lon: m.getLatLng().lng, lat: m.getLatLng().lat, };
-      };
 
       leaflet.markers.set(c, m);
       m.addEventListener('dragend', () => { func(marker2point(m, c)) });

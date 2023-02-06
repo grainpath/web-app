@@ -53,6 +53,7 @@ export function ReturnButton({ onClick }: SimpleButtonProps): JSX.Element {
 }
 
 export function MarkerButton({ onClick, kind, buttonStyle }: MarkerButtonProps) {
+
   return (
     <button className="standard-button" onClick={onClick} style={buttonStyle}>
       <LocationOn id={`${kind}-marker`} fontSize="large" />
