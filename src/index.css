@@ -43,3 +43,16 @@ html, body, #root, #map {
   top: 10px;
   left: 10px;
 }
+
+.marker-line {
+  display: flex;
+  align-items: center;
+}
+
+#source-marker {
+  color: #2aad27;
+}
+
+#target-marker {
+  color: #cb2b3e;
+}
