@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Boundary, UidPoint } from '../utils/types';
 
-export interface ResultState extends Boundary {
+export type ResultState = Boundary & {
   count?: number;
   distance?: number;
+  sequence: UidPoint[];
 }
 
 export const resultSlice = createSlice({
   name: 'result',
-  initialState: { } as ResultState,
+  initialState: { sequence: [] } as ResultState,
   reducers: {
     setSource: (state, action: PayloadAction<UidPoint>) => { state.source = action.payload; },
     setTarget: (state, action: PayloadAction<UidPoint>) => { state.target = action.payload; },
