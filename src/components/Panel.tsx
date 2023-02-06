@@ -1,42 +1,31 @@
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { PanelView } from '../utils/types';
-import { erase } from '../features/searchSlice';
-import { setRemote } from '../features/panelsSlice';
-import { useAppDispatch, useAppSelector } from '../features/hooks';
-import { RemoteButton, EraseButton } from './Button';
+import { useAppSelector } from '../features/hooks';
+import { RemoteHeader, RemoteBody } from './Remote';
+import { ResultHeader, ResultBody } from './Result';
+import { SearchHeader, SearchBody } from './Search';
 
 type PanelProps = {
   visibility: boolean;
   onHide: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-type SearchHeaderProps = {
-  erase: React.MouseEventHandler<HTMLButtonElement>;
-  remote: React.MouseEventHandler<HTMLButtonElement>;
-}
-
-function SearchHeader({ erase, remote }: SearchHeaderProps): JSX.Element {
-
-  return (
-    <>
-      <RemoteButton onClick={remote} />
-      <EraseButton onClick={erase} />
-    </>
-  );
-}
-
 export function Panel({ visibility, onHide }: PanelProps) {
 
-  const dispatch = useAppDispatch();
   const panel = useAppSelector(state => state.panels.value);
 
   return(
     <Offcanvas show={visibility} onHide={onHide} scroll={true} backdrop={false} keyboard={false}>
       <Offcanvas.Header closeButton>
-        {panel === PanelView.Search && <SearchHeader erase={() => { dispatch(erase()) }} remote={() => { dispatch(setRemote()) }} />}
-        {panel === PanelView.Result && <></>}
-        {panel === PanelView.Result && <></>}
+        {panel === PanelView.Search && <SearchHeader />}
+        {panel === PanelView.Result && <ResultHeader />}
+        {panel === PanelView.Remote && <RemoteHeader />}
       </Offcanvas.Header>
+      <Offcanvas.Body>
+        {panel === PanelView.Search && <SearchBody />}
+        {panel === PanelView.Result && <ResultBody />}
+        {panel === PanelView.Remote && <RemoteBody />}
+      </Offcanvas.Body>
     </Offcanvas>
   );
 }
