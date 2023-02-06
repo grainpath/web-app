@@ -14,7 +14,7 @@ export class Pin implements BaseIconOptions {
   constructor(color: string) {
 
     this.iconUrl = path + `colors/marker-icon-${color}.png`;
-    this.shadowUrl = path + 'colors/marker-shadow.png';
+    this.shadowUrl = path + 'shadow/marker-shadow.png';
     this.iconSize = [25, 41];
     this.iconAnchor = [12, 41];
     this.shadowSize = [41, 41];
