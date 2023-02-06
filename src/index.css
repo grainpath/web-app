@@ -56,3 +56,15 @@ html, body, #root, #map {
 #target-marker {
   color: #cb2b3e;
 }
+
+#custom-marker {
+  color: #2a81cb;
+}
+
+#tagged-marker {
+  color: #9c2bcb;
+}
+
+#adding-marker {
+  color: #888888;
+}
