@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Panel } from './Panel';
-import { SearchButton } from "./Button";
+import { PanelButton } from "./Button";
 
 export default function Control(): JSX.Element {
 
@@ -8,7 +8,7 @@ export default function Control(): JSX.Element {
 
   return(
     <>
-      <SearchButton onClick={() => setPanel(true)} />
+      <PanelButton onClick={() => setPanel(true)} />
       <Panel visibility={panel} onHide={() => setPanel(false)} />
     </>
   );
