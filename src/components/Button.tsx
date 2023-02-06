@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  Search,
   DeleteSweep,
-  InsertDriveFileOutlined,
+  Search,
+  Storage,
 } from '@mui/icons-material';
 
 type SimpleButtonProps = {
@@ -18,19 +18,19 @@ export function SearchButton({ onClick }: SimpleButtonProps): JSX.Element {
   );
 }
 
+export function RemoteButton({ onClick }: SimpleButtonProps): JSX.Element {
+  return (
+    <button className="standard-button" onClick={onClick}>
+      <Storage fontSize="large" />
+    </button>
+  );
+}
+
 export function EraseButton({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
     <button className='standard-button' onClick={onClick}>
       <DeleteSweep fontSize='large' />
-    </button>
-  );
-}
-
-export function ListButton({ onClick }: SimpleButtonProps): JSX.Element {
-  return (
-    <button className="standard-button" onClick={onClick}>
-      <InsertDriveFileOutlined fontSize="large" />
     </button>
   );
 }

@@ -1,5 +1,5 @@
 import { LatLng } from 'leaflet';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../features/hooks';
 import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
 import { setMap } from '../features/mapperSlice';
 
@@ -9,7 +9,7 @@ const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreet
 
 function MapExtractor(): JSX.Element {
 
-  useDispatch()(setMap(useMap()));
+  useAppDispatch()(setMap(useMap()));
   return(<></>)
 }
 
