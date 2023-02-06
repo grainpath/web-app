@@ -4,16 +4,16 @@ export enum PanelView {
   Remote,
 };
 
-export interface Point {
+export type Point = {
   lon: number;
   lat: number;
 };
 
-export interface UidPoint extends Point {
+export type UidPoint = Point & {
   uid: number;
 }
 
-export interface Boundary {
+export type Boundary = {
   source?: UidPoint;
   target?: UidPoint;
 };
