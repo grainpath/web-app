@@ -1,7 +1,7 @@
 import { LatLng } from 'leaflet';
-import { useAppDispatch } from '../features/hooks';
+import { AppContext } from '../App';
 import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
-import { setMap } from '../features/mapperSlice';
+import { useContext } from 'react';
 
 const cnt = new LatLng(50.088349, 14.403679);
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -9,7 +9,9 @@ const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreet
 
 function MapExtractor(): JSX.Element {
 
-  useAppDispatch()(setMap(useMap()));
+  const { leaflet } = useContext(AppContext);
+  leaflet.map = useMap();
+
   return(<></>)
 }
 
