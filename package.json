@@ -6,6 +6,9 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@inrupt/solid-client": "^1.25.1",
+    "@inrupt/solid-client-authn-browser": "^1.13.0",
+    "@inrupt/vocab-common-rdf": "^1.0.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
     "@reduxjs/toolkit": "^1.9.2",
@@ -59,5 +62,8 @@
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
   }
 }
