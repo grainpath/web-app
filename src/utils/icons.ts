@@ -1,6 +1,6 @@
 import L, { BaseIconOptions, PointExpression } from 'leaflet';
 
-const path = './assets/markers/';
+const path = './web-app/assets/markers/';
 
 export class Pin implements BaseIconOptions {
 
