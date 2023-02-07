@@ -2,7 +2,7 @@ import { Icon, Map as LeafletMap, Marker } from 'leaflet';
 import { Pin } from '../utils/icons';
 
 /**
- * Use application context for non-serializable items.
+ * Use application context for all non-serializable data!
  */
 
 export type LeafletContextValue = {
