@@ -1,15 +1,15 @@
 import { useContext } from 'react';
 import L, { LatLng } from 'leaflet';
-import { AppContext } from '../App';
-import { icons } from '../utils/icons';
-import { UidPoint } from '../utils/types';
-import { marker2point } from '../utils/convs';
-import { setRemote } from '../features/panelsSlice';
-import { erase, setSource, setTarget, } from '../features/searchSlice';
-import { useAppDispatch, useAppSelector } from '../features/hooks';
-import { SteadyMarkerLine } from './MarkerLine';
-import { RemoteButton, EraseButton } from './Button';
-import { TabsBoard } from './Search/TabsBoard';
+import { AppContext } from '../../App';
+import { icons } from '../../utils/icons';
+import { UidPoint } from '../../utils/types';
+import { marker2point } from '../../utils/convs';
+import { setRemote } from '../../features/panelsSlice';
+import { erase, setSource, setTarget, } from '../../features/searchSlice';
+import { useAppDispatch, useAppSelector } from '../../features/hooks';
+import { TabsBoard } from './TabsBoard';
+import EraseButton from './EraseButton';
+import { RemoteButton, SteadyMarkerLine } from '../PanelControl';
 
 export function SearchHeader(): JSX.Element {
 
@@ -25,7 +25,7 @@ export function SearchHeader(): JSX.Element {
 
   return (
     <>
-      <RemoteButton onClick={() => { dispatch(setRemote()) }} />
+      <RemoteButton onClick={() => { dispatch(setRemote()); }} />
       <EraseButton onClick={handleErase} />
     </>
   );

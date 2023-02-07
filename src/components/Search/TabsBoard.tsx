@@ -11,7 +11,6 @@ export function TabsBoard() {
         <DistanceInput />
       </Tab>
       <Tab eventKey='navigate' title='Navigate'>
-
       </Tab>
     </Tabs>
   );
