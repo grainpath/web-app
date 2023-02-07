@@ -17,6 +17,8 @@ export default function LoggerControl():JSX.Element {
   // TODO: logging logic
 
   return (
-    <LoggerButton onClick={() => {}} />
+    <div style={{ top: '10px', right: '10px', zIndex: 1000, position: 'absolute' }}>
+      <LoggerButton onClick={() => {}} />
+    </div>
   );
 }

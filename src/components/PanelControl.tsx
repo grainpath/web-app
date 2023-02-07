@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import {
-  KeyboardControlKey,
+  KeyboardCommandKey,
   LocationOn,
   Search,
   Storage,
@@ -35,7 +35,7 @@ function Button({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
     <button id='search-button' className='standard-button control-button' onClick={onClick}>
-      <KeyboardControlKey fontSize='large' />
+      <KeyboardCommandKey fontSize='large' />
     </button>
   );
 }
@@ -66,7 +66,9 @@ export default function PanelControl(): JSX.Element {
 
   return (
     <>
-      <Button onClick={() => setPanel(true)} />
+      <div style={{ top: '10px', left: '10px', zIndex: 1000, position: 'absolute' }}>
+        <Button onClick={() => setPanel(true)} />
+      </div>
       <Panel visibility={panel} onHide={() => setPanel(false)} />
     </>
   )

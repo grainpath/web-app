@@ -33,8 +33,6 @@ html, body, #root, #map {
   height: 3.5rem;
   border-width: 2px;
   border-color: #cccccc;
-  z-index: 1000;
-  position: absolute;
 }
 
 .control-button:hover {
@@ -43,14 +41,10 @@ html, body, #root, #map {
 
 #search-button {
   border-radius: 50%;
-  top: 10px;
-  left: 10px;
 }
 
 #logger-button {
   border-radius: 10%;
-  top: 10px;
-  right: 10px;
 }
 
 .marker-line {
