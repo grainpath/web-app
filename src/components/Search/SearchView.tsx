@@ -13,8 +13,9 @@ import { RemoteButton, SteadyMarkerLine } from '../PanelControl';
 
 export function SearchHeader(): JSX.Element {
 
-  const leaflet = useContext(AppContext).leaflet;
   const dispatch = useAppDispatch();
+  const leaflet = useContext(AppContext).leaflet;
+  const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
 
   const handleErase = () => {
 
@@ -25,7 +26,7 @@ export function SearchHeader(): JSX.Element {
 
   return (
     <>
-      <RemoteButton onClick={() => { dispatch(setRemote()); }} />
+      <RemoteButton onClick={() => { dispatch(setRemote()); }} disabled={!isLoggedIn} />
       <EraseButton onClick={handleErase} />
     </>
   );

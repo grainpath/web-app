@@ -31,6 +31,10 @@ type MarkerButtonProps = SimpleButtonProps & {
   buttonStyle: React.CSSProperties | undefined;
 }
 
+type RemoteButtonProps = SimpleButtonProps & {
+  disabled: boolean;
+}
+
 function Button({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
@@ -83,10 +87,10 @@ export function SearchButton({ onClick }: SimpleButtonProps): JSX.Element {
   );
 }
 
-export function RemoteButton({ onClick }: SimpleButtonProps): JSX.Element {
+export function RemoteButton({ onClick, disabled }: RemoteButtonProps): JSX.Element {
 
   return (
-    <button className='standard-button' onClick={onClick}>
+    <button className='standard-button' onClick={onClick} disabled={disabled}>
       <Storage fontSize='large' />
     </button>
   );
