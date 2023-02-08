@@ -28,20 +28,23 @@ html, body, #root, #map {
   background-color: var(--btn-background-color-hover);
 }
 
+.control-button {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-width: 2px;
+  border-color: #cccccc;
+}
+
 .control-button:hover {
   color: #0a58ca;
 }
 
 #search-button {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-width: 2px;
-  border-color: #cccccc;
   border-radius: 50%;
-  z-index: 1000;
-  position: absolute;
-  top: 10px;
-  left: 10px;
+}
+
+#logger-button {
+  border-radius: 10%;
 }
 
 .marker-line {

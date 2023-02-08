@@ -1,9 +1,14 @@
 import { Icon, Map as LeafletMap, Marker } from 'leaflet';
+import { Session } from '@inrupt/solid-client-authn-browser';
 import { Pin } from '../utils/icons';
 
 /**
- * Use application context for non-serializable items.
+ * Use application context for all non-serializable data!
  */
+
+export type InruptContextValue = {
+  session: Session;
+}
 
 export type LeafletContextValue = {
   map?: LeafletMap;
@@ -12,9 +17,11 @@ export type LeafletContextValue = {
 }
 
 export type AppContextValue = {
+  inrupt: InruptContextValue;
   leaflet: LeafletContextValue;
 };
 
 export const context: AppContextValue = {
+  inrupt: { session: new Session() },
   leaflet: { count: 0, markers: new Map<number, Marker<Icon<Pin>>>(), },
 };
