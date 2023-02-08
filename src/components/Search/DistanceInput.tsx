@@ -31,7 +31,7 @@ export function DistanceInput(): JSX.Element {
         <Form.Control ref={inputRef} type='number' defaultValue={distance} min={0} max={30.0} step={0.1} isInvalid={!valid} onChange={(e) => { checkIn(e.target.value) }} />
         <InputGroup.Text>km</InputGroup.Text>
       </InputGroup>
-      <Form.Text>double between 0.0 and 30.0.</Form.Text>
+      <Form.Text>double between 0.0 and 30.0</Form.Text>
     </Form.Group>
   );
 }

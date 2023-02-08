@@ -31,7 +31,7 @@ export function CountInput(): JSX.Element {
         <Form.Control ref={inputRef} type='number' defaultValue={count} min={1} max={1000} step={1} isInvalid={!valid} onChange={(e) => { checkIn(e.target.value); }} />
         <InputGroup.Text>pts</InputGroup.Text>
       </InputGroup>
-      <Form.Text>integer between 0 and 1000.</Form.Text>
+      <Form.Text>integer between 0 and 1000</Form.Text>
     </Form.Group>
   );
 }
