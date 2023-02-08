@@ -1,51 +1,122 @@
-import { useContext } from 'react';
-import {
-  Login,
-  Logout
-} from '@mui/icons-material';
-import { AppContext } from '../App';
-import { handleRedirectAfterLogin, login } from '../features/inrupt';
-// import type { SimpleButtonProps } from './types';
+import { useContext, useState, } from 'react';
+import { Button, Form, Modal, } from 'react-bootstrap';
+import { Login, Logout, } from '@mui/icons-material';
+import { AppContext, } from '../App';
 import { useAppDispatch, useAppSelector } from '../features/hooks';
-import { setLogger } from '../features/loggerSlice';
+import { SimpleButtonProps } from './types';
+import { setLoggedIn } from '../features/loggerSlice';
 
-function LoggerButton(): JSX.Element {
+const CLIENT_NAME = 'GrainPath App';
+const DEFAULT_PROVIDER = 'https://solidweb.org/';
 
-  const session = useContext(AppContext).inrupt.session;
-  const loggedIn = useAppSelector(state => state.logger.value);
+type ButtonProps = SimpleButtonProps & {
+  isLoggedIn: boolean;
+}
 
-  const func = () => { loggedIn ? session.logout() : login(session) };
+type DialogProps = {
+  onHide: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      {loggedIn && <span>{ session.info.webId }</span>}
-      <button id='login-button' className='standard-button control-button' onClick={func} style={{ marginLeft: '5px' }}>
-        {loggedIn ? <Logout fontSize='large' /> : <Login fontSize='large' />}
-      </button>
-    </div>
+    <button id='login-button' className='standard-button control-button' onClick={onClick}>
+      {isLoggedIn ? <Logout fontSize='large' /> : <Login fontSize='large' />}
+    </button>
+  );
+}
+
+function LoginDialog({ onHide }: DialogProps): JSX.Element {
+
+  const [isLogging, setIsLogging] = useState(false);
+  const [provider, setProvider] = useState(DEFAULT_PROVIDER);
+
+  const session = useContext(AppContext).inrupt.session;
+
+  const login = async () => {
+
+    setIsLogging(true);
+
+    try {
+      await session.login({
+        oidcIssuer: provider,
+        clientName: CLIENT_NAME,
+        redirectUrl: window.location.href
+      });
+    } catch(ex) { alert('[Login failure] ' + ex); }
+
+    setIsLogging(false);
+  };
+
+  return (
+    <>
+      <Modal.Body>
+        <Form.Control autoFocus defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant='secondary' onClick={onHide} disabled={isLogging}>Close</Button>
+        <Button variant='primary' onClick={login} disabled={isLogging}>Login</Button>
+      </Modal.Footer>
+    </>
+  );
+}
+
+function LogoutDialog({ onHide }: DialogProps): JSX.Element {
+
+  const session = useContext(AppContext).inrupt.session;
+
+  return (
+    <>
+      <Modal.Body>
+        Logged in as <a href={session.info.webId} rel='noreferrer' target='_blank'>{session.info.webId}</a>.
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant='secondary' onClick={onHide}>Close</Button>
+        <Button variant='primary' onClick={() => session.logout()}>Logout</Button>
+      </Modal.Footer>
+    </>
   );
 }
 
 export default function LoggerControl():JSX.Element {
 
+  const [showDialog, setShowDialog] = useState(false);
+  const toggleDialog = () => setShowDialog(!showDialog);
+
   const dispatch = useAppDispatch();
-
   const session = useContext(AppContext).inrupt.session;
+  const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
 
-  console.log('x');
+  session.removeAllListeners();
 
-  session.onLogin(() => { dispatch(setLogger(true)); });
-  session.onLogout(() => { dispatch(setLogger(false)); });
+  session.onLogin(() => {
+    dispatch(setLoggedIn(true));
+    console.log('Session ' + session.info.sessionId + ' logged in.');
+  });
 
-  session.onError(() => { alert('interaction with solid ended up with an error.'); });
+  session.onLogout(() => {
+    dispatch(setLoggedIn(false)); toggleDialog();
+    console.log('Session ' + session.info.sessionId + ' logged out.');
+  });
+
+  session.onError(() => {
+    alert('interaction with solid ended up with an error.');
+  });
+
   session.onSessionRestore(() => { alert('solid session is restored'); });
   session.onSessionExpiration(() => { alert('solid session has expired'); });
 
-  handleRedirectAfterLogin(session);
+  session.handleIncomingRedirect(window.location.href);
 
   return (
-    <div style={{ top: '10px', right: '10px', zIndex: 1000, position: 'absolute' }}>
-      <LoggerButton />
-    </div>
+    <>
+      <div style={{ top: '10px', right: '10px', zIndex: 1000, position: 'absolute' }}>
+        <StatusButton onClick={() => setShowDialog(!showDialog)} isLoggedIn={isLoggedIn} />
+      </div>
+      <Modal show={showDialog} onHide={toggleDialog} backdrop='static' centered={true} keyboard={false}>
+        <Modal.Header />
+        { !isLoggedIn ? <LoginDialog onHide={toggleDialog} /> : <LogoutDialog onHide={toggleDialog} /> }
+      </Modal>
+    </>
   );
 }

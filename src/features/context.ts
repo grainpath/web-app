@@ -6,14 +6,14 @@ import { Pin } from '../utils/icons';
  * Use application context for all non-serializable data!
  */
 
+export type InruptContextValue = {
+  session: Session;
+}
+
 export type LeafletContextValue = {
   map?: LeafletMap;
   count: number;
   markers: Map<number, Marker<Icon<Pin>>>;
-}
-
-export type InruptContextValue = {
-  session: Session;
 }
 
 export type AppContextValue = {
