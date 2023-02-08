@@ -1,13 +1,16 @@
 import { useContext, useState, } from 'react';
 import { Button, Form, Modal, } from 'react-bootstrap';
-import { Login, Logout, } from '@mui/icons-material';
+import { Login, } from '@mui/icons-material';
 import { AppContext, } from '../App';
-import { useAppDispatch, useAppSelector } from '../features/hooks';
-import { SimpleButtonProps } from './types';
-import { setLoggedIn } from '../features/loggerSlice';
+import { useAppDispatch, useAppSelector, } from '../features/hooks';
+import { SimpleButtonProps, } from './types';
+import { setLoggedIn, } from '../features/loggerSlice';
 
 const CLIENT_NAME = 'GrainPath App';
 const DEFAULT_PROVIDER = 'https://';
+
+const SOLID_LOGO_FILENAME = '/solid/logo.svg';
+const ASSETS_FOLDER =  process.env.PUBLIC_URL + '/assets';
 
 type ButtonProps = SimpleButtonProps & {
   isLoggedIn: boolean;
@@ -21,7 +24,7 @@ function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
   return (
     <button id='login-button' className='standard-button control-button' onClick={onClick}>
-      {isLoggedIn ? <Logout fontSize='large' /> : <Login fontSize='large' />}
+      { !isLoggedIn ? <Login fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
     </button>
   );
 }
@@ -100,11 +103,11 @@ export default function LoggerControl():JSX.Element {
   });
 
   session.onError(() => {
-    alert('interaction with solid ended up with an error.');
+    alert('Interaction with solid ended up with an error.');
   });
 
-  session.onSessionRestore(() => { alert('solid session is restored'); });
-  session.onSessionExpiration(() => { alert('solid session has expired'); });
+  session.onSessionRestore(() => { alert('Solid session is restored.'); });
+  session.onSessionExpiration(() => { alert('Solid session has expired.'); });
 
   session.handleIncomingRedirect(window.location.href);
 

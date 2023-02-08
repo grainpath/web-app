@@ -1,6 +1,6 @@
 import L, { BaseIconOptions, PointExpression } from 'leaflet';
 
-const path = './web-app/assets/markers/';
+const path = process.env.PUBLIC_URL + '/assets/markers';
 
 export class Pin implements BaseIconOptions {
 
@@ -13,8 +13,8 @@ export class Pin implements BaseIconOptions {
 
   constructor(color: string) {
 
-    this.iconUrl = path + `colors/marker-icon-${color}.png`;
-    this.shadowUrl = path + 'shadow/marker-shadow.png';
+    this.iconUrl = path + `/colors/marker-icon-${color}.png`;
+    this.shadowUrl = path + '/shadow/marker-shadow.png';
     this.iconSize = [25, 41];
     this.iconAnchor = [12, 41];
     this.shadowSize = [41, 41];
