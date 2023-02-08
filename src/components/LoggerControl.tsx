@@ -7,7 +7,7 @@ import { SimpleButtonProps } from './types';
 import { setLoggedIn } from '../features/loggerSlice';
 
 const CLIENT_NAME = 'GrainPath App';
-const DEFAULT_PROVIDER = 'https://solidweb.org/';
+const DEFAULT_PROVIDER = 'https://';
 
 type ButtonProps = SimpleButtonProps & {
   isLoggedIn: boolean;
