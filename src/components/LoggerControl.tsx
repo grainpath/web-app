@@ -7,7 +7,7 @@ import {
   getThing,
   Thing,
 } from '@inrupt/solid-client';
-import { Person, } from '@mui/icons-material';
+import { Login, } from '@mui/icons-material';
 import { AppContext, } from '../App';
 import { useAppDispatch, useAppSelector, } from '../features/hooks';
 import { SimpleButtonProps, } from './types';
@@ -34,20 +34,27 @@ type ButtonProps = SimpleButtonProps & {
   isLoggedIn: boolean;
 }
 
-type DialogProps = {
-  onHide: React.MouseEventHandler<HTMLButtonElement>;
+type ModalProps = {
+  centered: boolean;
+  keyboard: boolean;
+  backdrop: true | false | 'static';
+}
+
+type DialogProps = ModalProps & {
+  show: boolean;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
   return (
     <button id='login-button' className='standard-button control-button' onClick={onClick} title={ !isLoggedIn ? 'Log in' : 'Log out' }>
-      { !isLoggedIn ? <Person fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
+      { !isLoggedIn ? <Login fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
     </button>
   );
 }
 
-function LoginDialog({ onHide }: DialogProps): JSX.Element {
+function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
   const [isLogging, setIsLogging] = useState(false);
   const [provider, setProvider] = useState(DEFAULT_PROVIDER);
@@ -72,23 +79,23 @@ function LoginDialog({ onHide }: DialogProps): JSX.Element {
   const list = 'list-solid-providers';
 
   return (
-    <>
+    <Modal {...rest}>
       <Modal.Body>
-        <Form.Label>Enter an address of a Solid Pod provider.</Form.Label>
+        <Form.Label>Enter an address of a <a href='https://solidproject.org/users/get-a-pod' rel='noreferrer' target='_blank'>Solid Pod</a> provider.</Form.Label>
         <Form.Control autoFocus list={list} defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
         <datalist id={list}>{
           WELL_KNOWN_PROVIDERS.map((item, idx) => <option key={idx} value={item.label}></option>)
         }</datalist>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onHide} disabled={isLogging}>Close</Button>
+        <Button variant='secondary' onClick={onClick} disabled={isLogging}>Close</Button>
         <Button variant='primary' onClick={login} disabled={isLogging}>Login</Button>
       </Modal.Footer>
-    </>
+    </Modal>
   );
 }
 
-function LogoutDialog({ onHide }: DialogProps): JSX.Element {
+function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
   const session = useContext(AppContext).inrupt.session;
 
@@ -121,22 +128,25 @@ function LogoutDialog({ onHide }: DialogProps): JSX.Element {
   const label = (userName) ? userName : session.info.webId;
 
   return (
-    <>
+    <Modal {...rest}>
       <Modal.Body>
         Logged in as <a href={session.info.webId} rel='noreferrer' target='_blank'>{label}</a>.
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onHide}>Close</Button>
+        <Button variant='secondary' onClick={onClick}>Close</Button>
         <Button variant='danger' onClick={() => session.logout()}>Logout</Button>
       </Modal.Footer>
-    </>
+    </Modal>
   );
 }
 
 export default function LoggerControl():JSX.Element {
 
-  const [showDialog, setShowDialog] = useState(false);
-  const toggleDialog = () => setShowDialog(!showDialog);
+  const [showLi, setShowLi] = useState(false);
+  const toggleLi = () => setShowLi(!showLi);
+
+  const [showLo, setShowLo] = useState(false);
+  const toggleLo = () => setShowLo(!showLo);
 
   const dispatch = useAppDispatch();
   const session = useContext(AppContext).inrupt.session;
@@ -150,7 +160,7 @@ export default function LoggerControl():JSX.Element {
   });
 
   session.onLogout(() => {
-    dispatch(setLoggedIn(false)); toggleDialog();
+    dispatch(setLoggedIn(false)); toggleLo();
     console.log('Session ' + session.info.sessionId + ' logged out.');
   });
 
@@ -163,15 +173,19 @@ export default function LoggerControl():JSX.Element {
 
   session.handleIncomingRedirect(window.location.href);
 
+
+  const click = !isLoggedIn ? () => toggleLi() : () => toggleLo();
+
+  const modal: ModalProps = { backdrop: 'static', centered: true, keyboard: false, };
+  const li: DialogProps = { ...modal, show: showLi, onClick: () => toggleLi() };
+  const lo: DialogProps = { ...modal, show: showLo, onClick: () => toggleLo() };
+
   return (
     <>
       <div style={{ top: '10px', right: '10px', zIndex: 1000, position: 'absolute' }}>
-        <StatusButton onClick={() => setShowDialog(!showDialog)} isLoggedIn={isLoggedIn} />
+        <StatusButton onClick={click} isLoggedIn={isLoggedIn} />
       </div>
-      <Modal show={showDialog} onHide={toggleDialog} backdrop='static' centered={true} keyboard={false}>
-        <Modal.Header />
-        { !isLoggedIn ? <LoginDialog onHide={toggleDialog} /> : <LogoutDialog onHide={toggleDialog} /> }
-      </Modal>
+      { !isLoggedIn ? <LoginDialog {...li} /> : <LogoutDialog {...lo} /> }
     </>
   );
 }
