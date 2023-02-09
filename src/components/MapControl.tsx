@@ -15,7 +15,7 @@ export default function MapControl(): JSX.Element {
 
   const cnt = new LatLng(50.088349, 14.403679);
   const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="" target="_blank">Help</a>';
+  const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://grainpath.github.io/docs/" target="_blank">GrainPath docs</a>';
 
   return (
     <MapContainer id={"map"} center={cnt} scrollWheelZoom={true} zoom={4} zoomControl={false}>
