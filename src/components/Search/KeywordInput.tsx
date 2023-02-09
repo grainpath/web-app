@@ -1,5 +1,0 @@
-
-
-export function KeyboardInput() {
-  return (<></>);
-}

@@ -1,6 +1,7 @@
 import { Tab, Tabs } from 'react-bootstrap';
 import { CountInput } from './CountInput';
 import { DistanceInput } from './DistanceInput';
+import { KeywordsInput } from './KeywordsInput';
 
 export function TabsBoard() {
 
@@ -9,6 +10,7 @@ export function TabsBoard() {
       <Tab eventKey='discover' title='Discover'>
         <CountInput />
         <DistanceInput />
+        <KeywordsInput />
       </Tab>
       <Tab eventKey='navigate' title='Navigate'>
       </Tab>
