@@ -64,7 +64,7 @@ function LoginDialog({ onHide }: DialogProps): JSX.Element {
         clientName: CLIENT_NAME,
         redirectUrl: window.location.href
       });
-    } catch(ex) { alert('[Login failure] ' + ex); }
+    } catch(ex) { alert('[Login Error] ' + ex); }
 
     setIsLogging(false);
   };
@@ -111,7 +111,7 @@ function LogoutDialog({ onHide }: DialogProps): JSX.Element {
             if (name) { dispatch(setUserName(name)); }
             console.log('Fetched user name ' + name + '.');
           })
-          .catch((ex) => alert('[UserName fetch] ' + ex));
+          .catch((ex) => alert('[UserName Error] ' + ex));
       };
 
       fetcher();
