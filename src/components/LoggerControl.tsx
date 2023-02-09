@@ -7,7 +7,7 @@ import {
   getThing,
   Thing,
 } from '@inrupt/solid-client';
-import { Login, } from '@mui/icons-material';
+import { Person, } from '@mui/icons-material';
 import { AppContext, } from '../App';
 import { useAppDispatch, useAppSelector, } from '../features/hooks';
 import { SimpleButtonProps, } from './types';
@@ -41,8 +41,8 @@ type DialogProps = {
 function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
   return (
-    <button id='login-button' className='standard-button control-button' onClick={onClick}>
-      { !isLoggedIn ? <Login fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
+    <button id='login-button' className='standard-button control-button' onClick={onClick} title={ !isLoggedIn ? 'Log in' : 'Log out' }>
+      { !isLoggedIn ? <Person fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
     </button>
   );
 }
@@ -127,7 +127,7 @@ function LogoutDialog({ onHide }: DialogProps): JSX.Element {
       </Modal.Body>
       <Modal.Footer>
         <Button variant='secondary' onClick={onHide}>Close</Button>
-        <Button variant='primary' onClick={() => session.logout()}>Logout</Button>
+        <Button variant='danger' onClick={() => session.logout()}>Logout</Button>
       </Modal.Footer>
     </>
   );
@@ -155,7 +155,7 @@ export default function LoggerControl():JSX.Element {
   });
 
   session.onError(() => {
-    alert('Interaction with solid ended up with an error.');
+    alert('Interaction with Solid ended up with an error.');
   });
 
   session.onSessionRestore(() => { alert('Solid session is restored.'); });

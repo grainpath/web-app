@@ -38,7 +38,7 @@ type RemoteButtonProps = SimpleButtonProps & {
 function Button({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
-    <button id='search-button' className='standard-button control-button' onClick={onClick}>
+    <button id='search-button' className='standard-button control-button' onClick={onClick} title='Control'>
       <KeyboardCommandKey fontSize='large' />
     </button>
   );
@@ -81,7 +81,7 @@ export default function PanelControl(): JSX.Element {
 export function SearchButton({ onClick }: SimpleButtonProps): JSX.Element {
 
   return (
-    <button className="standard-button" onClick={onClick}>
+    <button className="standard-button" onClick={onClick} title='Search pane'>
       <Search fontSize="large" />
     </button>
   );
@@ -90,7 +90,7 @@ export function SearchButton({ onClick }: SimpleButtonProps): JSX.Element {
 export function RemoteButton({ onClick, disabled }: RemoteButtonProps): JSX.Element {
 
   return (
-    <button className='standard-button' onClick={onClick} disabled={disabled}>
+    <button className='standard-button' onClick={onClick} disabled={disabled} title='Remote storage'>
       <Storage fontSize='large' />
     </button>
   );
@@ -99,7 +99,7 @@ export function RemoteButton({ onClick, disabled }: RemoteButtonProps): JSX.Elem
 export function MarkerButton({ onClick, kind, buttonStyle }: MarkerButtonProps) {
 
   return (
-    <button className="standard-button" onClick={onClick} style={buttonStyle}>
+    <button className="standard-button" onClick={onClick} style={buttonStyle} title='Marker button'>
       <LocationOn id={`${kind}-marker`} fontSize="large" />
     </button>
   );
