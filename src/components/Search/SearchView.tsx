@@ -6,8 +6,9 @@ import { icons } from '../../utils/icons';
 import { UidPoint } from '../../utils/types';
 import { marker2point } from '../../utils/convs';
 import { setRemote } from '../../features/panelsSlice';
-import { erase, setSource, setTarget, } from '../../features/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../features/hooks';
+import { erase as searchErase, setSource, setTarget, } from '../../features/searchSlice';
+import { erase as keywordsErase, } from '../../features/keywordsSlice';
 import EraseButton from './EraseButton';
 import { CountInput } from './CountInput';
 import { DistanceInput } from './DistanceInput';
@@ -22,7 +23,9 @@ export function SearchHeader(): JSX.Element {
 
   const handleErase = () => {
 
-    dispatch(erase());
+    dispatch(searchErase());
+    dispatch(keywordsErase());
+
     leaflet.markers.forEach(marker => { leaflet.map?.removeLayer(marker); });
     leaflet.markers.clear();
   }
