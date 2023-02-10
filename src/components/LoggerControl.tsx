@@ -8,24 +8,11 @@ import {
   Thing,
 } from '@inrupt/solid-client';
 import { Login, } from '@mui/icons-material';
-import { AppContext, } from '../App';
-import { useAppDispatch, useAppSelector, } from '../features/hooks';
 import { SimpleButtonProps, } from './types';
+import { WELL_KNOWN_SOLID_PROVIDERS } from '../utils/const';
+import { useAppDispatch, useAppSelector, } from '../features/hooks';
 import { setLoggedIn, setUserName, } from '../features/loggerSlice';
-
-const CLIENT_NAME = 'GrainPath App';
-const DEFAULT_PROVIDER = 'https://';
-const WELL_KNOWN_PROVIDERS: Array<{ label: string }> = [
-  {
-    label: 'https://inrupt.net/',
-  },
-  {
-    label: 'https://solidcommunity.net/',
-  },
-  {
-    label: 'https://solidweb.org/',
-  },
-];
+import { AppContext, } from '../App';
 
 const SOLID_LOGO_FILENAME = '/solid/logo.svg';
 const ASSETS_FOLDER =  process.env.PUBLIC_URL + '/assets';
@@ -57,7 +44,7 @@ function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
   const [isLogging, setIsLogging] = useState(false);
-  const [provider, setProvider] = useState(DEFAULT_PROVIDER);
+  const [provider, setProvider] = useState('https://');
 
   const session = useContext(AppContext).inrupt.session;
 
@@ -68,7 +55,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
     try {
       await session.login({
         oidcIssuer: provider,
-        clientName: CLIENT_NAME,
+        clientName: 'GrainPath App',
         redirectUrl: window.location.href
       });
     } catch(ex) { alert('[Login Error] ' + ex); }
@@ -84,7 +71,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         <Form.Label>Enter an address of a <a href='https://solidproject.org/users/get-a-pod' rel='noreferrer' target='_blank'>Solid Pod</a> provider.</Form.Label>
         <Form.Control autoFocus list={list} defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
         <datalist id={list}>{
-          WELL_KNOWN_PROVIDERS.map((item, idx) => <option key={idx} value={item.label}></option>)
+          WELL_KNOWN_SOLID_PROVIDERS.map((item, idx) => <option key={idx} value={item.label}></option>)
         }</datalist>
       </Modal.Body>
       <Modal.Footer>

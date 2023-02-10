@@ -7,7 +7,7 @@ import {
   Search,
   Storage,
 } from '@mui/icons-material';
-import { marker2view } from '../utils/views';
+import { marker2view } from '../utils/funcs';
 import type { SimpleButtonProps } from './types';
 import { Point, PanelView } from '../utils/types';
 import { useAppSelector } from '../features/hooks';
