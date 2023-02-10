@@ -52,6 +52,10 @@ html, body, #root, #map {
   align-items: center;
 }
 
+#keywords-container {
+  border: 1px solid var(--btn-border-color-normal);
+}
+
 #source-marker {
   color: #2aad27;
 }
