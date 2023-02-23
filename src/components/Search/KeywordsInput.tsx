@@ -1,12 +1,21 @@
-import { useState, } from 'react';
-import { Button, Form, Modal, Spinner, } from 'react-bootstrap';
-import { Chip, } from '@mui/material';
-import { AddCircleOutline, } from '@mui/icons-material';
-import { SimpleButtonProps, } from '../types';
-import { useAppDispatch, useAppSelector, } from '../../features/hooks';
+import { useState } from 'react';
+import {
+  Button,
+  Form,
+  Modal,
+  Spinner
+} from 'react-bootstrap';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import { Chip } from '@mui/material';
+import { AddCircleOutline } from '@mui/icons-material';
+import { SimpleButtonProps } from '../types';
+import {
+  useAppDispatch,
+  useAppSelector
+} from '../../features/hooks';
 import {
   KeywordConstraint,
-  deleteKeyword,
+  deleteKeyword
 } from '../../features/keywordsSlice';
 
 type KeywordChip = {
@@ -45,23 +54,47 @@ type KeywordModalWindowProps = {
   onHide: React.MouseEventHandler<HTMLButtonElement>;
 }
 
+type KeywordEntry = { label: string };
+
 function KeywordModalWindow({ show, onHide }: KeywordModalWindowProps): JSX.Element {
 
-  const [keyword, setKeyword] = useState<string>('');
+  const [keyword, setKeyword] = useState<KeywordEntry[]>([]);
   const [constrs, setConstrs] = useState<KeywordConstraint[]>([]);
 
-  const confirm = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [options, setOptions] = useState<KeywordEntry[]>([]);
 
-    
+  const handleSearch = (query: string) => {
+    setLoading(true);
+
+    fetch(`${process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION! + "/autocomplete"}`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ index: "keywords", count: 5, prefix: query })
+    })
+    .then((res) => res.json())
+    .then((arr: string[]) => setOptions(arr.map((itm) => { return { label: itm } as KeywordEntry })))
+    .then(() => setLoading(false));
   };
 
-  console.log(keyword);
+  const confirm = () => { console.log(keyword); };
 
   return (
     <Modal show={show} backdrop='static' centered={true} keyboard={false}>
       <Modal.Body>
         <>
-          <Form.Control autoFocus={true} defaultValue={keyword} placeholder='camel_case_keyword' onChange={(e) => setKeyword(e.target.value)}></Form.Control>
+          <AsyncTypeahead
+            id="keyword-input"
+            isLoading={loading}
+            minLength={1}
+            onSearch={handleSearch}
+            onChange={(selected) => setKeyword(selected as KeywordEntry[])}
+            options={options}
+            placeholder="Start typing..."
+            selected={keyword} />
           {constrs.map((_, i) => 
             <div key={i} style={{ display: 'flex' }}>
               <Form.Select>
@@ -91,7 +124,7 @@ export function KeywordsInput(): JSX.Element {
   const [show, setShow] = useState(false);
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state.keywords.selected.map(obj => obj.keyword));
+  const keywords = useAppSelector(state => state.keywords.map(obj => obj.keyword));
 
   return (
     <>

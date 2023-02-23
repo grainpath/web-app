@@ -1,49 +1,47 @@
-export const WELL_KNOWN_SOLID_PROVIDERS: { label: string }[] = [
+const mapping = [
   {
-    label: 'https://inrupt.net/',
+    os: [ "==", "!=" ],
+    ts: [ "fee", "delivery", "drinking_water", "internet_access", "shower", "takeaway", "toilets", "wheelchair" ],
+    ty: "boolean"
   },
   {
-    label: 'https://solidcommunity.net/',
+    os: [ "+", "-" ],
+    ts: [ "clothes", "cuisine", "rental" ],
+    ty: "collect"
   },
   {
-    label: 'https://solidweb.org/',
-  },
-];
-
-const b = [ 'fee', 'delivery', 'drinking_water', 'internet_access', 'shower', 'takeaway', 'toilets', 'wheelchair', ]
-const c = [ 'clothes', 'cuisine', 'rental', ];
-const m = [ 'capacity', 'min_age', 'rank', ];
-const t = [ 'name', ];
-
-export const TAGS_TO_TYPE_MAPPING: { tags: Set<string>, type: string }[] = [
-  {
-    tags: new Set(b),
-    type: 'boolean',
+    os: [ "==", "!=", ">", ">=", "<", "<=" ],
+    ts: [ "capacity", "min_age", "rank" ],
+    ty: "measure"
   },
   {
-    tags: new Set(c),
-    type: 'collect',
-  },
-  {
-    tags: new Set(m),
-    type: 'measure',
-  },
-  {
-    tags: new Set(t),
-    type: 'textual',
-  },
-];
-
-export const TYPE_TO_OPERATOR_MAPPING = new Map<string, Set<string>>([
-  [ 'collect', new Set([ '+', '-', ]) ],
-  [ 'measure', new Set([ '==', '!=', '>', '>=', '<', '<=', ]) ],
-  [ 'textual', new Set([ '^', '^', '?' ]) ],
-]);
+    os: [ "^", "$", "?" ],
+    ts: [ "charge", "name", "opening_hours" ],
+    ty: "textual"
+  }
+]
 
 export const EXISTING_TAGS: Set<string> = new Set([
-  'image', 'website', 'email', 'phone', 'opening_hours', 'charge',
-  ...b,
-  ...c,
-  ...m,
-  ...t,
+  "description", "image", "website", "email", "phone",
+  ...mapping.map(({ ts }, _) => ts).flat()
 ]);
+
+export const TAG_TO_OPERATOR: Map<string, string[]> = mapping
+  .map(({ os, ts }) => ts.map((t) => { return { t: t, os: os }; })).flat()
+  .reduce((acc, { t, os }) => { acc.set(t, os); return acc; }, new Map<string, string[]>());
+
+export const TAG_TO_TYPE: Map<string, string> = mapping
+  .map(({ ts, ty }) => ts.map((t) => { return { t: t, ty: ty }; })).flat()
+  .reduce((acc, { t, ty }) => { acc.set(t, ty); return acc; }, new Map<string, string>());
+
+export const WELL_KNOWN_SOLID_PROVIDERS: { label: string }[] = [
+  {
+    label: "https://inrupt.net/",
+  },
+  {
+    label: "https://solidcommunity.net/",
+  },
+  {
+    label: "https://solidweb.org/",
+  },
+];

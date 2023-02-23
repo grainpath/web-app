@@ -1,8 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  EXISTING_KEYWORDS_MOCK,
-  SELECTED_KEYWORDS_MOCK
-} from "../utils/mocks";
 
 export type KeywordConstraint = {
   label: string;
@@ -15,38 +11,26 @@ export type SelectedKeyword = {
   constraints: KeywordConstraint[];
 }
 
-type KeywordState = {
-  existing: string[];
-  selected: SelectedKeyword[];
-};
+type KeywordState = SelectedKeyword[];
 
-const initialState = (): KeywordState => {
-  return {
-    existing: EXISTING_KEYWORDS_MOCK, // TODO: replace with actual keywords!
-    selected: SELECTED_KEYWORDS_MOCK, // TODO: replace with actual keywords!
-  };
-};
+const initialState = (): KeywordState => [];
 
 export const keywordsSlice = createSlice({
   name: 'keywords',
   initialState: initialState(),
   reducers: {
-    erase: (state) => { state.selected = [] },
-    setExisting: (state, action: PayloadAction<string[]>) => {
-      state.existing = action.payload;
-    },
+    erase: () => { return [] },
     appendKeyword: (state, action: PayloadAction<SelectedKeyword>) => {
-      state.selected.push(action.payload);
+      state.push(action.payload);
     },
     deleteKeyword: (state, action: PayloadAction<number>) => {
-      state.selected = state.selected.filter((_, idx) => idx !== action.payload);
+      return state.filter((_, idx) => idx !== action.payload);
     },
   }
 });
 
 export const {
   erase,
-  setExisting,
   appendKeyword,
   deleteKeyword,
 } = keywordsSlice.actions;
