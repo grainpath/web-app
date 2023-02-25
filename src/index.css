@@ -53,7 +53,7 @@ html, body, #root, #map {
 }
 
 .chips-container {
-  min-height: 2.0rem;
+  min-height: 2.4rem;
   border: 1px solid var(--btn-border-color-normal);
   border-radius: 0.375rem;
 }

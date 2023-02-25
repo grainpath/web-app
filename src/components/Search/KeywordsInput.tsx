@@ -1,48 +1,30 @@
-import { ReactElement, useState } from 'react';
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { Chip } from '@mui/material';
-import { AddCircleOutline, Save } from '@mui/icons-material';
-import { SimpleButtonProps } from '../types';
-import { useAppDispatch, useAppSelector } from '../../features/hooks';
-import { deleteKeyword } from '../../features/keywordsSlice';
-import { API_BASE_URL, EXISTING_TAGS, TAG_TO_OPERATOR, TAG_TO_TYPE } from '../../utils/const';
+import { ReactElement, useEffect, useMemo, useState } from "react";
+import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { AddCircleOutline, Save } from "@mui/icons-material";
+import { SimpleButtonProps } from "../types";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import {
+  deleteKeyword,
+  insertKeyword,
+  Keyword,
+  KeywordConstraint
+} from "../../features/keywordsSlice";
+import { EXISTING_TAGS, TagType, TAG_TO_OPERATOR, TAG_TO_TYPE } from "../../utils/const";
+import { StandardChip, StandardTypeahead } from "./InputPrimitives";
 
 const isTagWithOperator = (tag: string): boolean => TAG_TO_OPERATOR.has(tag);
 
-const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? "") === "boolean";
-const isTagCollect = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? "") === "collect";
-const isTagMeasure = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? "") === "measure";
-const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? "") === "textual";
-
-type StandardChipProps = {
-  label: string;
-  onClick: React.MouseEventHandler<HTMLElement>;
-  onDelete: React.MouseEventHandler<HTMLElement>;
-};
+const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.BOOLEAN;
+const isTagCollect = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.COLLECT;
+const isTagMeasure = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.MEASURE;
+const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.TEXTUAL;
 
 type ButtonContainerProps = { button: ReactElement; }
-
-type KeywordSearchEntry = { label: string };
 
 type KeywordModalWindowProps = {
   show: boolean;
   label: string | undefined;
-  onDiscard: React.MouseEventHandler<HTMLElement>;
-}
-
-type StandardTypeaheadProps = {
-  index: string;
-  label: string | undefined;
-  set: (arr: string[]) => void;
-}
-
-function StandardChip(props: StandardChipProps): JSX.Element {
-  return (
-    <div style={{ margin: "2px", display: "inline-block" }}>
-      <Chip {...props} color="primary" />
-    </div>
-  );
+  onHide: () => void;
 }
 
 function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
@@ -66,95 +48,134 @@ function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
 function ButtonContainer({ button }: ButtonContainerProps): JSX.Element {
 
   return (
-    <div className='mt-2 mb-2' style={{ display: 'flex', justifyContent: 'center' }}>
+    <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
       {button}
     </div>
   );
 }
 
-function StandardTypeahead({ index, label, set }: StandardTypeaheadProps): JSX.Element {
+function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): JSX.Element {
 
-  const content = "application/json";
-
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<KeywordSearchEntry[]>([]);
-
-  const handleSearch = (query: string) => {
-    setLoading(true);
-    fetch(`${API_BASE_URL + "/autocomplete"}`, {
-      method: "POST",
-      headers: { "Accept": content, "Content-Type": content },
-      body: JSON.stringify({ index: index, count: 3, prefix: query })
-    })
-    .then((res) => res.json())
-    .then((arr: string[]) => setOptions(arr.map((item) => { return { label: item } as KeywordSearchEntry })))
-    .catch((err) => alert(err))
-    .finally(() => setLoading(false));
-  };
-
-  return(
-    <AsyncTypeahead
-      id="keyword-typeahead-input"
-      defaultInputValue={label}
-      placeholder="Start typing..."
-      disabled={!!label}
-      isLoading={loading}
-      minLength={1}
-      options={options}
-      onSearch={handleSearch}
-      onChange={(selected) => set((selected as KeywordSearchEntry[]).map((entry) => entry.label))} />
-  );
-}
-
-function KeywordModalWindow({ show, label, onDiscard }: KeywordModalWindowProps): JSX.Element {
+  const dispatch = useAppDispatch();
 
   const [keyword, setKeyword] = useState<string[]>([]);
+  const [validK, setValidK] = useState<boolean>(true);
   const [constrs, setConstrs] = useState(useAppSelector(state => (!!label) ? state.keywords.filter((keyword) => keyword.label === label)[0].constrs : []));
 
-  const [tag, setTag] = useState<string>("");
+  const defaultTag = "";
+  const [tag, setTag] = useState<string>(defaultTag);
+  const [validTag, setValidTag] = useState<boolean>(true);
 
   const defaultOperator = "";
   const [operator, setOperator] = useState<string>(defaultOperator);
   const operators: string[] = TAG_TO_OPERATOR.get(tag) ?? [];
 
-  const defaultMeasure = 0;
-  const defaultTextual = "";
   const defaultBoolean = true;
-  const defaultCollect: string[] = [];
-
   const [b, setBoolean] = useState<boolean>(defaultBoolean);
+
+  const defaultCollect: string[] = useMemo(() => [], []);
+  const [validC, setValidC] = useState(true);
   const [c, setCollect] = useState<string[]>(defaultCollect);
+
+  const defaultMeasure = 0;
+  const [validM, setValidM] = useState(true);
   const [m, setMeasure] = useState<number>(defaultMeasure);
+
+  const defaultTextual = "";
+  const [validT, setValidT] = useState<boolean>(false);
   const [t, setTextual] = useState<string>(defaultTextual);
 
-  const handleTag = (t: string): void => {
-    setTag(t);
-    setOperator(defaultOperator);
-    setTextual(defaultTextual);
-    setBoolean(defaultBoolean);
-    setMeasure(defaultMeasure);
-    setTextual(defaultTextual);
+  useEffect(() => {
+    const resetTag = () => {
+      setValidTag(true);
+      setOperator(defaultOperator);
+    };
+    resetTag();
+  }, [tag]);
+
+  useEffect(() => {
+    const resetOperator = () => {
+      setBoolean(defaultBoolean);
+      setValidC(true);
+      setCollect(defaultCollect);
+      setValidM(true);
+      setMeasure(defaultMeasure);
+      setValidT(true);
+      setTextual(defaultTextual);
+    };
+    resetOperator();
+  }, [operator, defaultBoolean, defaultCollect, defaultMeasure, defaultTextual]);
+
+  const appendConstraint = (constr: KeywordConstraint) => setConstrs([ ...constrs, constr ]);
+
+  const deleteConstraint = (idx: number) => setConstrs([ ...constrs.slice(0, idx), ...constrs.slice(idx + 1) ]);
+
+  const defaultAppender = (v: boolean | number | string): void => {
+    const constr = (operator === defaultOperator)
+      ? { tag: tag }
+      : { tag: tag, operator: operator, value: v }
+    appendConstraint(constr as KeywordConstraint);
+    setTag(defaultTag);
   }
 
-  const handleOperator = (o: string): void => {
-    setOperator(o);
+  const defaultHandler = () => {
+    if (tag === defaultTag) { return setValidTag(false); }
+    appendConstraint({ tag: tag } as KeywordConstraint);
+    setTag(defaultTag);
   };
 
-  const confirm = () => { console.log(tag); };
+  const booleanHandler = () => defaultAppender(b);
+
+  const collectHandler = () => {
+    if (c.length !== 1) { return setValidC(false); }
+    defaultAppender(c[0]);
+  };
+
+  const measureHandler = () => {
+    if (m < 0) { return setValidM(false); }
+    defaultAppender(m);
+  };
+
+  const textualHandler = () => {
+    if (operator !== defaultOperator && !t.length) { return setValidT(false); }
+    defaultAppender(t);
+  };
+
+  const save = () => {
+    switch (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) {
+      case TagType.DEFAULT: defaultHandler(); break;
+      case TagType.BOOLEAN: booleanHandler(); break;
+      case TagType.COLLECT: collectHandler(); break;
+      case TagType.MEASURE: measureHandler(); break;
+      case TagType.TEXTUAL: textualHandler(); break;
+    }
+  };
+
+  const confirm = () => {
+    if (keyword.length !== 1) { return setValidK(false); }
+    dispatch(insertKeyword({ label: keyword[0], constrs: constrs } as Keyword));
+    onHide();
+  };
 
   return (
     <Modal show={show} backdrop="static" centered={true} keyboard={false}>
       <Modal.Body>
         <Form.Group className="mt-2 mb-2">
           <Form.Label>Keyword</Form.Label>
-          <StandardTypeahead index="keywords" label={label} set={setKeyword} />
+          <StandardTypeahead id="keyword-typeahead-input" index="keywords" label={label}
+            className={validK ? undefined : "is-invalid"} isInvalid={!validK} set={setKeyword} />
         </Form.Group>
         <Form.Group className="mt-2 mb-2">
           <Form.Label>Constraints</Form.Label>
           <div className="chips-container">
           {
             constrs.map((constr, i) => {
-              return <StandardChip key={i} label={[ constr.tag, constr.operator, constr.value ].join(' ')} onClick={() => {}} onDelete={() => {}} />
+              return (
+                <StandardChip
+                  key={i} label={[ constr.tag, constr.operator, constr.value ].join(' ')}
+                  onClick={() => {}} onDelete={() => deleteConstraint(i)}
+                />
+              );
             })
           }
           </div>
@@ -163,50 +184,69 @@ function KeywordModalWindow({ show, label, onDiscard }: KeywordModalWindowProps)
           <Form.Label xs={3} column>Tag</Form.Label>
           {
             <Col>
-              <Form.Select value={tag} onChange={(e) => handleTag(e.target.value)}>
-                <option value=""></option>
-                {
-                  EXISTING_TAGS.map((t, i) => <option key={i} value={t}>{t}</option>)
-                }
-              </Form.Select>
+              <Form.Group>
+                <Form.Select isInvalid={!validTag} value={tag} onChange={(e) => setTag(e.target.value)}>
+                  <option value={defaultTag}></option>
+                  {
+                    EXISTING_TAGS.map((t, i) => <option key={i} value={t}>{t}</option>)
+                  }
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">Tag should be non-empty.</Form.Control.Feedback>
+              </Form.Group>
             </Col>
           }
         </Form.Group>
         <Form.Group as={Row} className="mt-2 mb-2">
           <Form.Label xs={3} column>Operator</Form.Label>
           <Col>
-            <Form.Select value={operator} onChange={(e) => handleOperator(e.target.value)} disabled={!isTagWithOperator(tag)}>
-              <option value=""></option>
-              {
-                operators.map((o, i) => <option key={i} value={o}>{o}</option>)
-              }
-            </Form.Select>
+            <Form.Group>
+              <Form.Select value={operator} onChange={(e) => setOperator(e.target.value)} disabled={!isTagWithOperator(tag)}>
+                <option value={defaultOperator}></option>
+                {
+                  operators.map((o, i) => <option key={i} value={o}>{o}</option>)
+                }
+              </Form.Select>
+            </Form.Group>
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mt-2 mb-2" style={{ alignItems: "center" }}>
           <Form.Label xs={3} column>Value</Form.Label>
           {
-            (operator !== "") && <Col>
+            (operator !== defaultOperator) && <Col>
               {
-                isTagBoolean(tag) && <Form.Check type="switch" id="boolean-value" defaultChecked={true} />
+                isTagBoolean(tag) &&
+                  <Form.Check id="boolean-value" type="switch" defaultChecked={b} onChange={() => setBoolean(!b)} />
               }
               {
-                isTagCollect(tag) && <StandardTypeahead index={tag} label={undefined} set={() => {}} />
+                isTagCollect(tag) &&
+                  <StandardTypeahead id={tag + "typeahead-input"} index={tag} label={undefined}
+                    className={validC ? undefined : "is-invalid"} isInvalid={!validC} set={(values) => setCollect(values)} />
               }
               {
-                isTagMeasure(tag) && <Form.Control type="number" min={0} defaultValue={0} />
+                isTagMeasure(tag) &&
+                  <Form.Group>
+                    <Form.Control isInvalid={!validM} type="number" defaultValue={m} onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) { setMeasure(value); }
+                    }} />
+                    <Form.Control.Feedback type="invalid">Number should be non-negative.</Form.Control.Feedback>
+                  </Form.Group>
               }
               {
-                isTagTextual(tag) && <Form.Control type="text" />
+                isTagTextual(tag) &&
+                  <Form.Group>
+                    <Form.Control isInvalid={!validT} type="text" defaultValue={t} onChange={(e) => setTextual(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Text field should be non-empty.</Form.Control.Feedback>
+                  </Form.Group>
               }
             </Col>
           }
         </Form.Group>
-        <ButtonContainer button={<SaveKeywordButton onClick={() => {}} />} />
+        <ButtonContainer button={<SaveKeywordButton onClick={() => save()} />} />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onDiscard}>Discard</Button>
-        <Button variant='primary' onClick={confirm}>Confirm</Button>
+        <Button variant="danger" onClick={() => onHide()}>Discard</Button>
+        <Button variant="primary" onClick={confirm}>Confirm</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -233,7 +273,7 @@ export function KeywordsInput(): JSX.Element {
         </div>
         <ButtonContainer button={<AddKeywordButton onClick={() => modal(undefined)} />} />
       </Form.Group>
-      <KeywordModalWindow show={show} label={curr} onDiscard={() => setShow(false)} />
+      <KeywordModalWindow show={show} label={curr} onHide={() => setShow(false)} />
     </>
   );
 }

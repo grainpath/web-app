@@ -1,10 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type KeywordConstraint = {
+type ConstraintBase = {
   tag: string;
   operator?: string;
+};
+
+export type BooleanConstraint = ConstraintBase & {
+  value?: boolean;
+};
+
+export type CollectConstraint = ConstraintBase & {
   value?: string;
-}
+};
+
+export type MeasureConstraint = ConstraintBase & {
+  value?: number;
+};
+
+export type TextualConstraint = ConstraintBase & {
+  value?: string;
+};
+
+export type KeywordConstraint
+  = BooleanConstraint
+  | CollectConstraint
+  | MeasureConstraint
+  | TextualConstraint;
 
 export type Keyword = {
   label: string;
