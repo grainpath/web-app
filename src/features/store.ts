@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import loggerReducer from './loggerSlice';
-import panelsReducer from './panelsSlice';
-import searchReducer from './searchSlice';
-import resultReducer from './resultSlice';
-import keywordsReducer from './keywordsSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import loggerReducer from "./loggerSlice";
+import panelsReducer from "./panelsSlice";
+import searchReducer from "./searchSlice";
+import resultReducer from "./resultSlice";
+import keywordsReducer from "./keywordsSlice";
 
 export const store = configureStore({
   reducer: {

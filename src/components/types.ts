@@ -1,3 +1,3 @@
 export type SimpleButtonProps = {
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick: React.MouseEventHandler<HTMLElement>;
 }

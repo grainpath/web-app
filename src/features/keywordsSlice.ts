@@ -1,38 +1,40 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type KeywordConstraint = {
-  label: string;
+  tag: string;
   operator?: string;
   value?: string;
 }
 
-export type SelectedKeyword = {
-  keyword: string;
-  constraints: KeywordConstraint[];
+export type Keyword = {
+  label: string;
+  constrs: KeywordConstraint[];
 }
 
-type KeywordState = SelectedKeyword[];
+type KeywordsState = Keyword[];
 
-const initialState = (): KeywordState => [];
+const initialState = (): KeywordsState => [];
 
 export const keywordsSlice = createSlice({
-  name: 'keywords',
+  name: "keywords",
   initialState: initialState(),
   reducers: {
     erase: () => { return [] },
-    appendKeyword: (state, action: PayloadAction<SelectedKeyword>) => {
-      state.push(action.payload);
+    insertKeyword: (state, action: PayloadAction<Keyword>) => {
+      let i = state.findIndex((keyword) => keyword.label === action.payload.label);
+      i = (i === -1) ? state.length : i;
+      return [ ...state.slice(0, i), action.payload, ...state.slice(i + 1) ];
     },
-    deleteKeyword: (state, action: PayloadAction<number>) => {
-      return state.filter((_, idx) => idx !== action.payload);
-    },
+    deleteKeyword: (state, action: PayloadAction<string>) => {
+      return state.filter((keyword, _) => keyword.label !== action.payload);
+    }
   }
 });
 
 export const {
   erase,
-  appendKeyword,
   deleteKeyword,
+  insertKeyword,
 } = keywordsSlice.actions;
 
 export default keywordsSlice.reducer;
