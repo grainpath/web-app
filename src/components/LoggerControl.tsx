@@ -1,21 +1,16 @@
-import { useContext, useEffect, useState, } from 'react';
-import { Button, Form, Modal, } from 'react-bootstrap';
-import { VCARD } from '@inrupt/vocab-common-rdf';
-import {
-  getSolidDataset,
-  getStringNoLocale,
-  getThing,
-  Thing,
-} from '@inrupt/solid-client';
-import { Login, } from '@mui/icons-material';
-import { SimpleButtonProps, } from './types';
-import { WELL_KNOWN_SOLID_PROVIDERS } from '../utils/const';
-import { useAppDispatch, useAppSelector, } from '../features/hooks';
-import { setLoggedIn, setUserName, } from '../features/loggerSlice';
-import { AppContext, } from '../App';
+import { useContext, useEffect, useState } from "react";
+import { Button, Form, Modal } from "react-bootstrap";
+import { VCARD } from "@inrupt/vocab-common-rdf";
+import { getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
+import { Login } from "@mui/icons-material";
+import { SimpleButtonProps } from "./types";
+import { WELL_KNOWN_SOLID_PROVIDERS } from "../utils/const";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
+import { setLoggedIn, setUserName } from "../features/loggerSlice";
+import { AppContext } from "../App";
 
-const SOLID_LOGO_FILENAME = '/solid/logo.svg';
-const ASSETS_FOLDER =  process.env.PUBLIC_URL + '/assets';
+const SOLID_LOGO_FILENAME = "/solid/logo.svg";
+const ASSETS_FOLDER =  process.env.PUBLIC_URL + "/assets";
 
 type ButtonProps = SimpleButtonProps & {
   isLoggedIn: boolean;
@@ -63,7 +58,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
     setIsLogging(false);
   };
 
-  const list = 'list-solid-providers';
+  const list = "list-solid-providers";
 
   return (
     <Modal {...rest}>
@@ -120,8 +115,8 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         Logged in as <a href={session.info.webId} rel='noreferrer' target='_blank'>{label}</a>.
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onClick}>Close</Button>
-        <Button variant='danger' onClick={() => session.logout()}>Logout</Button>
+        <Button variant="secondary" onClick={onClick}>Close</Button>
+        <Button variant="danger" onClick={() => session.logout()}>Logout</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -130,10 +125,7 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 export default function LoggerControl():JSX.Element {
 
   const [showLi, setShowLi] = useState(false);
-  const toggleLi = () => setShowLi(!showLi);
-
   const [showLo, setShowLo] = useState(false);
-  const toggleLo = () => setShowLo(!showLo);
 
   const dispatch = useAppDispatch();
   const session = useContext(AppContext).inrupt.session;
@@ -143,16 +135,16 @@ export default function LoggerControl():JSX.Element {
 
   session.onLogin(() => {
     dispatch(setLoggedIn(true));
-    console.log('Session ' + session.info.sessionId + ' logged in.');
+    console.log("Session " + session.info.sessionId + " logged in.");
   });
 
   session.onLogout(() => {
-    dispatch(setLoggedIn(false)); toggleLo();
-    console.log('Session ' + session.info.sessionId + ' logged out.');
+    dispatch(setLoggedIn(false)); setShowLo(false);
+    console.log("Session " + session.info.sessionId + " logged out.");
   });
 
   session.onError(() => {
-    alert('Interaction with Solid ended up with an error.');
+    alert("Interaction with Solid ended up with an error.");
   });
 
   session.onSessionRestore(() => { alert('Solid session is restored.'); });
@@ -160,16 +152,15 @@ export default function LoggerControl():JSX.Element {
 
   session.handleIncomingRedirect(window.location.href);
 
+  const click = !isLoggedIn ? () => setShowLi(true) : () => setShowLo(true);
 
-  const click = !isLoggedIn ? () => toggleLi() : () => toggleLo();
-
-  const modal: ModalProps = { backdrop: 'static', centered: true, keyboard: false, };
-  const li: DialogProps = { ...modal, show: showLi, onClick: () => toggleLi() };
-  const lo: DialogProps = { ...modal, show: showLo, onClick: () => toggleLo() };
+  const modal: ModalProps = { backdrop: "static", centered: true, keyboard: false, };
+  const li: DialogProps = { ...modal, show: showLi, onClick: () => setShowLi(false) };
+  const lo: DialogProps = { ...modal, show: showLo, onClick: () => setShowLo(false) };
 
   return (
     <>
-      <div style={{ top: '10px', right: '10px', zIndex: 1000, position: 'absolute' }}>
+      <div style={{ top: "10px", right: "10px", zIndex: 1000, position: "absolute" }}>
         <StatusButton onClick={click} isLoggedIn={isLoggedIn} />
       </div>
       { !isLoggedIn ? <LoginDialog {...li} /> : <LogoutDialog {...lo} /> }
