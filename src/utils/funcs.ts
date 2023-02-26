@@ -1,19 +1,23 @@
-import { Point } from './types';
-
-const degree2view = (loc: number): string => {
-
-  const deg = Math.floor(loc);
-  loc = (loc - deg) * 60;
-  const min = Math.floor(loc);
-  const sec = (loc - min) * 60;
-  return `${deg}°${min}'${sec.toFixed(3)}''`;
-};
+import { LatLng } from "leaflet";
+import { Point } from "./types";
 
 /**
  * Constructs human-readable GPS representation.
  */
 export function marker2view(point: Point): string {
-  return `${degree2view(point.lat)}N, ${degree2view(point.lon)}E`;
+  const prec = 7;
+  return `${point.lat.toFixed(prec)}N, ${point.lon.toFixed(prec)}E`;
+}
+
+/**
+ * Ensure coordinates within EPSG:3857, see https://epsg.io/3857.
+ * @param marker raised dragend event.
+ */
+export function ensureMarkerBounds(marker: L.Marker<any>): void {
+  const lls = marker.getLatLng();
+  const lat = Math.min(Math.max(lls.lat, -85.06), +85.06);
+  const lng = Math.min(Math.max(lls.lng, -180.0), +180.0);
+  marker.setLatLng(new LatLng(lat, lng));
 }
 
 /**
