@@ -63,7 +63,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
   return (
     <Modal {...rest}>
       <Modal.Body>
-        <Form.Label>Enter an address of a <a href='https://solidproject.org/users/get-a-pod' rel='noreferrer' target='_blank'>Solid Pod</a> provider.</Form.Label>
+        <Form.Label>Enter an address of a <a href="https://solidproject.org/users/get-a-pod" rel="noreferrer" target="_blank">Solid Pod</a> provider.</Form.Label>
         <Form.Control autoFocus list={list} defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
         <datalist id={list}>{
           WELL_KNOWN_SOLID_PROVIDERS.map((item, idx) => <option key={idx} value={item.label}></option>)
