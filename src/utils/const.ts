@@ -55,3 +55,7 @@ export const WELL_KNOWN_SOLID_PROVIDERS: { label: string }[] = [
     label: "https://solidweb.org/",
   },
 ];
+
+export const QUERY_ADDR = "/query";
+export const VAULT_ADDR = "/vault";
+export const ARTIFACT_ADDR = "/artifact";

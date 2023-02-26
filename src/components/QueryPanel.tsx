@@ -1,26 +1,27 @@
 import { useContext } from "react";
 import L, { LatLng } from "leaflet";
-import { Tab, Tabs } from "react-bootstrap";
-import { AppContext } from "../../App";
-import { icons } from "../../utils/icons";
-import { UidPoint } from "../../utils/types";
-import { marker2point } from "../../utils/convs";
-import { setRemote } from "../../features/panelsSlice";
-import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { erase as searchErase, setSource, setTarget, } from "../../features/searchSlice";
-import { erase as keywordsErase, } from "../../features/keywordsSlice";
-import EraseButton from "./EraseButton";
-import { CountInput } from "./CountInput";
-import { DistanceInput } from "./DistanceInput";
-import { KeywordsInput } from "./KeywordsInput";
-import { RemoteButton, SteadyMarkerLine } from "../PanelControl";
-import { ensureMarkerBounds } from "../../utils/funcs";
+import { Offcanvas, Tab, Tabs } from "react-bootstrap";
+import { AppContext } from "../App";
+import { icons } from "../utils/icons";
+import { UidPoint } from "../utils/types";
+import { marker2point } from "../utils/convs";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
+import { erase as searchErase, setSource, setTarget, } from "../features/searchSlice";
+import { erase as keywordsErase, } from "../features/keywordsSlice";
+import EraseButton from "./Query/EraseButton";
+import { CountInput } from "./Query/CountInput";
+import { DistanceInput } from "./Query/DistanceInput";
+import { KeywordsInput } from "./Query/KeywordsInput";
+import { VaultButton, SteadyMarkerLine } from "./PanelControl";
+import { ensureMarkerBounds } from "../utils/funcs";
+import { useNavigate } from "react-router-dom";
+import { VAULT_ADDR } from "../utils/const";
 
-export function SearchHeader(): JSX.Element {
+function QueryHeader(): JSX.Element {
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const leaflet = useContext(AppContext).leaflet;
-  const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
 
   const handleErase = () => {
 
@@ -32,14 +33,14 @@ export function SearchHeader(): JSX.Element {
   }
 
   return (
-    <>
-      <RemoteButton onClick={() => { dispatch(setRemote()); }} disabled={!isLoggedIn} />
+    <Offcanvas.Header closeButton>
+      <VaultButton onClick={() => navigate(VAULT_ADDR)} />
       <EraseButton onClick={handleErase} />
-    </>
+    </Offcanvas.Header>
   );
 }
 
-export function SearchBody(): JSX.Element {
+function QueryBody(): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { leaflet } = useContext(AppContext);
@@ -66,7 +67,7 @@ export function SearchBody(): JSX.Element {
   };
 
   return (
-    <>
+    <Offcanvas.Body>
       <SteadyMarkerLine kind="source" point={source} onClick={() => handlePoint(source, "source", (point: UidPoint) => { dispatch(setSource(point)) })} />
       <SteadyMarkerLine kind="target" point={target} onClick={() => handlePoint(target, "target", (point: UidPoint) => { dispatch(setTarget(point)) })} />
       <Tabs defaultActiveKey="discover" fill className="mb-4 mt-4">
@@ -78,6 +79,16 @@ export function SearchBody(): JSX.Element {
         <Tab eventKey="navigate" title="Navigate">
         </Tab>
       </Tabs>
+    </Offcanvas.Body>
+  );
+}
+
+export default function QueryPanel(): JSX.Element {
+
+  return (
+    <>
+      <QueryHeader />
+      <QueryBody />
     </>
   );
 }

@@ -232,7 +232,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
               }
               { isTagCollect(tag) &&
                   <StandardTypeahead index={tag} label={undefined} set={(values) => setCollect(values)} feedback={OPTION_MESSAGE}
-                    touch={() => setValidC(true)} id={tag + "-typeahead-input"} className={validC ? undefined : "is-invalid"} isInvalid={!validC} />
+                    isInvalid={!validC} touch={() => setValidC(true)} id={tag + "-typeahead-input"} className={validC ? undefined : "is-invalid"} />
               }
               { isTagMeasure(tag) &&
                   <Form.Group>
@@ -258,7 +258,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
         <ButtonContainer button={<SaveKeywordButton onClick={() => save()} />} />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={() => onHide()}>Discard</Button>
+        <Button variant="danger" onClick={onHide}>Discard</Button>
         <Button variant="primary" onClick={confirm}>Confirm</Button>
       </Modal.Footer>
     </Modal>
