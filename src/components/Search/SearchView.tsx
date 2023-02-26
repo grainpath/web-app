@@ -49,7 +49,7 @@ export function SearchBody(): JSX.Element {
   const handlePoint = (point: UidPoint | undefined, view: string, func: (point: UidPoint) => void): void => {
     if (!point) {
 
-      const c = leaflet.count++;
+      const c = leaflet.uid++;
       const m = L.marker(leaflet.map!.getCenter(), { icon: (icons as any)[view], draggable: true }).addTo(leaflet.map!);
 
       leaflet.markers.set(c, m);
