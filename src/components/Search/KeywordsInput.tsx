@@ -12,6 +12,9 @@ import {
 import { EXISTING_TAGS, TagType, TAG_TO_OPERATOR, TAG_TO_TYPE } from "../../utils/const";
 import { StandardChip, StandardTypeahead } from "./InputPrimitives";
 
+const EXISTS_MESSAGE = "Keyword is already defined.";
+const OPTION_MESSAGE = "Select option from those appeared.";
+
 const isTagWithOperator = (tag: string): boolean => TAG_TO_OPERATOR.has(tag);
 
 const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.BOOLEAN;
@@ -22,7 +25,6 @@ const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.
 type ButtonContainerProps = { button: ReactElement; }
 
 type KeywordModalWindowProps = {
-  show: boolean;
   label: string | undefined;
   onHide: () => void;
 }
@@ -30,7 +32,7 @@ type KeywordModalWindowProps = {
 function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
 
   return (
-    <button {...props} className="standard-button" title='add keyword'>
+    <button {...props} className="standard-button" title="add keyword">
       <AddCircleOutline fontSize="large" />
     </button>
   );
@@ -39,7 +41,7 @@ function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
 function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
 
   return(
-    <button {...props} className="standard-button" title='save keyword'>
+    <button {...props} className="standard-button" title="save keyword">
       <Save fontSize="large" />
     </button>
   );
@@ -54,13 +56,16 @@ function ButtonContainer({ button }: ButtonContainerProps): JSX.Element {
   );
 }
 
-function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): JSX.Element {
+function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Element {
 
   const dispatch = useAppDispatch();
+  const keywords = useAppSelector(state => state).keywords.map(k => k.label);
 
-  const [keyword, setKeyword] = useState<string[]>([]);
-  const [validK, setValidK] = useState<boolean>(true);
-  const [constrs, setConstrs] = useState(useAppSelector(state => (!!label) ? state.keywords.filter((keyword) => keyword.label === label)[0].constrs : []));
+  const [keyword, setKeyword] = useState<string[]>((!!label) ? [ label ] : [ ]);
+  const [statusK, setStatusK] = useState<{ valid: boolean; message: string | undefined }>({ valid: true, message: undefined });
+
+  const defaultConstrs = useAppSelector(state => (!!label) ? state.keywords.filter((keyword) => keyword.label === label)[0].constrs : [ ]);
+  const [constrs, setConstrs] = useState(defaultConstrs);
 
   const defaultTag = "";
   const [tag, setTag] = useState<string>(defaultTag);
@@ -71,19 +76,19 @@ function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): J
   const operators: string[] = TAG_TO_OPERATOR.get(tag) ?? [];
 
   const defaultBoolean = true;
-  const [b, setBoolean] = useState<boolean>(defaultBoolean);
+  const [bool, setBoolean] = useState<boolean>(defaultBoolean);
 
   const defaultCollect: string[] = useMemo(() => [], []);
   const [validC, setValidC] = useState(true);
-  const [c, setCollect] = useState<string[]>(defaultCollect);
+  const [coll, setCollect] = useState<string[]>(defaultCollect);
 
   const defaultMeasure = 0;
   const [validM, setValidM] = useState(true);
-  const [m, setMeasure] = useState<number>(defaultMeasure);
+  const [meas, setMeasure] = useState<number>(defaultMeasure);
 
   const defaultTextual = "";
   const [validT, setValidT] = useState<boolean>(false);
-  const [t, setTextual] = useState<string>(defaultTextual);
+  const [text, setTextual] = useState<string>(defaultTextual);
 
   useEffect(() => {
     const resetTag = () => {
@@ -124,21 +129,21 @@ function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): J
     setTag(defaultTag);
   };
 
-  const booleanHandler = () => defaultAppender(b);
+  const booleanHandler = () => defaultAppender(bool);
 
   const collectHandler = () => {
-    if (c.length !== 1) { return setValidC(false); }
-    defaultAppender(c[0]);
+    if (coll.length !== 1) { return setValidC(false); }
+    defaultAppender(coll[0]);
   };
 
   const measureHandler = () => {
-    if (m < 0) { return setValidM(false); }
-    defaultAppender(m);
+    if (isNaN(meas) || meas < 0) { return setValidM(false); }
+    defaultAppender(meas);
   };
 
   const textualHandler = () => {
-    if (operator !== defaultOperator && !t.length) { return setValidT(false); }
-    defaultAppender(t);
+    if (operator !== defaultOperator && !text.length) { return setValidT(false); }
+    defaultAppender(text);
   };
 
   const save = () => {
@@ -152,18 +157,27 @@ function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): J
   };
 
   const confirm = () => {
-    if (keyword.length !== 1) { return setValidK(false); }
+    if (keyword.length !== 1) { return setStatusK({ valid: false, message: OPTION_MESSAGE }); }
+
+    if (!label && keywords.findIndex(k => k === keyword[0]) >= 0) {
+      return setStatusK({ valid: false, message: EXISTS_MESSAGE });
+    }
+
     dispatch(insertKeyword({ label: keyword[0], constrs: constrs } as Keyword));
     onHide();
   };
 
   return (
-    <Modal show={show} backdrop="static" centered={true} keyboard={false}>
+    <Modal show={true} backdrop="static" centered={true} keyboard={false}>
       <Modal.Body>
         <Form.Group className="mt-2 mb-2">
           <Form.Label>Keyword</Form.Label>
-          <StandardTypeahead id="keyword-typeahead-input" index="keywords" label={label}
-            className={validK ? undefined : "is-invalid"} isInvalid={!validK} set={setKeyword} />
+          { (!!label)
+            ? <Form.Control type="text" placeholder={label} disabled readOnly />
+            : <StandardTypeahead index="keywords" label={label} set={setKeyword} feedback={statusK.message}
+                touch={() => setStatusK({ valid: true, message: undefined })} id="keyword-typeahead-input"
+                className={statusK.valid ? undefined : "is-invalid"} isInvalid={!statusK.valid} />
+          }
         </Form.Group>
         <Form.Group className="mt-2 mb-2">
           <Form.Label>Constraints</Form.Label>
@@ -213,29 +227,28 @@ function KeywordModalWindow({ show, label, onHide }: KeywordModalWindowProps): J
           <Form.Label xs={3} column>Value</Form.Label>
           {
             (operator !== defaultOperator) && <Col>
-              {
-                isTagBoolean(tag) &&
-                  <Form.Check id="boolean-value" type="switch" defaultChecked={b} onChange={() => setBoolean(!b)} />
+              { isTagBoolean(tag) &&
+                  <Form.Check id="boolean-value" type="switch" defaultChecked={bool} onChange={() => setBoolean(!bool)} />
               }
-              {
-                isTagCollect(tag) &&
-                  <StandardTypeahead id={tag + "typeahead-input"} index={tag} label={undefined}
-                    className={validC ? undefined : "is-invalid"} isInvalid={!validC} set={(values) => setCollect(values)} />
+              { isTagCollect(tag) &&
+                  <StandardTypeahead index={tag} label={undefined} set={(values) => setCollect(values)} feedback={OPTION_MESSAGE}
+                    touch={() => setValidC(true)} id={tag + "-typeahead-input"} className={validC ? undefined : "is-invalid"} isInvalid={!validC} />
               }
-              {
-                isTagMeasure(tag) &&
+              { isTagMeasure(tag) &&
                   <Form.Group>
-                    <Form.Control isInvalid={!validM} type="number" defaultValue={m} onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (!isNaN(value)) { setMeasure(value); }
+                    <Form.Control isInvalid={!validM} type="number" min={0} defaultValue={meas} onChange={(e) => {
+                      setValidM(true);
+                      setMeasure(parseInt(e.target.value));
                     }} />
-                    <Form.Control.Feedback type="invalid">Number should be non-negative.</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Expects non-negative number.</Form.Control.Feedback>
                   </Form.Group>
               }
-              {
-                isTagTextual(tag) &&
+              { isTagTextual(tag) &&
                   <Form.Group>
-                    <Form.Control isInvalid={!validT} type="text" defaultValue={t} onChange={(e) => setTextual(e.target.value)} />
+                    <Form.Control isInvalid={!validT} type="text" defaultValue={text} onChange={(e) => {
+                      setValidT(true);
+                      setTextual(e.target.value);
+                    }} />
                     <Form.Control.Feedback type="invalid">Text field should be non-empty.</Form.Control.Feedback>
                   </Form.Group>
               }
@@ -273,7 +286,7 @@ export function KeywordsInput(): JSX.Element {
         </div>
         <ButtonContainer button={<AddKeywordButton onClick={() => modal(undefined)} />} />
       </Form.Group>
-      <KeywordModalWindow show={show} label={curr} onHide={() => setShow(false)} />
+      {show && <KeywordModalWindow label={curr} onHide={() => setShow(false)} />}
     </>
   );
 }

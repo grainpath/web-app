@@ -13,12 +13,14 @@ type StandardChipProps = {
 type AutocompleteEntry = { label: string };
 
 type StandardTypeaheadProps = {
-  id: string;
   index: string;
   label: string | undefined;
+  set: (arr: string[]) => void;
+  feedback: string | undefined;
+  touch: () => void;
+  id: string;
   className: string | undefined;
   isInvalid: boolean;
-  set: (arr: string[]) => void;
 }
 
 export function StandardChip(props: StandardChipProps): JSX.Element {
@@ -30,14 +32,18 @@ export function StandardChip(props: StandardChipProps): JSX.Element {
   );
 }
 
-export function StandardTypeahead({ index, label, set, ...rest }: StandardTypeaheadProps): JSX.Element {
+export function StandardTypeahead({ index, label, set, feedback, touch, ...rest }: StandardTypeaheadProps): JSX.Element {
 
   const content = "application/json";
+  const cache: Map<string, AutocompleteEntry[]> = new Map();
 
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<AutocompleteEntry[]>([]);
 
   const handleSearch = (query: string) => {
+    touch();
+    if (cache.has(query)) { return setOptions(cache.get(query)!); }
+
     setLoading(true);
     fetch(`${API_BASE_URL + "/autocomplete"}`, {
       method: "POST",
@@ -45,7 +51,10 @@ export function StandardTypeahead({ index, label, set, ...rest }: StandardTypeah
       body: JSON.stringify({ index: index, count: 3, prefix: query })
     })
     .then((res) => res.json())
-    .then((arr: string[]) => setOptions(arr.map((item) => { return { label: item } as AutocompleteEntry })))
+    .then((arr: string[]) => {
+      cache.set(query, arr.map((item) => { return { label: item } as AutocompleteEntry }));
+      setOptions(cache.get(query)!);
+    })
     .catch((err) => alert(err))
     .finally(() => setLoading(false));
   };
@@ -62,7 +71,7 @@ export function StandardTypeahead({ index, label, set, ...rest }: StandardTypeah
         options={options}
         onSearch={handleSearch}
         onChange={(selected) => set((selected as AutocompleteEntry[]).map((entry) => entry.label))} />
-      <Form.Control.Feedback type="invalid">Select option from those appeared.</Form.Control.Feedback>
+      <Form.Control.Feedback type="invalid">{feedback}</Form.Control.Feedback>
     </Form.Group>
   );
 }
