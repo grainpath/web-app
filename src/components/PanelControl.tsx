@@ -60,7 +60,7 @@ export function SteadyMarkerLine({ kind, point, onClick }: MarkerLineProps) {
     <div className="mt-2 mb-2">
       <div className="marker-line">
         <MarkerButton onClick={onClick} kind={kind} buttonStyle={{ marginRight: "0.5rem" }} />
-        <Form.Control type='text' placeholder={(point) ? marker2view(point) : ""} readOnly />
+        <Form.Control type="text" value={(point) ? marker2view(point) : ""} readOnly />
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import { SimpleButtonProps } from "./types";
 import { DATASET_ADDR, SEARCH_ADDR } from "../utils/const";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setCurrentPod } from "../features/loggerSlice";
-import { SearchButton, StandardButton } from "./PanelControl";
+import { SearchButton } from "./PanelControl";
 
 type LockerModalProps = { onHide: () => void; }
 
@@ -27,7 +27,9 @@ function LockerHead(): JSX.Element {
 function ConfigureButton(props: SimpleButtonProps): JSX.Element {
 
   return (
-    <StandardButton {...props} icon={<SettingsApplicationsIcon fontSize="large" />} title="Configure Pod" />
+    <button {...props} className="standard-button" style={{ marginLeft: "10px" }} title="Settings">
+      <SettingsApplicationsIcon fontSize="large" />
+    </button>
   );
 }
 
@@ -107,9 +109,8 @@ function LockerContent(): JSX.Element {
 
   return (
     <>
-      <Form.Group style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="mt-4 mb-4">
-        <Form.Label>Pod</Form.Label>
-        <Form.Control type="text" placeholder="Configure Pod..." defaultValue={currentPod} readOnly />
+      <Form.Group style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="mt-2 mb-4">
+        <Form.Control type="text" placeholder="Select Pod..." defaultValue={currentPod} readOnly />
         <ConfigureButton onClick={() => setModal(true)} />
       </Form.Group>
       {currentPod && <LockerPanes />}
