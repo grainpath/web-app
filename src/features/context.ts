@@ -1,5 +1,7 @@
 import { Icon, Map as LeafletMap, Marker } from "leaflet";
 import { Session } from "@inrupt/solid-client-authn-browser";
+import { SolidDataset, UrlString } from "@inrupt/solid-client";
+
 import { Pin } from "../utils/icons";
 
 /**
@@ -8,13 +10,14 @@ import { Pin } from "../utils/icons";
 
 export type InruptContextValue = {
   session: Session;
-}
+  datamap: Map<UrlString, SolidDataset>;
+};
 
 export type LeafletContextValue = {
   uid: number;
   map?: LeafletMap;
-  geo?: L.Control.Locate;
   zoom?: L.Control.Zoom;
+  geo?: L.Control.Locate;
   markers: Map<number, Marker<Icon<Pin>>>;
 }
 
@@ -24,7 +27,10 @@ export type AppContextValue = {
 };
 
 export const context: AppContextValue = {
-  inrupt: { session: new Session() },
+  inrupt: {
+    session: new Session(),
+    datamap: new Map<UrlString, SolidDataset>()
+  },
   leaflet: {
     uid: 0,
     markers: new Map<number, Marker<Icon<Pin>>>()

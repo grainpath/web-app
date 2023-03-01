@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, InputGroup } from "react-bootstrap";
+
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setDistance } from "../../features/searchSlice";
 
@@ -25,13 +26,14 @@ export function DistanceInput(): JSX.Element {
   };
 
   return (
-    <Form.Group className='mt-4 mb-4'>
+    <Form.Group className="mt-4 mb-4">
       <Form.Label>Distance</Form.Label>
       <InputGroup>
-        <Form.Control ref={inputRef} type='number' defaultValue={distance} min={0} max={30.0} step={0.1} isInvalid={!valid} onChange={(e) => { checkIn(e.target.value) }} />
+        <Form.Control ref={inputRef} type="number" defaultValue={distance} min={0} max={30.0}
+          step={0.1} isInvalid={!valid} onChange={(e) => { checkIn(e.target.value) }} />
         <InputGroup.Text>km</InputGroup.Text>
       </InputGroup>
-      <Form.Text>double between 0.0 and 30.0</Form.Text>
+      <Form.Text>real number between 0.0 and 30.0</Form.Text>
     </Form.Group>
   );
 }

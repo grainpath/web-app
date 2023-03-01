@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { AddCircleOutline, Save } from "@mui/icons-material";
+
 import { SimpleButtonProps } from "../types";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
@@ -9,18 +10,18 @@ import {
   Keyword,
   KeywordConstraint
 } from "../../features/keywordsSlice";
-import { EXISTING_TAGS, TagType, TAG_TO_OPERATOR, TAG_TO_TYPE } from "../../utils/const";
+import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/const";
 import { StandardChip, StandardTypeahead } from "./InputPrimitives";
 
 const EXISTS_MESSAGE = "Keyword is already defined.";
 const OPTION_MESSAGE = "Select option from those appeared.";
 
-const isTagWithOperator = (tag: string): boolean => TAG_TO_OPERATOR.has(tag);
+const isTagWithOperator = (tag: string): boolean => TAG_TO_RELATION.has(tag);
 
-const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.BOOLEAN;
-const isTagCollect = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.COLLECT;
-const isTagMeasure = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.MEASURE;
-const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) === TagType.TEXTUAL;
+const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.BOOLEAN;
+const isTagCollect = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.COLLECT;
+const isTagMeasure = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.MEASURE;
+const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.TEXTUAL;
 
 type ButtonContainerProps = { button: ReactElement; }
 
@@ -41,7 +42,7 @@ function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
 function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
 
   return(
-    <button {...props} className="standard-button" title="save keyword">
+    <button {...props} className="standard-button" title="Save tag">
       <Save fontSize="large" />
     </button>
   );
@@ -73,7 +74,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
 
   const defaultOperator = "";
   const [operator, setOperator] = useState<string>(defaultOperator);
-  const operators: string[] = TAG_TO_OPERATOR.get(tag) ?? [];
+  const operators: string[] = TAG_TO_RELATION.get(tag)?.map((o) => RelView.get(o)!) ?? [];
 
   const defaultBoolean = true;
   const [bool, setBoolean] = useState<boolean>(defaultBoolean);
@@ -147,12 +148,12 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
   };
 
   const save = () => {
-    switch (TAG_TO_TYPE.get(tag) ?? TagType.DEFAULT) {
-      case TagType.DEFAULT: defaultHandler(); break;
-      case TagType.BOOLEAN: booleanHandler(); break;
-      case TagType.COLLECT: collectHandler(); break;
-      case TagType.MEASURE: measureHandler(); break;
-      case TagType.TEXTUAL: textualHandler(); break;
+    switch (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) {
+      case TagEnum.DEFAULT: defaultHandler(); break;
+      case TagEnum.BOOLEAN: booleanHandler(); break;
+      case TagEnum.COLLECT: collectHandler(); break;
+      case TagEnum.MEASURE: measureHandler(); break;
+      case TagEnum.TEXTUAL: textualHandler(); break;
     }
   };
 

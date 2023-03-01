@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { VCARD } from "@inrupt/vocab-common-rdf";
-import { getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
+import { getPodUrlAll, getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
 import { Login } from "@mui/icons-material";
+
 import { SimpleButtonProps } from "./types";
 import { WELL_KNOWN_SOLID_PROVIDERS } from "../utils/const";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setLoggedIn, setUserName } from "../features/loggerSlice";
+import { setLoggedIn, setPodUrls, setUserName } from "../features/loggerSlice";
 import { AppContext } from "../App";
 
 const SOLID_LOGO_FILENAME = "/solid/logo.svg";
@@ -19,7 +20,7 @@ type ButtonProps = SimpleButtonProps & {
 type ModalProps = {
   centered: boolean;
   keyboard: boolean;
-  backdrop: true | false | 'static';
+  backdrop: true | false | "static";
 }
 
 type DialogProps = ModalProps & {
@@ -30,8 +31,8 @@ type DialogProps = ModalProps & {
 function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
   return (
-    <button id='login-button' className='standard-button control-button' onClick={onClick} title={ !isLoggedIn ? 'Log in' : 'Log out' }>
-      { !isLoggedIn ? <Login fontSize='large' /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
+    <button id="login-button" className="standard-button control-button" onClick={onClick} title={ !isLoggedIn ? "Log in" : "Log out" }>
+      { !isLoggedIn ? <Login fontSize="large" /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
     </button>
   );
 }
@@ -39,7 +40,7 @@ function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
   const [isLogging, setIsLogging] = useState(false);
-  const [provider, setProvider] = useState('https://');
+  const [provider, setProvider] = useState("https://");
 
   const session = useContext(AppContext).inrupt.session;
 
@@ -50,7 +51,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
     try {
       await session.login({
         oidcIssuer: provider,
-        clientName: 'GrainPath App',
+        clientName: "GrainPath App",
         redirectUrl: window.location.href
       });
     } catch(ex) { alert('[Login Error] ' + ex); }
@@ -70,8 +71,8 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         }</datalist>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onClick} disabled={isLogging}>Close</Button>
-        <Button variant='primary' onClick={login} disabled={isLogging}>Login</Button>
+        <Button variant="secondary" onClick={onClick} disabled={isLogging}>Close</Button>
+        <Button variant="primary" onClick={login} disabled={isLogging}>Login</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -79,40 +80,42 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
 function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
-  const session = useContext(AppContext).inrupt.session;
-
   const dispatch = useAppDispatch();
   const userName = useAppSelector(state => state.logger.userName);
-  const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
+  const session = useContext(AppContext).inrupt.session;
 
   useEffect(() => {
+    const fetcher = async () => {
+      let wid = session.info.webId!;
+      dispatch(setUserName(wid));
+      let url = new URL(wid); url.hash = "";
+      return getSolidDataset(url.href, { fetch: session.fetch })
+        .then(dataset => { return getThing(dataset, wid); })
+        .then(profile => { return getStringNoLocale(profile as Thing, VCARD.fn); })
+        .then(name => {
+          if (name) { dispatch(setUserName(name)); }
+          console.log("Fetched user name " + name + ".");
+        })
+        .catch((ex) => alert("[UserName Error] " + ex));
+    };
+    fetcher();
+  }, [dispatch, session]);
 
-    if (isLoggedIn && !userName) {
-
-      let fetcher = async () => {
-
-        let wid = session.info.webId!;
-        let url = new URL(wid); url.hash = '';
-        return getSolidDataset(url.href, { fetch: session.fetch })
-          .then(dataset => { return getThing(dataset, wid); })
-          .then(profile => { return getStringNoLocale(profile as Thing, VCARD.fn); })
-          .then(name => {
-            if (name) { dispatch(setUserName(name)); }
-            console.log('Fetched user name ' + name + '.');
-          })
-          .catch((ex) => alert('[UserName Error] ' + ex));
-      };
-
-      fetcher();
-    }
-  }, [dispatch, isLoggedIn, session, userName]);
+  useEffect(() => {
+    const fetcher = async () => {
+      const pods = await getPodUrlAll(session.info.webId!);
+      dispatch(setPodUrls(pods));
+      if (!pods.length) { alert("[SolidPod Error] No available Solid pods associated with the account."); }
+    };
+    fetcher();
+  }, [dispatch, session]);
 
   const label = (userName) ? userName : session.info.webId;
 
   return (
     <Modal {...rest}>
       <Modal.Body>
-        Logged in as <a href={session.info.webId} rel='noreferrer' target='_blank'>{label}</a>.
+        Logged in as <a href={session.info.webId} rel="noreferrer" target="_blank">{label}</a>.
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClick}>Close</Button>

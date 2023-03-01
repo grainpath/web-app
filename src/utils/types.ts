@@ -1,9 +1,3 @@
-export enum PanelView {
-  Search,
-  Result,
-  Remote,
-};
-
 export type Point = {
   lon: number;
   lat: number;

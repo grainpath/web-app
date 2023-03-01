@@ -1,17 +1,19 @@
 import { createContext, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import { ARTIFACT_ADDR, QUERY_ADDR, VAULT_ADDR } from "./utils/const";
+
+import { SEARCH_ADDR, LOCKER_ADDR, RESULT_ADDR, POINTS_ADDR } from "./utils/const";
 import { store } from "./features/store";
 import { context } from "./features/context";
 import MapControl from "./components/MapControl";
 import { PanelButton } from "./components/PanelControl";
-import QueryPanel from "./components/QueryPanel";
-import VaultPanel from "./components/VaultPanel";
+import SearchPanel from "./components/SearchPanel";
+import LockerPanel from "./components/LockerPanel";
+import ResultPanel from "./components/ResultPanel";
+import PointsPanel from "./components/PointsPanel";
 import NotFoundPanel from "./components/NotFoundPanel";
 import LoggerControl from "./components/LoggerControl";
-import ArtifactPanel from "./components/ArtifactPanel";
 
 export const AppContext = createContext(context);
 
@@ -22,18 +24,18 @@ export default function App(): JSX.Element {
     <Provider store={store}>
       <MapControl />
       <PanelButton onClick={() => setVisible(true)} />
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <HashRouter>
         <Offcanvas show={visible} onHide={() => setVisible(false)} backdrop={false} keyboard={false} scroll>
           <Routes>
-            <Route path={QUERY_ADDR} element={<QueryPanel />} />
-            <Route path={VAULT_ADDR} element={<VaultPanel />} />
-            <Route path={ARTIFACT_ADDR} element={<ArtifactPanel />} />
-            {/* <Route path="/point/:id" element={<PointPanel />} /> */}
-            <Route path="/" element={<Navigate to={QUERY_ADDR} />} />
+            <Route path={SEARCH_ADDR} element={<SearchPanel />} />
+            <Route path={LOCKER_ADDR} element={<LockerPanel />} />
+            <Route path={RESULT_ADDR} element={<ResultPanel />} />
+            <Route path={POINTS_ADDR} element={<PointsPanel />} />
+            <Route path="/" element={<Navigate to={SEARCH_ADDR} />} />
             <Route path="*" element={<NotFoundPanel />} />
           </Routes>
         </Offcanvas>
-      </BrowserRouter>
+      </HashRouter>
       <LoggerControl />
     </Provider>
   );

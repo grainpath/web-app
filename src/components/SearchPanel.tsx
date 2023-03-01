@@ -1,23 +1,24 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import L, { LatLng } from "leaflet";
 import { Offcanvas, Tab, Tabs } from "react-bootstrap";
+
 import { AppContext } from "../App";
 import { icons } from "../utils/icons";
 import { UidPoint } from "../utils/types";
+import { LOCKER_ADDR } from "../utils/const";
 import { marker2point } from "../utils/convs";
+import { ensureMarkerBounds } from "../utils/funcs";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { erase as searchErase, setSource, setTarget, } from "../features/searchSlice";
 import { erase as keywordsErase, } from "../features/keywordsSlice";
-import EraseButton from "./Query/EraseButton";
-import { CountInput } from "./Query/CountInput";
-import { DistanceInput } from "./Query/DistanceInput";
-import { KeywordsInput } from "./Query/KeywordsInput";
-import { VaultButton, SteadyMarkerLine } from "./PanelControl";
-import { ensureMarkerBounds } from "../utils/funcs";
-import { useNavigate } from "react-router-dom";
-import { VAULT_ADDR } from "../utils/const";
+import EraseButton from "./Search/EraseButton";
+import { CountInput } from "./Search/CountInput";
+import { DistanceInput } from "./Search/DistanceInput";
+import { KeywordsInput } from "./Search/KeywordsInput";
+import { LockerButton, SteadyMarkerLine } from "./PanelControl";
 
-function QueryHeader(): JSX.Element {
+function SearchHead(): JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -34,13 +35,13 @@ function QueryHeader(): JSX.Element {
 
   return (
     <Offcanvas.Header closeButton>
-      <VaultButton onClick={() => navigate(VAULT_ADDR)} />
+      <LockerButton onClick={() => navigate(LOCKER_ADDR)} />
       <EraseButton onClick={handleErase} />
     </Offcanvas.Header>
   );
 }
 
-function QueryBody(): JSX.Element {
+function SearchBody(): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { leaflet } = useContext(AppContext);
@@ -83,12 +84,12 @@ function QueryBody(): JSX.Element {
   );
 }
 
-export default function QueryPanel(): JSX.Element {
+export default function SearchPanel(): JSX.Element {
 
   return (
     <>
-      <QueryHeader />
-      <QueryBody />
+      <SearchHead />
+      <SearchBody />
     </>
   );
 }

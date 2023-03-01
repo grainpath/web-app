@@ -1,4 +1,4 @@
-export enum TagType {
+export enum TagEnum {
   DEFAULT,
   BOOLEAN,
   COLLECT,
@@ -6,26 +6,60 @@ export enum TagType {
   TEXTUAL
 };
 
-const mapping = [
+export enum RelEnum {
+  EQ = 0,
+  NE,
+  LT,
+  LE,
+  GT,
+  GE,
+  IN,
+  NI,
+  SW,
+  EW,
+  CN
+};
+
+export const RelView = new Map<RelEnum, string>([
+  [ RelEnum.EQ, "==" ],
+  [ RelEnum.NE, "!=" ],
+  [ RelEnum.LT, "<"  ],
+  [ RelEnum.LE, "<=" ],
+  [ RelEnum.GT, ">"  ],
+  [ RelEnum.GE, ">=" ],
+  [ RelEnum.IN, "+"  ],
+  [ RelEnum.NI, "-"  ],
+  [ RelEnum.SW, "^"  ],
+  [ RelEnum.EW, "$"  ],
+  [ RelEnum.CN, "?"  ]
+]);
+
+type TagMapping = {
+  ty: TagEnum;
+  ts: string[];
+  rs: RelEnum[];
+};
+
+const mapping: TagMapping[] = [
   {
-    os: [ "^", "$", "?" ],
     ts: [ "name" ],
-    ty: TagType.TEXTUAL
+    ty: TagEnum.TEXTUAL,
+    rs: [ RelEnum.SW, RelEnum.EW, RelEnum.CN ]
   },
   {
-    os: [ "+", "-" ],
+    ty: TagEnum.COLLECT,
     ts: [ "clothes", "cuisine", "rental" ],
-    ty: TagType.COLLECT
+    rs: [ RelEnum.IN, RelEnum.NI ]
   },
   {
-    os: [ "==", "!=", ">", ">=", "<", "<=" ],
+    ty: TagEnum.MEASURE,
     ts: [ "capacity", "min_age", "rank" ],
-    ty: TagType.MEASURE
+    rs: [ RelEnum.EQ, RelEnum.NE, RelEnum.LT, RelEnum.LE, RelEnum.GT, RelEnum.GE ]
   },
   {
-    os: [ "==", "!=" ],
+    ty: TagEnum.BOOLEAN,
     ts: [ "fee", "delivery", "drinking_water", "internet_access", "shower", "takeaway", "toilets", "wheelchair" ],
-    ty: TagType.BOOLEAN
+    rs: [ RelEnum.EQ, RelEnum.NE ]
   }
 ];
 
@@ -34,28 +68,37 @@ export const EXISTING_TAGS: string[] = [
   "description", "image", "website", "email", "phone", "charge", "opening_hours"
 ];
 
-export const TAG_TO_OPERATOR: Map<string, string[]> = mapping
-  .map(({ os, ts }) => ts.map((t) => { return { t: t, os: os }; })).flat()
-  .reduce((acc, { t, os }) => { acc.set(t, os); return acc; }, new Map<string, string[]>());
+function tag2entity<T>(ms: TagMapping[], f: (t: TagMapping) => T): Map<string, T> {
+  return ms
+    .map((m) => m.ts.map((t) => { return { t: t, es: f(m) }; })).flat()
+    .reduce((acc, { t, es }) => { acc.set(t, es); return acc; }, new Map<string, T>());
+}
 
-export const TAG_TO_TYPE: Map<string, TagType> = mapping
-  .map(({ ts, ty }) => ts.map((t) => { return { t: t, ty: ty }; })).flat()
-  .reduce((acc, { t, ty }) => { acc.set(t, ty); return acc; }, new Map<string, TagType>());
+export const TAG_TO_TYPE: Map<string, TagEnum> = tag2entity(mapping, t => t.ty);
+
+export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) => t.rs);
 
 export const API_BASE_URL: string = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
 
+// Client-side routing
+
+export const SEARCH_ADDR = "/search";
+export const LOCKER_ADDR = "/locker";
+export const RESULT_ADDR = "/result";
+export const POINTS_ADDR = "/points/:id";
+
+// Solid Pod
+
+export const DATASET_ADDR = "grainpath/dataset";
+
 export const WELL_KNOWN_SOLID_PROVIDERS: { label: string }[] = [
   {
-    label: "https://inrupt.net/",
+    label: "https://inrupt.net/"
   },
   {
-    label: "https://solidcommunity.net/",
+    label: "https://solidcommunity.net/"
   },
   {
-    label: "https://solidweb.org/",
-  },
+    label: "https://solidweb.org/"
+  }
 ];
-
-export const QUERY_ADDR = "/query";
-export const VAULT_ADDR = "/vault";
-export const ARTIFACT_ADDR = "/artifact";

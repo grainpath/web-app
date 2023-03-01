@@ -3,6 +3,13 @@ import { KeyboardCommandKey, LocationOn, Search, Storage } from "@mui/icons-mate
 import { marker2view } from "../utils/funcs";
 import type { SimpleButtonProps } from "./types";
 import { Point } from "../utils/types";
+import { ReactElement } from "react";
+
+type StandardButtonProps = {
+  title: string;
+  icon: ReactElement;
+  onClick: React.MouseEventHandler<HTMLElement>;
+}
 
 type MarkerLineProps = {
   kind: string;
@@ -26,22 +33,16 @@ export function PanelButton({ onClick }: SimpleButtonProps): JSX.Element {
   );
 }
 
-export function QueryButton({ onClick }: SimpleButtonProps): JSX.Element {
-
-  return (
-    <button className="standard-button" onClick={onClick} title='Query panel'>
-      <Search fontSize="large" />
-    </button>
-  );
+export function StandardButton({ icon, ...rest }: StandardButtonProps): JSX.Element {
+  return (<button {...rest} className="standard-button">{icon}</button>);
 }
 
-export function VaultButton({ onClick }: SimpleButtonProps): JSX.Element {
+export function SearchButton(props: SimpleButtonProps): JSX.Element {
+  return (<StandardButton {...props} icon={<Search fontSize="large" />} title="Search panel" />);
+}
 
-  return (
-    <button className="standard-button" onClick={onClick} title="Vault panel">
-      <Storage fontSize="large" />
-    </button>
-  );
+export function LockerButton(props: SimpleButtonProps): JSX.Element {
+  return (<StandardButton {...props} icon={<Storage fontSize="large" />} title="Locker panel" />);
 }
 
 export function MarkerButton({ onClick, kind, buttonStyle }: MarkerButtonProps) {

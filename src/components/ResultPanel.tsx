@@ -1,10 +1,10 @@
+import { Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Alert, Offcanvas } from "react-bootstrap";
 
 import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/const";
 import { SearchButton, LockerButton } from "./PanelControl";
 
-function NotFoundHead(): JSX.Element {
+function ResultHead(): JSX.Element {
 
   const navigate = useNavigate();
 
@@ -16,21 +16,19 @@ function NotFoundHead(): JSX.Element {
   );
 }
 
-function NotFoundBody(): JSX.Element {
+function ResultBody(): JSX.Element {
 
   return (
-    <Offcanvas.Body>
-      <Alert variant="warning">Oops! Unknown address...</Alert>
-    </Offcanvas.Body>
+    <Offcanvas.Body></Offcanvas.Body>
   );
 }
 
-export default function NotFoundPanel(): JSX.Element {
+export default function ResultPanel(): JSX.Element {
 
-  return(
+  return (
     <>
-      <NotFoundHead />
-      <NotFoundBody />
+      <ResultHead />
+      <ResultBody />
     </>
   );
 }

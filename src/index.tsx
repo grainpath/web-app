@@ -1,16 +1,16 @@
-import './index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-import 'leaflet/dist/leaflet.css';
+import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "leaflet/dist/leaflet.css";
 import "leaflet.locatecontrol/src/L.Control.Locate.js";
 import "leaflet.locatecontrol/dist/L.Control.Locate.css";
-import reportWebVitals from './reportWebVitals';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import reportWebVitals from "./reportWebVitals";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
 root.render(
