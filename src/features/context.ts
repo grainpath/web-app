@@ -1,38 +1,44 @@
-import { Icon, Map as LeafletMap, Marker } from "leaflet";
-import { Session } from "@inrupt/solid-client-authn-browser";
+import { Icon, LayerGroup, Map as LeafletMap, Marker } from "leaflet";
 import { SolidDataset, UrlString } from "@inrupt/solid-client";
 
-import { Pin } from "../utils/icons";
+import { pinViews, PinViewType } from "../utils/icons";
 
 /**
  * Use application context for all non-serializable data!
  */
 
-export type InruptContextValue = {
-  session: Session;
+export type LockerContextValue = {
   datamap: Map<UrlString, SolidDataset>;
 };
 
+export type SearchContextValue = {
+  sequence: Marker<Icon<any>>[];
+};
+
 export type LeafletContextValue = {
-  uid: number;
   map?: LeafletMap;
+  views: PinViewType;
+  layerGroup?: LayerGroup;
+
+  // single-purpose
   zoom?: L.Control.Zoom;
   geo?: L.Control.Locate;
-  markers: Map<number, Marker<Icon<Pin>>>;
 }
 
 export type AppContextValue = {
-  inrupt: InruptContextValue;
+  locker: LockerContextValue;
+  search: SearchContextValue;
   leaflet: LeafletContextValue;
 };
 
 export const context: AppContextValue = {
-  inrupt: {
-    session: new Session(),
+  locker: {
     datamap: new Map<UrlString, SolidDataset>()
   },
+  search: {
+    sequence: []
+  },
   leaflet: {
-    uid: 0,
-    markers: new Map<number, Marker<Icon<Pin>>>()
+    views: pinViews
   }
 };

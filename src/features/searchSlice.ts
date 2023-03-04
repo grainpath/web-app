@@ -1,24 +1,71 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Boundary, UidPoint } from '../utils/types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface SearchState extends Boundary {
-  count: number;
+import { Boundary, LightGrain, Point } from "../domain/types";
+
+type ConstraintBase = {
+  tag: string;
+  relation?: string;
+};
+
+export type BooleanConstraint = ConstraintBase & {
+  value?: boolean;
+};
+
+export type CollectConstraint = ConstraintBase & {
+  value?: string;
+};
+
+export type MeasureConstraint = ConstraintBase & {
+  value?: number;
+};
+
+export type TextualConstraint = ConstraintBase & {
+  value?: string;
+};
+
+export type KeywordConstraint = BooleanConstraint | CollectConstraint | MeasureConstraint | TextualConstraint;
+
+export type Keyword = {
+  label: string;
+  constrs: KeywordConstraint[];
+}
+
+export type SearchState = Boundary & {
+  quantity: number;
   distance: number;
+  keywords: Keyword[];
+  sequence: LightGrain[];
 };
 
 const initialState = () => {
-  return { count: 100, distance: 3.0, } as SearchState;
+  return { quantity: 100, distance: 3.0, keywords: [], sequence: [] } as SearchState;
 }
 
 export const searchSlice = createSlice({
-  name: 'search',
+  name: "search",
   initialState: initialState(),
   reducers: {
-    erase: () => { return initialState(); },
-    setSource: (state, action: PayloadAction<UidPoint>) => { state.source = action.payload; },
-    setTarget: (state, action: PayloadAction<UidPoint>) => { state.target = action.payload; },
-    setCount: (state, action: PayloadAction<number>) => { state.count = action.payload; },
-    setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; }
+    erase: () => initialState(),
+    setSource: (state, action: PayloadAction<Point>) => { state.source = action.payload; },
+    setTarget: (state, action: PayloadAction<Point>) => { state.target = action.payload; },
+    setQuantity: (state, action: PayloadAction<number>) => { state.quantity = action.payload; },
+    setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
+    appendPoint: (state, action: PayloadAction<LightGrain>) => { state.sequence.push(action.payload); },
+    deletePoint: (state, action: PayloadAction<number>) => {
+      state.sequence = [ ...state.sequence.slice(0, action.payload), ...state.sequence.slice(action.payload + 1) ]
+    },
+    updatePoint: (state, action: PayloadAction<{ point: Point, i: number}>) => {
+      state.sequence[action.payload.i].location = action.payload.point;
+    },
+    setSequence: (state, action: PayloadAction<LightGrain[]>) => { state.sequence = action.payload; },
+    insertKeyword: (state, action: PayloadAction<Keyword>) => {
+      let i = state.keywords.findIndex((keyword) => keyword.label === action.payload.label);
+      i = (i === -1) ? state.keywords.length : i;
+      state.keywords = [ ...state.keywords.slice(0, i), action.payload, ...state.keywords.slice(i + 1) ];
+    },
+    deleteKeyword: (state, action: PayloadAction<string>) => {
+      state.keywords = state.keywords.filter((keyword, _) => keyword.label !== action.payload);
+    }
   }
 });
 
@@ -26,8 +73,12 @@ export const {
   erase,
   setSource,
   setTarget,
-  setCount,
+  setQuantity,
   setDistance,
+  appendPoint,
+  updatePoint,
+  insertKeyword,
+  deleteKeyword
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

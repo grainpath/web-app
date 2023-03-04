@@ -6,10 +6,11 @@ import { createSolidDataset, getSolidDataset, SolidDataset, UrlString } from "@i
 
 import { AppContext } from "../App";
 import { SimpleButtonProps } from "./types";
-import { DATASET_ADDR, SEARCH_ADDR } from "../utils/const";
+import { DATASET_ADDR, SEARCH_ADDR } from "../utils/constants";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setCurrentPod } from "../features/loggerSlice";
+import { setPodCurr } from "../features/lockerSlice";
 import { SearchButton } from "./PanelControl";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 type LockerModalProps = { onHide: () => void; }
 
@@ -47,14 +48,13 @@ function LockerPanes(): JSX.Element {
 
 function LockerModal({ onHide }: LockerModalProps): JSX.Element {
 
-  const session = useContext(AppContext).inrupt.session;
-  const datamap = useContext(AppContext).inrupt.datamap;
+  const datamap = useContext(AppContext).locker.datamap;
 
-  const podUrls = useAppSelector(state => state.logger.podUrls) ?? [];
+  const podList = useAppSelector(state => state.locker.podList);
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
-  const [pod, setPod] = useState<UrlString | undefined>(podUrls[0]);
+  const [pod, setPod] = useState<UrlString | undefined>(podList[0]);
 
   const confirm = async () => {
 
@@ -63,15 +63,15 @@ function LockerModal({ onHide }: LockerModalProps): JSX.Element {
       let dataset: SolidDataset | undefined = undefined;
 
       try {
-        dataset = await getSolidDataset(pod + DATASET_ADDR, { fetch: session.fetch });
+        dataset = await getSolidDataset(pod + DATASET_ADDR, { fetch: fetch });
       }
       catch (err: any) {
-        if (typeof err.statusCode === "number" && err.statusCode === 404) { dataset = createSolidDataset(); }
+        if (err.statusCode === 404) { dataset = createSolidDataset(); }
       }
       finally {
         if (dataset) {
           datamap.set(pod, dataset);
-          dispatch(setCurrentPod(pod));
+          dispatch(setPodCurr(pod));
           onHide();
         }
         else {
@@ -89,7 +89,7 @@ function LockerModal({ onHide }: LockerModalProps): JSX.Element {
         <Form.Group>
           <Form.Select value={pod} disabled={loading} onChange={(e) => setPod(e.target.value)}>
             {
-              podUrls.map((url, i) => <option key={i} value={url}>{url}</option>)
+              podList.map((url, i) => <option key={i} value={url}>{url}</option>)
             }
           </Form.Select>
         </Form.Group>
@@ -105,15 +105,15 @@ function LockerModal({ onHide }: LockerModalProps): JSX.Element {
 function LockerContent(): JSX.Element {
 
   const [modal, setModal] = useState(false);
-  const currentPod = useAppSelector(state => state.logger.currentPod);
+  const podCurr = useAppSelector(state => state.locker.podCurr);
 
   return (
     <>
       <Form.Group style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="mt-2 mb-4">
-        <Form.Control type="text" placeholder="Select Pod..." defaultValue={currentPod} readOnly />
+        <Form.Control type="text" placeholder="Select Pod..." defaultValue={podCurr} readOnly />
         <ConfigureButton onClick={() => setModal(true)} />
       </Form.Group>
-      {currentPod && <LockerPanes />}
+      {podCurr && <LockerPanes />}
       {modal && <LockerModal onHide={() => setModal(false)} />}
     </>
   );

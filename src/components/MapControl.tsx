@@ -13,6 +13,7 @@ function FeatureSetter(): JSX.Element {
   leaflet.map = useMap();
   leaflet.zoom = leaflet.zoom ?? L.control.zoom({ position: pos }).addTo(leaflet.map!);
   leaflet.geo = leaflet.geo ?? L.control.locate({ position: pos }).addTo(leaflet.map!);
+  leaflet.layerGroup = leaflet.layerGroup ?? L.layerGroup().addTo(leaflet.map!);
 
   return (<></>);
 }

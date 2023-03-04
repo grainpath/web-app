@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Alert, Offcanvas } from "react-bootstrap";
 
-import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/const";
+import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/constants";
 import { SearchButton, LockerButton } from "./PanelControl";
 
 function NotFoundHead(): JSX.Element {

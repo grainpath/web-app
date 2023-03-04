@@ -1,14 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { VCARD } from "@inrupt/vocab-common-rdf";
 import { getPodUrlAll, getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
+import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { Login } from "@mui/icons-material";
 
 import { SimpleButtonProps } from "./types";
-import { WELL_KNOWN_SOLID_PROVIDERS } from "../utils/const";
+import { WELL_KNOWN_SOLID_PROVIDERS } from "../utils/constants";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setLoggedIn, setPodUrls, setUserName } from "../features/loggerSlice";
-import { AppContext } from "../App";
+import { erase, setPodList } from "../features/lockerSlice";
+import { setLoggedIn, setUserName } from "../features/loggerSlice";
 
 const SOLID_LOGO_FILENAME = "/solid/logo.svg";
 const ASSETS_FOLDER =  process.env.PUBLIC_URL + "/assets";
@@ -39,24 +40,26 @@ function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
 function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
-  const [isLogging, setIsLogging] = useState(false);
+  const [logging, setLogging] = useState(false);
   const [provider, setProvider] = useState("https://");
 
-  const session = useContext(AppContext).inrupt.session;
+  const session = getDefaultSession();
 
   const login = async () => {
 
-    setIsLogging(true);
+    setLogging(true);
 
     try {
-      await session.login({
-        oidcIssuer: provider,
-        clientName: "GrainPath App",
-        redirectUrl: window.location.href
-      });
-    } catch(ex) { alert('[Login Error] ' + ex); }
+      if (!session.info.isLoggedIn) {
+        await session.login({
+          oidcIssuer: provider,
+          clientName: "GrainPath App",
+          redirectUrl: window.location.href
+        });
+      }
+    } catch(ex) { alert("[Login Error] " + ex); }
 
-    setIsLogging(false);
+    setLogging(false);
   };
 
   const list = "list-solid-providers";
@@ -64,15 +67,15 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
   return (
     <Modal {...rest}>
       <Modal.Body>
-        <Form.Label>Enter an address of a <a href="https://solidproject.org/users/get-a-pod" rel="noreferrer" target="_blank">Solid Pod</a> provider.</Form.Label>
+        <Form.Label>Enter an address of a <a href="https://solidproject.org/users/get-a-pod" rel="noopener noreferrer" target="_blank">Solid Pod</a> provider.</Form.Label>
         <Form.Control autoFocus list={list} defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
         <datalist id={list}>{
-          WELL_KNOWN_SOLID_PROVIDERS.map((item, idx) => <option key={idx} value={item.label}></option>)
+          WELL_KNOWN_SOLID_PROVIDERS.map((prov, idx) => <option key={idx} value={prov}></option>)
         }</datalist>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClick} disabled={isLogging}>Close</Button>
-        <Button variant="primary" onClick={login} disabled={isLogging}>Login</Button>
+        <Button variant="secondary" onClick={onClick} disabled={logging}>Close</Button>
+        <Button variant="primary" onClick={login} disabled={logging}>Login</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -82,19 +85,20 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const userName = useAppSelector(state => state.logger.userName);
-  const session = useContext(AppContext).inrupt.session;
+  const session = getDefaultSession();
 
   useEffect(() => {
+
     const fetcher = async () => {
       let wid = session.info.webId!;
       dispatch(setUserName(wid));
       let url = new URL(wid); url.hash = "";
-      return getSolidDataset(url.href, { fetch: session.fetch })
-        .then(dataset => { return getThing(dataset, wid); })
-        .then(profile => { return getStringNoLocale(profile as Thing, VCARD.fn); })
+
+      return getSolidDataset(url.href, { fetch: fetch })
+        .then(dataset => getThing(dataset, wid))
+        .then(profile => getStringNoLocale(profile as Thing, VCARD.fn))
         .then(name => {
           if (name) { dispatch(setUserName(name)); }
-          console.log("Fetched user name " + name + ".");
         })
         .catch((ex) => alert("[UserName Error] " + ex));
     };
@@ -102,9 +106,10 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
   }, [dispatch, session]);
 
   useEffect(() => {
+
     const fetcher = async () => {
       const pods = await getPodUrlAll(session.info.webId!);
-      dispatch(setPodUrls(pods));
+      dispatch(setPodList(pods));
       if (!pods.length) { alert("[SolidPod Error] No available Solid pods associated with the account."); }
     };
     fetcher();
@@ -115,7 +120,7 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
   return (
     <Modal {...rest}>
       <Modal.Body>
-        Logged in as <a href={session.info.webId} rel="noreferrer" target="_blank">{label}</a>.
+        Logged in as <a href={session.info.webId} rel="noopener noreferrer" target="_blank">{label}</a>.
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClick}>Close</Button>
@@ -131,7 +136,7 @@ export default function LoggerControl():JSX.Element {
   const [showLo, setShowLo] = useState(false);
 
   const dispatch = useAppDispatch();
-  const session = useContext(AppContext).inrupt.session;
+  const session = getDefaultSession();
   const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
 
   session.removeAllListeners();
@@ -142,7 +147,7 @@ export default function LoggerControl():JSX.Element {
   });
 
   session.onLogout(() => {
-    dispatch(setLoggedIn(false)); setShowLo(false);
+    dispatch(setLoggedIn(false)); dispatch(erase()); setShowLo(false);
     console.log("Session " + session.info.sessionId + " logged out.");
   });
 
@@ -150,8 +155,8 @@ export default function LoggerControl():JSX.Element {
     alert("Interaction with Solid ended up with an error.");
   });
 
-  session.onSessionRestore(() => { alert('Solid session is restored.'); });
-  session.onSessionExpiration(() => { alert('Solid session has expired.'); });
+  session.onSessionRestore(() => { alert("Solid session has been restored."); });
+  session.onSessionExpiration(() => { alert("Solid session has expired."); });
 
   session.handleIncomingRedirect(window.location.href);
 

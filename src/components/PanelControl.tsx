@@ -1,9 +1,10 @@
-import { Form } from "react-bootstrap";
-import { KeyboardCommandKey, LocationOn, Search, Storage } from "@mui/icons-material";
-import { marker2view } from "../utils/funcs";
-import type { SimpleButtonProps } from "./types";
-import { Point } from "../utils/types";
 import { ReactElement } from "react";
+import { Form, Stack } from "react-bootstrap";
+import { Chip } from "@mui/material";
+import { Info, KeyboardCommandKey, LocationOn, Search, Storage } from "@mui/icons-material";
+import { point2view } from "../utils/functions";
+import type { SimpleButtonProps } from "./types";
+import { LightGrain, Point } from "../domain/types";
 
 type StandardButtonProps = {
   title: string;
@@ -20,6 +21,10 @@ type MarkerLineProps = {
 type MarkerButtonProps = SimpleButtonProps & {
   kind: string;
   buttonStyle: React.CSSProperties | undefined;
+}
+
+type LightGrainPopupProps = SimpleButtonProps & {
+  grain: LightGrain;
 }
 
 export function PanelButton({ onClick }: SimpleButtonProps): JSX.Element {
@@ -45,6 +50,33 @@ export function LockerButton(props: SimpleButtonProps): JSX.Element {
   return (<StandardButton {...props} icon={<Storage fontSize="large" />} title="Locker panel" />);
 }
 
+export function LightGrainPopup({ grain, ...rest }: LightGrainPopupProps): JSX.Element {
+
+  const name = (!!grain.tags.name) ? grain.tags.name : "Noname"
+
+  return (
+    <>
+      <b>{name}</b>
+      {
+        (!!grain.id) &&
+        <>
+          <hr style={{opacity: 1.0, margin: "0.25rem 0"}} />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <button {...rest} className="standard-button" style={{ borderRadius: "50%" }} disabled={!grain.id}>
+              <Info fontSize="large" />
+            </button>
+            <Stack direction="horizontal" gap={1}>
+              {
+                grain.keywords.map((keyword, i) => <Chip key={i} color="success" label={keyword} size="small" />)
+              }
+            </Stack>
+          </div>
+        </>
+      }
+    </>
+  );
+}
+
 export function MarkerButton({ onClick, kind, buttonStyle }: MarkerButtonProps) {
 
   return (
@@ -60,7 +92,7 @@ export function SteadyMarkerLine({ kind, point, onClick }: MarkerLineProps) {
     <div className="mt-2 mb-2">
       <div className="marker-line">
         <MarkerButton onClick={onClick} kind={kind} buttonStyle={{ marginRight: "0.5rem" }} />
-        <Form.Control type="text" value={(point) ? marker2view(point) : ""} readOnly />
+        <Form.Control type="text" value={(point) ? point2view(point) : ""} readOnly />
       </div>
     </div>
   );

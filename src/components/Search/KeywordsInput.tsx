@@ -9,8 +9,8 @@ import {
   insertKeyword,
   Keyword,
   KeywordConstraint
-} from "../../features/keywordsSlice";
-import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/const";
+} from "../../features/searchSlice";
+import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/constants";
 import { StandardChip, StandardTypeahead } from "./InputPrimitives";
 
 const EXISTS_MESSAGE = "Keyword is already defined.";
@@ -60,21 +60,21 @@ function ButtonContainer({ button }: ButtonContainerProps): JSX.Element {
 function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Element {
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state).keywords.map(k => k.label);
+  const keywords = useAppSelector(state => state.search).keywords.map(k => k.label);
 
   const [keyword, setKeyword] = useState<string[]>((!!label) ? [ label ] : [ ]);
   const [statusK, setStatusK] = useState<{ valid: boolean; message: string | undefined }>({ valid: true, message: undefined });
 
-  const defaultConstrs = useAppSelector(state => (!!label) ? state.keywords.filter((keyword) => keyword.label === label)[0].constrs : [ ]);
+  const defaultConstrs = useAppSelector(state => (!!label) ? state.search.keywords.filter((keyword) => keyword.label === label)[0].constrs : [ ]);
   const [constrs, setConstrs] = useState(defaultConstrs);
 
   const defaultTag = "";
   const [tag, setTag] = useState<string>(defaultTag);
   const [validTag, setValidTag] = useState<boolean>(true);
 
-  const defaultOperator = "";
-  const [operator, setOperator] = useState<string>(defaultOperator);
-  const operators: string[] = TAG_TO_RELATION.get(tag)?.map((o) => RelView.get(o)!) ?? [];
+  const defaultRelation = "";
+  const [relation, setRelation] = useState<string>(defaultRelation);
+  const relations: string[] = TAG_TO_RELATION.get(tag)?.map((o) => RelView.get(o)!) ?? [];
 
   const defaultBoolean = true;
   const [bool, setBoolean] = useState<boolean>(defaultBoolean);
@@ -94,13 +94,13 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
   useEffect(() => {
     const resetTag = () => {
       setValidTag(true);
-      setOperator(defaultOperator);
+      setRelation(defaultRelation);
     };
     resetTag();
   }, [tag]);
 
   useEffect(() => {
-    const resetOperator = () => {
+    const resetRelation = () => {
       setBoolean(defaultBoolean);
       setValidC(true);
       setCollect(defaultCollect);
@@ -109,17 +109,17 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
       setValidT(true);
       setTextual(defaultTextual);
     };
-    resetOperator();
-  }, [operator, defaultBoolean, defaultCollect, defaultMeasure, defaultTextual]);
+    resetRelation();
+  }, [relation, defaultBoolean, defaultCollect, defaultMeasure, defaultTextual]);
 
   const appendConstraint = (constr: KeywordConstraint) => setConstrs([ ...constrs, constr ]);
 
   const deleteConstraint = (idx: number) => setConstrs([ ...constrs.slice(0, idx), ...constrs.slice(idx + 1) ]);
 
   const defaultAppender = (v: boolean | number | string): void => {
-    const constr = (operator === defaultOperator)
+    const constr = (relation === defaultRelation)
       ? { tag: tag }
-      : { tag: tag, operator: operator, value: v }
+      : { tag: tag, operator: relation, value: v }
     appendConstraint(constr as KeywordConstraint);
     setTag(defaultTag);
   }
@@ -143,7 +143,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
   };
 
   const textualHandler = () => {
-    if (operator !== defaultOperator && !text.length) { return setValidT(false); }
+    if (relation !== defaultRelation && !text.length) { return setValidT(false); }
     defaultAppender(text);
   };
 
@@ -187,7 +187,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
             constrs.map((constr, i) => {
               return (
                 <StandardChip
-                  key={i} label={[ constr.tag, constr.operator, constr.value ].join(' ')}
+                  key={i} label={[ constr.tag, constr.relation, constr.value ].join(' ')}
                   onClick={() => {}} onDelete={() => deleteConstraint(i)}
                 />
               );
@@ -212,13 +212,13 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
           }
         </Form.Group>
         <Form.Group as={Row} className="mt-2 mb-2">
-          <Form.Label xs={3} column>Operator</Form.Label>
+          <Form.Label xs={3} column>Relation</Form.Label>
           <Col>
             <Form.Group>
-              <Form.Select value={operator} onChange={(e) => setOperator(e.target.value)} disabled={!isTagWithOperator(tag)}>
-                <option value={defaultOperator}></option>
+              <Form.Select value={relation} onChange={(e) => setRelation(e.target.value)} disabled={!isTagWithOperator(tag)}>
+                <option value={defaultRelation}></option>
                 {
-                  operators.map((o, i) => <option key={i} value={o}>{o}</option>)
+                  relations.map((o, i) => <option key={i} value={o}>{o}</option>)
                 }
               </Form.Select>
             </Form.Group>
@@ -227,7 +227,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
         <Form.Group as={Row} className="mt-2 mb-2" style={{ alignItems: "center" }}>
           <Form.Label xs={3} column>Value</Form.Label>
           {
-            (operator !== defaultOperator) && <Col>
+            (relation !== defaultRelation) && <Col>
               { isTagBoolean(tag) &&
                   <Form.Check id="boolean-value" type="switch" defaultChecked={bool} onChange={() => setBoolean(!bool)} />
               }
@@ -272,7 +272,7 @@ export function KeywordsInput(): JSX.Element {
   const [curr, setCurr] = useState<string | undefined>(undefined);
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state.keywords.map(obj => obj.label));
+  const keywords = useAppSelector(state => state.search.keywords.map(obj => obj.label));
 
   const modal = (label: string | undefined) => { setCurr(label); setShow(true); };
 

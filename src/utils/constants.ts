@@ -1,3 +1,5 @@
+// user input
+
 export enum TagEnum {
   DEFAULT,
   BOOLEAN,
@@ -25,8 +27,8 @@ export const RelView = new Map<RelEnum, string>([
   [ RelEnum.NE, "!=" ],
   [ RelEnum.LT, "<"  ],
   [ RelEnum.LE, "<=" ],
-  [ RelEnum.GT, ">"  ],
   [ RelEnum.GE, ">=" ],
+  [ RelEnum.GT, ">"  ],
   [ RelEnum.IN, "+"  ],
   [ RelEnum.NI, "-"  ],
   [ RelEnum.SW, "^"  ],
@@ -78,27 +80,35 @@ export const TAG_TO_TYPE: Map<string, TagEnum> = tag2entity(mapping, t => t.ty);
 
 export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) => t.rs);
 
-export const API_BASE_URL: string = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
-
-// Client-side routing
+// client-side routing
 
 export const SEARCH_ADDR = "/search";
 export const LOCKER_ADDR = "/locker";
-export const RESULT_ADDR = "/result";
+export const SHAPES_ADDR = "/shapes";
 export const POINTS_ADDR = "/points/:id";
+export const NOT_FOUND_ADDR = "/404";
 
-// Solid Pod
+// solid pod
+
+export const WELL_KNOWN_SOLID_PROVIDERS: string[] = [
+  "https://inrupt.net/",
+  "https://solidweb.org/",
+  "https://solidweb.me/",
+  "https://solidcommunity.net/"
+];
 
 export const DATASET_ADDR = "grainpath/dataset";
 
-export const WELL_KNOWN_SOLID_PROVIDERS: { label: string }[] = [
-  {
-    label: "https://inrupt.net/"
-  },
-  {
-    label: "https://solidcommunity.net/"
-  },
-  {
-    label: "https://solidweb.org/"
-  }
-];
+// grainpath api
+
+const API_BASE_URL: string = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
+
+export function grainpathFetch(resource: string, body: any): Promise<Response> {
+  const content = "application/json";
+
+  return fetch(API_BASE_URL + resource, {
+    method: "POST",
+    headers: { "Accept": content, "Content-Type": content },
+    body: JSON.stringify(body)
+  })
+}

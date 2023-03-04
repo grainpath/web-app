@@ -1,15 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
+import lockerReducer from "./lockerSlice";
 import loggerReducer from "./loggerSlice";
+import pointsReducer from "./pointsSlice";
 import searchReducer from "./searchSlice";
-import resultReducer from "./resultSlice";
-import keywordsReducer from "./keywordsSlice";
+import shapesReducer from "./shapesSlice";
 
 export const store = configureStore({
   reducer: {
+    locker: lockerReducer,
     logger: loggerReducer,
+    points: pointsReducer,
     search: searchReducer,
-    result: resultReducer,
-    keywords: keywordsReducer
+    shapes: shapesReducer
   }
 });
 
