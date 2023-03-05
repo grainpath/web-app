@@ -36,7 +36,7 @@ export default function App(): JSX.Element {
             <Route path={SEARCH_ADDR} element={<SearchPanel />} />
             <Route path={LOCKER_ADDR} element={<LockerPanel />} />
             <Route path={SHAPES_ADDR} element={<ShapesPanel />} />
-            <Route path={POINTS_ADDR} element={<PointsPanel />} />
+            <Route path={POINTS_ADDR + "/:id"} element={<PointsPanel />} />
             <Route path={NOT_FOUND_ADDR} element={<NotFoundPanel />} />
             <Route path="/" element={<Navigate to={SEARCH_ADDR} />} />
             <Route path="*" element={<NotFoundPanel />} />

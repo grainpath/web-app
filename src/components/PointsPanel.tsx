@@ -1,13 +1,16 @@
-import { Chip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Alert, Image, Offcanvas, Spinner, Stack } from "react-bootstrap";
+import { useContext, useEffect, useState } from "react";
+import { Alert, Badge, Button, Image, Offcanvas, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import L, { LatLng } from "leaflet";
+
+import { AppContext } from "../App";
 import { HeavyGrain } from "../domain/types";
-import { useAppSelector } from "../features/hooks";
+import { point2view } from "../utils/functions";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
+import { appendPoint } from "../features/searchSlice";
 import { appendList, setCurr } from "../features/pointsSlice";
 import { grainpathFetch, LOCKER_ADDR, SEARCH_ADDR } from "../utils/constants";
-import { point2view } from "../utils/functions";
 import { CenteredContainer, LockerButton, SearchButton } from "./PanelControl";
 
 type HeavyGrainViewProps = {
@@ -17,7 +20,7 @@ type HeavyGrainViewProps = {
 function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Element {
 
   const opacity = 0.7;
-  const [ lon, lat ] = grain.location.coordinates;
+  const point = grain.location;
 
   const {
     name,
@@ -25,19 +28,35 @@ function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Element {
     image
   } = grain.tags;
 
-  
+  const dispatch = useAppDispatch();
+  const sequence = useAppSelector(state => state.search.sequence);
+
+  const leaflet = useContext(AppContext).leaflet;
 
   useEffect(() => {
 
+    leaflet.layerGroup?.clearLayers();
 
-  });
+    const l = new LatLng(point.lat, point.lon);
+    L.marker(l, { icon: leaflet.views.tagged, draggable: false }).addTo(leaflet.layerGroup!);
+
+    if (grain.polygon) {
+      L.polygon(grain.polygon?.map((point) => new LatLng(point.lat, point.lon)), { color: "green" }).addTo(leaflet.layerGroup!);
+    }
+
+    leaflet.map?.flyTo(l, leaflet.map?.getZoom());
+  }, [leaflet, point.lon, point.lat, grain.polygon]);
+
+  const enlist = () => {
+    dispatch(appendPoint({ id: grain.id, location: point, keywords: grain.keywords, tags: { name: name } }));
+  };
 
   return (
     <>
       <h4>{name ?? "Noname" }</h4>
       <hr style={{ opacity: opacity, margin: "0.5rem 0" }}/>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <small style={{ opacity: opacity }}>{point2view({ lon: lon, lat: lat })}</small>
+        <small style={{ opacity: opacity }}>{point2view(point)}</small>
       </div>
       { image &&
         <div>
@@ -46,12 +65,13 @@ function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Element {
           </a>
         </div>
       }
-      <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
+      <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
         {
-          grain.keywords.map((keyword, i) => <Chip key={i} label={keyword} color="success" style={{ margin: "0 0.2rem" }} />)
+          grain.keywords.map((keyword, i) => <h6><Badge key={i} bg="success" style={{ margin: "0 0.2rem", display: "block" }} pill>{keyword}</Badge></h6>)
         }
       </div>
       { description && <div className="mt-2 mb-2"><small>{description}</small></div> }
+      <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={enlist}>Enlist</Button>
     </>
   );
 }

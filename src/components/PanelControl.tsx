@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
-import { Form, Stack } from "react-bootstrap";
-import { Chip } from "@mui/material";
+import { Badge, Form } from "react-bootstrap";
 import { Info, KeyboardCommandKey, LocationOn, Search, Storage } from "@mui/icons-material";
 import { point2view } from "../utils/functions";
 import type { SimpleButtonProps } from "./types";
@@ -11,6 +10,8 @@ type StandardButtonProps = {
   icon: ReactElement;
   onClick: React.MouseEventHandler<HTMLElement>;
 }
+
+type CenteredContainerProps = { element: ReactElement; }
 
 type MarkerLineProps = {
   kind: string;
@@ -23,8 +24,15 @@ type MarkerButtonProps = SimpleButtonProps & {
   buttonStyle: React.CSSProperties | undefined;
 }
 
-type LightGrainPopupProps = SimpleButtonProps & {
-  grain: LightGrain;
+type LightGrainPopupProps = { grain: LightGrain; }
+
+export function CenteredContainer({ element }: CenteredContainerProps): JSX.Element {
+
+  return (
+    <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
+      {element}
+    </div>
+  );
 }
 
 export function PanelButton({ onClick }: SimpleButtonProps): JSX.Element {
@@ -50,26 +58,24 @@ export function LockerButton(props: SimpleButtonProps): JSX.Element {
   return (<StandardButton {...props} icon={<Storage fontSize="large" />} title="Locker panel" />);
 }
 
-export function LightGrainPopup({ grain, ...rest }: LightGrainPopupProps): JSX.Element {
-
-  const name = (!!grain.tags.name) ? grain.tags.name : "Noname"
+export function LightGrainPopup({ grain }: LightGrainPopupProps): JSX.Element {
 
   return (
     <>
-      <b>{name}</b>
+      <b>{grain.tags.name ?? "Noname"}</b>
       {
         (!!grain.id) &&
         <>
           <hr style={{opacity: 1.0, margin: "0.25rem 0"}} />
           <div style={{ display: "flex", alignItems: "center" }}>
-            <button {...rest} className="standard-button" style={{ borderRadius: "50%" }} disabled={!grain.id}>
+            <button id={(grain.id) ? `popup-${grain.id}` : undefined} className="standard-button" style={{ borderRadius: "50%", marginRight: "0.2rem" }} disabled={!grain.id}>
               <Info fontSize="large" />
             </button>
-            <Stack direction="horizontal" gap={1}>
+            <div className="mt-1 mb-1" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", width: "150px" }}>
               {
-                grain.keywords.map((keyword, i) => <Chip key={i} color="success" label={keyword} size="small" />)
+                grain.keywords.map((keyword, i) => <Badge key={i} bg="success" pill style={{ margin: "0.1rem", display: "block" }}>{keyword}</Badge>)
               }
-            </Stack>
+            </div>
           </div>
         </>
       }

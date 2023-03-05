@@ -85,7 +85,7 @@ export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) =
 export const SEARCH_ADDR = "/search";
 export const LOCKER_ADDR = "/locker";
 export const SHAPES_ADDR = "/shapes";
-export const POINTS_ADDR = "/points/:id";
+export const POINTS_ADDR = "/points";
 export const NOT_FOUND_ADDR = "/404";
 
 // solid pod

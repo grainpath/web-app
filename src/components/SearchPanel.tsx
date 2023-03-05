@@ -47,7 +47,7 @@ function SearchBody(): JSX.Element {
     return latLng2point(ensureLatLngBounds(leaflet.map!.getCenter()));
   }
 
-  const addEvent = (marker: Marker<Icon<any>>, func: (point: Point) => void): void => {
+  const addDragendEvent = (marker: Marker<Icon<any>>, func: (point: Point) => void): void => {
     marker.addEventListener("dragend", () => {
       ensureMarkerBounds(marker);
       func({ lon: marker.getLatLng().lng, lat: marker.getLatLng().lat });
@@ -61,24 +61,29 @@ function SearchBody(): JSX.Element {
   const ensureSource = useCallback(() => {
     if (!!source) {
       const m = addPoint(source, leaflet.views.source, true);
-      addEvent(m, (point: Point) => dispatch(setSource(point)));
+      addDragendEvent(m, (point: Point) => dispatch(setSource(point)));
     }
   }, [addPoint, dispatch, source, leaflet.views]);
 
   const ensureTarget = useCallback(() => {
     if (!!target) {
       const m = addPoint(target, leaflet.views.target, true);
-      addEvent(m, (point: Point) => dispatch(setTarget(point)));
+      addDragendEvent(m, (point: Point) => dispatch(setTarget(point)));
     }
   }, [addPoint, dispatch, target, leaflet.views]);
 
   const ensureSequence = useCallback(() => {
     search.sequence = sequence.map((g, i) => {
 
-      const popup = ReactDOMServer.renderToString(<LightGrainPopup grain={g} onClick={() => navigate([ POINTS_ADDR, g.id! ].join("/"))} />);
+      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} />);
+      const m = addPoint(g.location, (!!g.id) ? leaflet.views.tagged : leaflet.views.custom, !g.id).bindPopup(p);
 
-      const m = addPoint(g.location, (!!g.id) ? leaflet.views.tagged : leaflet.views.custom, !g.id).bindPopup(popup);
-      addEvent(m, (point: Point) => dispatch(updatePoint({point: point, i: i})));
+      m.addEventListener("popupopen", () => {
+        if (!!g.id) {
+          document.getElementById(`popup-${g.id}`)?.addEventListener("click", () => navigate(POINTS_ADDR + `/${g.id}`));
+        }
+      });
+      addDragendEvent(m, (point: Point) => dispatch(updatePoint({point: point, i: i})));
       return m;
     });
   }, [addPoint, navigate, dispatch, leaflet.views, search, sequence]);
