@@ -5,8 +5,8 @@ import { getPodUrlAll, getSolidDataset, getStringNoLocale, getThing, Thing } fro
 import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { Login } from "@mui/icons-material";
 
-import { SimpleButtonProps } from "./types";
-import { WELL_KNOWN_SOLID_PROVIDERS } from "../utils/constants";
+import { SimpleButtonProps } from "./PanelPrimitives";
+import { SOLID_WELL_KNOWN_PROVIDERS } from "../utils/solid";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { erase, setPodList } from "../features/lockerSlice";
 import { setLoggedIn, setUserName } from "../features/loggerSlice";
@@ -70,7 +70,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         <Form.Label>Enter an address of a <a href="https://solidproject.org/users/get-a-pod" rel="noopener noreferrer" target="_blank">Solid Pod</a> provider.</Form.Label>
         <Form.Control autoFocus list={list} defaultValue={provider} type='text' onChange={(e) => setProvider(e.target.value)} />
         <datalist id={list}>{
-          WELL_KNOWN_SOLID_PROVIDERS.map((prov, idx) => <option key={idx} value={prov}></option>)
+          SOLID_WELL_KNOWN_PROVIDERS.map((prov, idx) => <option key={idx} value={prov}></option>)
         }</datalist>
       </Modal.Body>
       <Modal.Footer>

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Boundary, LightGrain, Point } from "../domain/types";
+import { Boundary, LightGrain, Point } from "../utils/grainpath";
 
 type ConstraintBase = {
   tag: string;
@@ -76,6 +76,7 @@ export const {
   setQuantity,
   setDistance,
   appendPoint,
+  deletePoint,
   updatePoint,
   insertKeyword,
   deleteKeyword

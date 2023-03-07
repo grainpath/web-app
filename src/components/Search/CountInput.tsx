@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-import { setCount } from "../../features/searchSlice";
+import { setQuantity } from "../../features/searchSlice";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 
 export function CountInput(): JSX.Element {
@@ -13,7 +13,7 @@ export function CountInput(): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useAppDispatch();
-  const count = useAppSelector(state => state.search.count);
+  const count = useAppSelector(state => state.search.quantity);
 
   useEffect(() => {
     if (inputRef.current) { inputRef.current!.value = count.toString(); }
@@ -24,7 +24,7 @@ export function CountInput(): JSX.Element {
     var s = input !== defaultInput && c >= minVal && c <= maxVal;
 
     setValid(s);
-    if (s) { dispatch(setCount(c)); }
+    if (s) { dispatch(setQuantity(c)); }
   };
 
   return (

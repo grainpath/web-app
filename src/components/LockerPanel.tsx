@@ -1,18 +1,18 @@
 import { useContext, useState } from "react";
 import { Alert, Button, Form, Modal, Offcanvas, Tab, Tabs } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import { createSolidDataset, getSolidDataset, SolidDataset, UrlString } from "@inrupt/solid-client";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import { getStringNoLocale, getThingAll, Thing, UrlString } from "@inrupt/solid-client";
 
 import { AppContext } from "../App";
-import { SimpleButtonProps } from "./types";
-import { DATASET_ADDR, SEARCH_ADDR } from "../utils/constants";
+import { ns } from "../utils/general";
+import { SimpleButtonProps } from "./PanelPrimitives";
+import { SEARCH_ADDR } from "../utils/general";
+import { fetchSolidDataset, SOLID_POINTS_DATASET, SOLID_SHAPES_DATASET } from "../utils/solid";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setPodCurr } from "../features/lockerSlice";
-import { SearchButton } from "./PanelControl";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-
-type LockerModalProps = { onHide: () => void; }
+import { SearchButton } from "./PanelPrimitives";
+import LockerItem from "./Locker/LockerItem";
 
 function LockerHead(): JSX.Element {
 
@@ -34,52 +34,91 @@ function ConfigureButton(props: SimpleButtonProps): JSX.Element {
   );
 }
 
-function LockerPanes(): JSX.Element {
+// locker panes
+
+type LockerPanesProps = { pod: string }
+
+function LockerPanes({ pod }: LockerPanesProps): JSX.Element {
+
+  const { points, shapes } = useContext(AppContext).locker.data.get(pod)!;
+
+  const [pts, sts] = [points, shapes].map((dataset) => {
+    return getThingAll(dataset).map((thing) => {
+      return { thing: thing, label: getStringNoLocale(thing, ns.skos.prefLabel)! };
+    });
+  });
+
+  const seePoint = (thing: Thing): void => {
+    console.log(thing.url);
+  };
+
+  const delPoint = (thing: Thing): void => {
+    console.log(thing.url);
+  };
+
+  const seeShape = (thing: Thing): void => {
+    console.log(thing.url);
+  };
+
+  const delShape = (thing: Thing): void => {
+    console.log(thing.url);
+  };
 
   return (
-    <Tabs defaultActiveKey="points" fill className="mb-4 mt-4">
+    <Tabs className="mb-4 mt-4" defaultActiveKey="points" fill>
       <Tab eventKey="points" title="Points">
+        {
+          pts.map((p, i) => {
+            return <LockerItem key={i} label={p.label} onSee={() => seePoint(p.thing)} onDel={() => delPoint(p.thing)} />
+          })
+        }
       </Tab>
-      <Tab eventKey="results" title="Results">
+      <Tab eventKey="shapes" title="Shapes">
+        {
+          sts.map((s, i) => {
+            return <LockerItem key={i} label={s.label} onSee={() => seeShape(s.thing)} onDel={() => delShape(s.thing)} />
+          })
+        }
       </Tab>
     </Tabs>
   );
 };
 
+// locker modal
+
+type LockerModalProps = { onHide: () => void; }
+
+/**
+ * Performs acquisition of both @b points and @b shapes datasets.
+ */
 function LockerModal({ onHide }: LockerModalProps): JSX.Element {
 
-  const datamap = useContext(AppContext).locker.datamap;
+  const data = useContext(AppContext).locker.data;
 
+  const podCurr = useAppSelector(state => state.locker.podCurr);
   const podList = useAppSelector(state => state.locker.podList);
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
-  const [pod, setPod] = useState<UrlString | undefined>(podList[0]);
+  const [pod, setPod] = useState<UrlString | undefined>(podCurr ?? podList[0]);
 
   const confirm = async () => {
 
-    if (pod) {
+    try {
       setLoading(true);
-      let dataset: SolidDataset | undefined = undefined;
 
-      try {
-        dataset = await getSolidDataset(pod + DATASET_ADDR, { fetch: fetch });
+      const points = await fetchSolidDataset(pod + SOLID_POINTS_DATASET);
+      const shapes = await fetchSolidDataset(pod + SOLID_SHAPES_DATASET);
+
+      if (!points || !shapes) {
+        return alert("[Solid Error] Cannot obtain datasets from the selected Solid Pod.");
       }
-      catch (err: any) {
-        if (err.statusCode === 404) { dataset = createSolidDataset(); }
-      }
-      finally {
-        if (dataset) {
-          datamap.set(pod, dataset);
-          dispatch(setPodCurr(pod));
-          onHide();
-        }
-        else {
-          alert("[Solid Error] Cannot obtain dataset from the selected Solid Pod.");
-        }
-        setLoading(false);
-      }
+
+      data.set(pod!, { points: points, shapes: shapes });
+      dispatch(setPodCurr(pod!));
+      onHide();
     }
+    finally { setLoading(false); }
   };
 
   return (
@@ -96,7 +135,7 @@ function LockerModal({ onHide }: LockerModalProps): JSX.Element {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" disabled={loading} onClick={onHide}>Cancel</Button>
-        <Button variant="primary" disabled={loading} onClick={confirm}>Confirm</Button>
+        <Button variant="primary" disabled={!pod || loading} onClick={confirm}>Confirm</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -105,15 +144,15 @@ function LockerModal({ onHide }: LockerModalProps): JSX.Element {
 function LockerContent(): JSX.Element {
 
   const [modal, setModal] = useState(false);
-  const podCurr = useAppSelector(state => state.locker.podCurr);
+  const pod = useAppSelector(state => state.locker.podCurr);
 
   return (
     <>
       <Form.Group style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="mt-2 mb-4">
-        <Form.Control type="text" placeholder="Select Pod..." defaultValue={podCurr} readOnly />
+        <Form.Control type="text" placeholder="Select Pod..." defaultValue={pod} readOnly />
         <ConfigureButton onClick={() => setModal(true)} />
       </Form.Group>
-      {podCurr && <LockerPanes />}
+      {pod && <LockerPanes pod={pod} />}
       {modal && <LockerModal onHide={() => setModal(false)} />}
     </>
   );

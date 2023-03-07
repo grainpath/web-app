@@ -1,3 +1,7 @@
+import { LatLng } from "leaflet";
+import namespace from "@rdfjs/namespace";
+import { Point } from "./grainpath";
+
 // user input
 
 export enum TagEnum {
@@ -86,29 +90,56 @@ export const SEARCH_ADDR = "/search";
 export const LOCKER_ADDR = "/locker";
 export const SHAPES_ADDR = "/shapes";
 export const POINTS_ADDR = "/points";
-export const NOT_FOUND_ADDR = "/404";
 
-// solid pod
+// linked open vocabularies
 
-export const WELL_KNOWN_SOLID_PROVIDERS: string[] = [
-  "https://inrupt.net/",
-  "https://solidweb.org/",
-  "https://solidweb.me/",
-  "https://solidcommunity.net/"
-];
+export const ns = {
+  dct: namespace("http://purl.org/dc/terms/"),
+  geo: namespace("http://www.w3.org/2003/01/geo/wgs84_pos#"),
+  ov: namespace("http://open.vocab.org/terms/"),
+  owl: namespace("http://dbpedia.org/ontology/"),
+  rdf: namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
+  rdfs: namespace("http://www.w3.org/2000/01/rdf-schema#"),
+  skos: namespace("http://www.w3.org/2004/02/skos/core#"),
+};
 
-export const DATASET_ADDR = "grainpath/dataset";
-
-// grainpath api
-
-const API_BASE_URL: string = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
-
-export function grainpathFetch(resource: string, body: any): Promise<Response> {
-  const content = "application/json";
-
-  return fetch(API_BASE_URL + resource, {
-    method: "POST",
-    headers: { "Accept": content, "Content-Type": content },
-    body: JSON.stringify(body)
-  })
+/**
+ * Constructs human-readable GPS representation.
+ */
+export function point2view(point: Point): string {
+  const prec = 6;
+  return `${point.lat.toFixed(prec)}N, ${point.lon.toFixed(prec)}E`;
 }
+
+const ensureLonBounds = (lon: number): number => Math.min(Math.max(lon, -180.0), +180.0);
+const ensureLatBounds = (lat: number): number => Math.min(Math.max(lat, -85.06), +85.06);
+
+/**
+ * Ensure LatLng within EPSG:3857, see https://epsg.io/3857.
+ */
+export function ensureLatLngBounds(latLng: L.LatLng): L.LatLng {
+  return new LatLng(ensureLatBounds(latLng.lat), ensureLonBounds(latLng.lng));
+}
+
+/**
+ * Ensure marker within EPSG:3857, see https://epsg.io/3857.
+ * @param marker raised dragend event.
+ */
+export function ensureMarkerBounds(marker: L.Marker<any>): L.Marker<any> {
+  const lls = marker.getLatLng();
+  return marker.setLatLng(ensureLatLngBounds(lls));
+};
+
+/**
+ * Transform Leaflet point to a standard.
+ */
+export function latLng2point(l: LatLng): Point {
+  return { lon: l.lng, lat: l.lat } as Point;
+}
+
+/**
+ * Swaps elements in an array and return its copy. The input array is not modified.
+ */
+export function swapImmutable<T>(arr: T[], l: number, r: number): T[] {
+  return [ ...arr.slice(0, l), arr[r], ...arr.slice(l + 1, r), arr[l], ...arr.slice(r + 1) ];
+};

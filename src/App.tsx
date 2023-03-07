@@ -3,17 +3,11 @@ import { Offcanvas } from "react-bootstrap";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import {
-  LOCKER_ADDR,
-  NOT_FOUND_ADDR,
-  POINTS_ADDR,
-  SEARCH_ADDR,
-  SHAPES_ADDR
-} from "./utils/constants";
+import { LOCKER_ADDR, POINTS_ADDR, SEARCH_ADDR, SHAPES_ADDR } from "./utils/general";
 import { store } from "./features/store";
 import { context } from "./features/context";
 import MapControl from "./components/MapControl";
-import { PanelButton } from "./components/PanelControl";
+import { PanelButton } from "./components/PanelPrimitives";
 import SearchPanel from "./components/SearchPanel";
 import LockerPanel from "./components/LockerPanel";
 import ShapesPanel from "./components/ShapesPanel";
@@ -37,7 +31,6 @@ export default function App(): JSX.Element {
             <Route path={LOCKER_ADDR} element={<LockerPanel />} />
             <Route path={SHAPES_ADDR} element={<ShapesPanel />} />
             <Route path={POINTS_ADDR + "/:id"} element={<PointsPanel />} />
-            <Route path={NOT_FOUND_ADDR} element={<NotFoundPanel />} />
             <Route path="/" element={<Navigate to={SEARCH_ADDR} />} />
             <Route path="*" element={<NotFoundPanel />} />
           </Routes>

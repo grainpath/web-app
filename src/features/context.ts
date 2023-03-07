@@ -7,8 +7,13 @@ import { pinViews, PinViewType } from "../utils/icons";
  * Use application context for all non-serializable data!
  */
 
+type LockerDatasets = {
+  points: SolidDataset;
+  shapes: SolidDataset
+}
+
 export type LockerContextValue = {
-  datamap: Map<UrlString, SolidDataset>;
+  data: Map<UrlString, LockerDatasets>;
 };
 
 export type SearchContextValue = {
@@ -33,7 +38,7 @@ export type AppContextValue = {
 
 export const context: AppContextValue = {
   locker: {
-    datamap: new Map<UrlString, SolidDataset>()
+    data: new Map<UrlString, LockerDatasets>()
   },
   search: {
     sequence: []

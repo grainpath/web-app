@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import lockerReducer from "./lockerSlice";
 import loggerReducer from "./loggerSlice";
 import pointsReducer from "./pointsSlice";

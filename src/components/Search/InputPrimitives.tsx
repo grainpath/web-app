@@ -2,8 +2,7 @@ import { Chip } from "@mui/material";
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-
-import { API_BASE_URL } from "../../utils/const";
+import { grainpathFetch } from "../../utils/grainpath";
 
 type StandardChipProps = {
   label: string;
@@ -35,7 +34,6 @@ export function StandardChip(props: StandardChipProps): JSX.Element {
 
 export function StandardTypeahead({ index, label, set, feedback, touch, ...rest }: StandardTypeaheadProps): JSX.Element {
 
-  const content = "application/json";
   const cache: Map<string, AutocompleteEntry[]> = new Map();
 
   const [loading, setLoading] = useState(false);
@@ -46,11 +44,7 @@ export function StandardTypeahead({ index, label, set, feedback, touch, ...rest 
     if (cache.has(query)) { return setOptions(cache.get(query)!); }
 
     setLoading(true);
-    fetch(`${API_BASE_URL + "/autocomplete"}`, {
-      method: "POST",
-      headers: { "Accept": content, "Content-Type": content },
-      body: JSON.stringify({ index: index, count: 3, prefix: query })
-    })
+    grainpathFetch("/autocomplete", { index: index, count: 3, prefix: query })
     .then((res) => res.json())
     .then((arr: string[]) => {
       cache.set(query, arr.map((item) => { return { label: item } as AutocompleteEntry }));

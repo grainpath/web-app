@@ -4,10 +4,9 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 import { AppContext } from "../App";
 
-const pos = "bottomright";
-
 function FeatureSetter(): JSX.Element {
 
+  const pos = "bottomright";
   const { leaflet } = useContext(AppContext);
 
   leaflet.map = useMap();

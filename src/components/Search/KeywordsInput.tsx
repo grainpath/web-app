@@ -1,16 +1,11 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { AddCircleOutline, Save } from "@mui/icons-material";
 
-import { SimpleButtonProps } from "../types";
+import { centerContainerProps, SimpleButtonProps } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import {
-  deleteKeyword,
-  insertKeyword,
-  Keyword,
-  KeywordConstraint
-} from "../../features/searchSlice";
-import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/constants";
+import { deleteKeyword, insertKeyword, Keyword, KeywordConstraint } from "../../features/searchSlice";
+import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/general";
 import { StandardChip, StandardTypeahead } from "./InputPrimitives";
 
 const EXISTS_MESSAGE = "Keyword is already defined.";
@@ -22,8 +17,6 @@ const isTagBoolean = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.
 const isTagCollect = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.COLLECT;
 const isTagMeasure = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.MEASURE;
 const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.DEFAULT) === TagEnum.TEXTUAL;
-
-type ButtonContainerProps = { button: ReactElement; }
 
 type KeywordModalWindowProps = {
   label: string | undefined;
@@ -45,15 +38,6 @@ function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
     <button {...props} className="standard-button" title="Save tag">
       <Save fontSize="large" />
     </button>
-  );
-}
-
-function ButtonContainer({ button }: ButtonContainerProps): JSX.Element {
-
-  return (
-    <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
-      {button}
-    </div>
   );
 }
 
@@ -256,7 +240,9 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
             </Col>
           }
         </Form.Group>
-        <ButtonContainer button={<SaveKeywordButton onClick={() => save()} />} />
+        <div {...centerContainerProps}>
+          <SaveKeywordButton onClick={() => save()} />
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="danger" onClick={onHide}>Discard</Button>
@@ -285,7 +271,9 @@ export function KeywordsInput(): JSX.Element {
             return <StandardChip key={i} label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteKeyword(keyword))} />
           })}
         </div>
-        <ButtonContainer button={<AddKeywordButton onClick={() => modal(undefined)} />} />
+        <div {...centerContainerProps}>
+          <AddKeywordButton onClick={() => modal(undefined)} />
+        </div>
       </Form.Group>
       {show && <KeywordModalWindow label={curr} onHide={() => setShow(false)} />}
     </>

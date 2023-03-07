@@ -1,6 +1,6 @@
 import { DeleteSweepOutlined } from "@mui/icons-material";
 
-import type { SimpleButtonProps } from "../types";
+import type { SimpleButtonProps } from "../PanelPrimitives";
 
 export default function EraseButton({ onClick }: SimpleButtonProps): JSX.Element {
 
