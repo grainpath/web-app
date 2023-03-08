@@ -5,16 +5,16 @@ import L, { Icon, LatLng, Marker } from "leaflet";
 import { Button, Offcanvas, Tab, Tabs } from "react-bootstrap";
 
 import { AppContext } from "../App";
-import { Point } from "../domain/types";
-import { LOCKER_ADDR, POINTS_ADDR } from "../utils/constants";
-import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/functions";
+import { Point } from "../utils/grainpath";
+import { LOCKER_ADDR, point2view, POINTS_ADDR } from "../utils/general";
+import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/general";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { appendPoint, erase, setSource, setTarget, updatePoint } from "../features/searchSlice";
+import { appendPoint, deletePoint, erase, setSource, setTarget, updatePoint } from "../features/searchSlice";
 import EraseButton from "./Search/EraseButton";
 import { CountInput } from "./Search/CountInput";
 import { DistanceInput } from "./Search/DistanceInput";
 import { KeywordsInput } from "./Search/KeywordsInput";
-import { LightGrainPopup, LockerButton, SteadyMarkerLine } from "./PanelControl";
+import { LightGrainPopup, LockerButton, RemovableMarkerLine, SteadyMarkerLine } from "./PanelPrimitives";
 
 function SearchHead(): JSX.Element {
 
@@ -75,7 +75,7 @@ function SearchBody(): JSX.Element {
   const ensureSequence = useCallback(() => {
     search.sequence = sequence.map((g, i) => {
 
-      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} />);
+      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} index={i} />);
       const m = addPoint(g.location, (!!g.id) ? leaflet.views.tagged : leaflet.views.custom, !g.id).bindPopup(p);
 
       m.addEventListener("popupopen", () => {
@@ -114,8 +114,10 @@ function SearchBody(): JSX.Element {
 
   return (
     <Offcanvas.Body>
-      <SteadyMarkerLine kind="source" point={source} onClick={() => handleBoundary(source, (point) => dispatch(setSource(point)))} />
-      <SteadyMarkerLine kind="target" point={target} onClick={() => handleBoundary(target, (point) => dispatch(setTarget(point)))} />
+      <SteadyMarkerLine kind="source" label={source ? point2view(source) : undefined}
+        onMarker={() => handleBoundary(source, (point) => { dispatch(setSource(point)); })} />
+      <SteadyMarkerLine kind="target" label={target ? point2view(target) : undefined}
+        onMarker={() => handleBoundary(target, (point) => { dispatch(setTarget(point)); })} />
       <Tabs defaultActiveKey="discover" fill className="mb-4 mt-4">
         <Tab eventKey="discover" title="Discover">
           <CountInput />
@@ -124,7 +126,10 @@ function SearchBody(): JSX.Element {
         </Tab>
         <Tab eventKey="navigate" title="Navigate">
           {
-            sequence.map((g, i) => <Button key={i} onClick={() => handleSequence(i)}>{i}</Button>)
+            sequence.map((g, i) => {
+              return <RemovableMarkerLine key={i} kind={(!!g.id ? "tagged" : "custom")} label={g.tags.name ?? `Unknown ${i + 1}`}
+                onMarker={() => handleSequence(i)} onDelete={() => { dispatch(deletePoint(i)); }} />
+            })
           }
           <Button onClick={() => { dispatch(appendPoint({ location: getCenter(), keywords: [], tags: {} })); }} />
         </Tab>

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPoint } from "../../features/searchSlice";
 import { point2view } from "../../utils/general";
 import { HeavyGrain } from "../../utils/grainpath";
+import { standardContainerClassName } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
 
 type HeavyGrainViewProps = {
@@ -47,13 +48,13 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
     leaflet.map?.flyTo(l, leaflet.map?.getZoom());
   }, [leaflet, point.lon, point.lat, grain.polygon]);
 
-  const enlist = () => {
+  const list = () => {
     dispatch(appendPoint({ id: grain.id, location: point, keywords: grain.keywords, tags: { name: name } }));
   };
 
   return (
     <>
-      <h4>{ name ?? "Noname" }</h4>
+      <h4>{name}</h4>
       <hr style={{ opacity: opacity, margin: "0.5rem 0" }}/>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <small style={{ opacity: opacity }}>{point2view(point)}</small>
@@ -65,14 +66,14 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
           </a>
         </div>
       }
-      <div className="mt-2 mb-2" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+      <div className={standardContainerClassName} style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
         {
           grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0 0.2rem", display: "block" }} pill>{keyword}</Badge>)
         }
       </div>
       { description && <div className="mt-2 mb-2"><small>{description}</small></div> }
       <div className="mt-4" style={{ display: "flex", justifyContent: "space-evenly" }}>
-        <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={enlist}>Enlist</Button>
+        <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={list}>Enlist</Button>
         <Button disabled={!isLoggedIn || !podCurr} onClick={() => setModal(true)}>Save</Button>
       </div>
       { modal && <SaveModal grain={grain} onHide={() => setModal(false)} /> }

@@ -99,7 +99,6 @@ export const ns = {
   ov: namespace("http://open.vocab.org/terms/"),
   owl: namespace("http://dbpedia.org/ontology/"),
   rdf: namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
-  rdfs: namespace("http://www.w3.org/2000/01/rdf-schema#"),
   skos: namespace("http://www.w3.org/2004/02/skos/core#"),
 };
 

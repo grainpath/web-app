@@ -52,7 +52,7 @@ export const searchSlice = createSlice({
     setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
     appendPoint: (state, action: PayloadAction<LightGrain>) => { state.sequence.push(action.payload); },
     deletePoint: (state, action: PayloadAction<number>) => {
-      state.sequence = [ ...state.sequence.slice(0, action.payload), ...state.sequence.slice(action.payload + 1) ]
+      state.sequence = [ ...state.sequence.slice(0, action.payload), ...state.sequence.slice(action.payload + 1) ];
     },
     updatePoint: (state, action: PayloadAction<{ point: Point, i: number}>) => {
       state.sequence[action.payload.i].location = action.payload.point;

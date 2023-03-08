@@ -2,7 +2,7 @@ import { Chip } from "@mui/material";
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { grainpathFetch } from "../../utils/grainpath";
+import { grainpathFetch, GRAINPATH_AUTOCOMPLETE_URL } from "../../utils/grainpath";
 
 type StandardChipProps = {
   label: string;
@@ -44,7 +44,7 @@ export function StandardTypeahead({ index, label, set, feedback, touch, ...rest 
     if (cache.has(query)) { return setOptions(cache.get(query)!); }
 
     setLoading(true);
-    grainpathFetch("/autocomplete", { index: index, count: 3, prefix: query })
+    grainpathFetch(GRAINPATH_AUTOCOMPLETE_URL, { index: index, count: 3, prefix: query })
     .then((res) => res.json())
     .then((arr: string[]) => {
       cache.set(query, arr.map((item) => { return { label: item } as AutocompleteEntry }));

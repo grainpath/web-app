@@ -103,7 +103,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
   const defaultAppender = (v: boolean | number | string): void => {
     const constr = (relation === defaultRelation)
       ? { tag: tag }
-      : { tag: tag, operator: relation, value: v }
+      : { tag: tag, relation: relation, value: v }
     appendConstraint(constr as KeywordConstraint);
     setTag(defaultTag);
   }

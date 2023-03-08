@@ -18,44 +18,44 @@ export default function PointsPanel(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [current, setCurrent] = useState<HeavyGrain | undefined>(undefined);
-
   const dispatch = useDispatch();
   const list = useAppSelector(state => state.points.list);
+
+  const [loading, setLoading] = useState(false);
+  const [current, setCurrent] = useState<HeavyGrain | undefined>(undefined);
 
   useEffect(() => {
 
     let ignore = false;
 
     const fetcher = async () => {
-      let cand = list.find((grain) => grain.id === id);
+
+      let next;
+      const prev = list.find((grain) => grain.id === id); console.log(list);
 
       try {
-        if (!loading) { setLoading(true); }
-
-        if (!cand) {
+        if (!prev) {
+          setLoading(true);
           const res = await grainpathFetch(GRAINPATH_HEAVY_URL, { id: id });
-  
-          if (res.ok) {
-            cand = (await res.json()) as HeavyGrain;
-            if (!!cand) { dispatch(appendList(cand)); }
-          }
 
-          else if (res.status === 404) { /* do nothing */ }
-          else { throw new Error("[Heavy Error] " + res.status + ": " + res.statusText); }
+          switch (res.status) {
+            case 200: next = (await res.json()) as HeavyGrain; break;
+            case 404: break;
+            default:  throw new Error("[Heavy Error] " + res.status + ": " + res.statusText);
+          }
         }
       }
       catch (ex) { alert(ex); }
 
       if (!ignore) {
         setLoading(false);
-        setCurrent(cand);
+        setCurrent(prev ?? next);
+        if (!prev && next) { dispatch(appendList(next)); };
       }
     };
     fetcher();
     return () => { ignore = true; };
-  }, [id, list, dispatch, navigate]);
+  }, [id, list, dispatch]);
 
   const view = (current)
     ? <HeavyGrainView grain={current} />
