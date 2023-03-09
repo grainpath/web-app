@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Badge, Form, Row } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import {
   DeleteOutline,
   DescriptionOutlined,
@@ -10,8 +10,7 @@ import {
   Storage
 } from "@mui/icons-material";
 
-import { point2view } from "../utils/general";
-import { HeavyGrain, LightGrain } from "../utils/grainpath";
+import { LightGrain } from "../utils/grainpath";
 
 export const standardContainerClassName = "mt-2 mb-2";
 
@@ -122,21 +121,21 @@ export function RemovableMarkerLine({ label, onDelete, ...rest }: RemovableMarke
   );
 }
 
-type LightGrainPopupProps = { grain: LightGrain; index: number };
+type LightGrainPopupProps = { grain: LightGrain; };
 
-export function LightGrainPopup({ grain, index }: LightGrainPopupProps): JSX.Element {
+export function LightGrainPopup({ grain }: LightGrainPopupProps): JSX.Element {
 
   const buttonId = (grain.id) ? `popup-${grain.id}` : undefined;
   const buttonStyle = { borderRadius: "50%", marginRight: "0.2rem" };
 
   return (
     <>
-      <b>{grain.tags.name ?? `Unknown ${index + 1}`}</b>
+      <b>{grain.name}</b>
       {
         (!!grain.id) &&
         <>
           <hr style={{opacity: 1.0, margin: "0.25rem 0"}} />
-          <div className="mt-2 mb-2" style={{ display: "flex", alignItems: "center" }}>
+          <div className={standardContainerClassName} style={{ display: "flex", alignItems: "center" }}>
             <button id={buttonId} className="standard-button" style={buttonStyle} disabled={!grain.id}>
               <Info fontSize="large" />
             </button>
@@ -164,63 +163,28 @@ export const standardModalProps: StandardModalProps = {
   backdrop: "static"
 };
 
-export const maxLockerItemLabelLength = 50;
 export const maxLockerItemNoteLength = 150;
 
-type SaveModalHeadProps = {
-  label: string;
-  maxLabel: number;
-  setLabel: (label: string) => void;
+type UserInputPaneProps = {
   note: string;
-  maxNote: number;
   setNote: (note: string) => void;
-  valid: boolean;
-  setValid: (valid: boolean) => void;
+  modified?: Date;
 };
 
-export function EntityUserInput(props: SaveModalHeadProps): JSX.Element {
-
-  const {
-    valid, setValid,
-    note, maxNote, setNote,
-    label, maxLabel, setLabel
-  } = props;
+export function UserInputPane({ note, setNote, modified }: UserInputPaneProps): JSX.Element {
 
   return (
     <>
       <Form.Group className={standardContainerClassName}>
         <Form.Label>
-          Label<sup><span style={{ color: "red" }}><b> *</b></span></sup> ({maxLabel - label.length} chars left)
-        </Form.Label>
-        <Form.Control as="textarea" value={label} rows={1} maxLength={maxLabel} minLength={1} isInvalid={!valid}
-          onChange={(e) => { setValid(true); setLabel(e.target.value);}} />
-        <Form.Control.Feedback>Label shall be non-empty string.</Form.Control.Feedback>
+          Note (optional, {maxLockerItemNoteLength - note.length} chars left)</Form.Label>
+        <Form.Control as="textarea" value={note} rows={3} maxLength={maxLockerItemNoteLength} onChange={(e) => setNote(e.target.value)} />
       </Form.Group>
-      <Form.Group className={standardContainerClassName}>
-        <Form.Label>
-          Note (optional, {maxNote - note.length} chars left)</Form.Label>
-        <Form.Control as="textarea" value={note} rows={3} maxLength={maxNote} onChange={(e) => setNote(e.target.value)} />
-      </Form.Group>
-    </>
-  );
-}
-
-export type LockerGrainInfoProps = {
-  grain: HeavyGrain;
-}
-
-export function LockerGrainInfo({ grain }: LockerGrainInfoProps): JSX.Element {
-  return (
-    <>
-      <Row>
-        <Form.Label><b>Name:</b> {grain.tags.name}</Form.Label>
-      </Row>
-      <Row>
-        <Form.Label><b>Location:</b> {point2view(grain.location)}</Form.Label>
-      </Row>
-      <Row>
-        <Form.Label><b>Keywords:</b> {grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0.1rem"}}>{keyword}</Badge>)}</Form.Label>
-      </Row>
+      { (modified) &&
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <small style={{ opacity: 0.7 }}>{`modified: ${modified.toLocaleString()}`}</small>
+        </div>
+      }
     </>
   );
 }

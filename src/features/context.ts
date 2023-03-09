@@ -1,7 +1,7 @@
 import { Icon, LayerGroup, Map as LeafletMap, Marker } from "leaflet";
 import { SolidDataset, UrlString } from "@inrupt/solid-client";
 
-import { pinViews, PinViewType } from "../utils/icons";
+import { pinViews, PinViewType } from "../utils/leaflet";
 
 /**
  * Use application context for all non-serializable data!

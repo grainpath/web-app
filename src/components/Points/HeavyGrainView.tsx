@@ -1,5 +1,3 @@
-import L from "leaflet";
-import { LatLng } from "leaflet";
 import { useContext, useEffect, useState } from "react";
 import { Badge, Button, Image } from "react-bootstrap";
 
@@ -8,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPoint } from "../../features/searchSlice";
 import { point2view } from "../../utils/general";
 import { HeavyGrain } from "../../utils/grainpath";
+import { setLeafletHeavyGrain } from "../../utils/leaflet";
 import { standardContainerClassName } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
 
@@ -18,10 +17,8 @@ type HeavyGrainViewProps = {
 export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Element {
 
   const opacity = 0.7;
-  const point = grain.location;
 
   const {
-    name,
     description,
     image
   } = grain.tags;
@@ -32,32 +29,20 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
   const podCurr = useAppSelector(state => state.locker.podCurr);
 
   const leaflet = useContext(AppContext).leaflet;
-  const [modal, setModal] = useState(false);
+  const [mod, setMod] = useState(false);
 
-  useEffect(() => {
-
-    leaflet.layerGroup?.clearLayers();
-
-    const l = new LatLng(point.lat, point.lon);
-    L.marker(l, { icon: leaflet.views.tagged, draggable: false }).addTo(leaflet.layerGroup!);
-
-    if (grain.polygon) {
-      L.polygon(grain.polygon?.map((point) => new LatLng(point.lat, point.lon)), { color: "green" }).addTo(leaflet.layerGroup!);
-    }
-
-    leaflet.map?.flyTo(l, leaflet.map?.getZoom());
-  }, [leaflet, point.lon, point.lat, grain.polygon]);
+  useEffect(() => setLeafletHeavyGrain(leaflet, grain), [leaflet, grain]);
 
   const list = () => {
-    dispatch(appendPoint({ id: grain.id, location: point, keywords: grain.keywords, tags: { name: name } }));
+    dispatch(appendPoint({ id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords }));
   };
 
   return (
     <>
-      <h4>{name}</h4>
+      <h4>{grain.name}</h4>
       <hr style={{ opacity: opacity, margin: "0.5rem 0" }}/>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <small style={{ opacity: opacity }}>{point2view(point)}</small>
+        <small style={{ opacity: opacity }}>{point2view(grain.location)}</small>
       </div>
       { image &&
         <div>
@@ -72,11 +57,11 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
         }
       </div>
       { description && <div className="mt-2 mb-2"><small>{description}</small></div> }
-      <div className="mt-4" style={{ display: "flex", justifyContent: "space-evenly" }}>
-        <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={list}>Enlist</Button>
-        <Button disabled={!isLoggedIn || !podCurr} onClick={() => setModal(true)}>Save</Button>
+      <div className="mt-2" style={{ display: "flex", justifyContent: "space-evenly" }}>
+        <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={list}>List</Button>
+        <Button disabled={!isLoggedIn || !podCurr} onClick={() => setMod(true)}>Save</Button>
       </div>
-      { modal && <SaveModal grain={grain} onHide={() => setModal(false)} /> }
+      { mod && <SaveModal grain={grain} onHide={() => setMod(false)} /> }
     </>
   );
 }

@@ -6,7 +6,7 @@ import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { Login } from "@mui/icons-material";
 
 import { SimpleButtonProps, StandardModalProps, standardModalProps } from "./PanelPrimitives";
-import { SOLID_WELL_KNOWN_PROVIDERS } from "../utils/solid";
+import { initSolidSession, SOLID_WELL_KNOWN_PROVIDERS } from "../utils/solid";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { erase, setPodList } from "../features/lockerSlice";
 import { setLoggedIn, setUserName } from "../features/loggerSlice";
@@ -34,10 +34,10 @@ function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
 
 function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
+  const session = getDefaultSession();
+
   const [logging, setLogging] = useState(false);
   const [provider, setProvider] = useState("https://");
-
-  const session = getDefaultSession();
 
   const login = async () => {
 
@@ -51,7 +51,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
           redirectUrl: window.location.href
         });
       }
-    } catch(ex) { alert("[Login Error] " + ex); }
+    } catch (ex) { alert("[Login Error] " + ex); }
 
     setLogging(false);
   };
@@ -68,7 +68,7 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         }</datalist>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClick} disabled={logging}>Close</Button>
+        <Button variant="secondary" onClick={onClick}>Close</Button>
         <Button variant="primary" onClick={login} disabled={logging}>Login</Button>
       </Modal.Footer>
     </Modal>
@@ -126,33 +126,16 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
 
 export default function LoggerControl():JSX.Element {
 
+  const dispatch = useAppDispatch();
+
   const [showLi, setShowLi] = useState(false);
   const [showLo, setShowLo] = useState(false);
-
-  const dispatch = useAppDispatch();
-  const session = getDefaultSession();
   const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
 
-  session.removeAllListeners();
+  const fi = () => { dispatch(setLoggedIn(true)); };
+  const fo = () => { dispatch(setLoggedIn(false)); dispatch(erase()); setShowLo(false); }
 
-  session.onLogin(() => {
-    dispatch(setLoggedIn(true));
-    console.log("Session " + session.info.sessionId + " logged in.");
-  });
-
-  session.onLogout(() => {
-    dispatch(setLoggedIn(false)); dispatch(erase()); setShowLo(false);
-    console.log("Session " + session.info.sessionId + " logged out.");
-  });
-
-  session.onError(() => {
-    alert("Interaction with Solid ended up with an error.");
-  });
-
-  session.onSessionRestore(() => { alert("Solid session has been restored."); });
-  session.onSessionExpiration(() => { alert("Solid session has expired."); });
-
-  session.handleIncomingRedirect(window.location.href);
+  initSolidSession(fi, fo);
 
   const click = !isLoggedIn ? () => setShowLi(true) : () => setShowLo(true);
 

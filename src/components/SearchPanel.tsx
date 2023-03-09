@@ -5,7 +5,7 @@ import L, { Icon, LatLng, Marker } from "leaflet";
 import { Button, Offcanvas, Tab, Tabs } from "react-bootstrap";
 
 import { AppContext } from "../App";
-import { Point } from "../utils/grainpath";
+import { LightGrain, Point } from "../utils/grainpath";
 import { LOCKER_ADDR, point2view, POINTS_ADDR } from "../utils/general";
 import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/general";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
@@ -75,7 +75,7 @@ function SearchBody(): JSX.Element {
   const ensureSequence = useCallback(() => {
     search.sequence = sequence.map((g, i) => {
 
-      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} index={i} />);
+      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} />);
       const m = addPoint(g.location, (!!g.id) ? leaflet.views.tagged : leaflet.views.custom, !g.id).bindPopup(p);
 
       m.addEventListener("popupopen", () => {
@@ -127,11 +127,11 @@ function SearchBody(): JSX.Element {
         <Tab eventKey="navigate" title="Navigate">
           {
             sequence.map((g, i) => {
-              return <RemovableMarkerLine key={i} kind={(!!g.id ? "tagged" : "custom")} label={g.tags.name ?? `Unknown ${i + 1}`}
+              return <RemovableMarkerLine key={i} kind={(!!g.id ? "tagged" : "custom")} label={g.name}
                 onMarker={() => handleSequence(i)} onDelete={() => { dispatch(deletePoint(i)); }} />
             })
           }
-          <Button onClick={() => { dispatch(appendPoint({ location: getCenter(), keywords: [], tags: {} })); }} />
+          <Button onClick={() => { const cnt = getCenter(); dispatch(appendPoint({ name: point2view(cnt), location: cnt, keywords: [] } as LightGrain)); }} />
         </Tab>
       </Tabs>
     </Offcanvas.Body>

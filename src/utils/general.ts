@@ -97,9 +97,9 @@ export const ns = {
   dct: namespace("http://purl.org/dc/terms/"),
   geo: namespace("http://www.w3.org/2003/01/geo/wgs84_pos#"),
   ov: namespace("http://open.vocab.org/terms/"),
-  owl: namespace("http://dbpedia.org/ontology/"),
   rdf: namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
-  skos: namespace("http://www.w3.org/2004/02/skos/core#"),
+  rdfs: namespace("http://www.w3.org/2000/01/rdf-schema#"),
+  skos: namespace("http://www.w3.org/2004/02/skos/core#")
 };
 
 /**

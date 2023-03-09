@@ -1,4 +1,11 @@
-import L, { BaseIconOptions, Icon, PointExpression } from "leaflet";
+import L, {
+  BaseIconOptions,
+  Icon,
+  LatLng,
+  PointExpression
+} from "leaflet";
+import { LeafletContextValue } from "../features/context";
+import { HeavyGrain } from "./grainpath";
 
 const path = process.env.PUBLIC_URL + "/assets/markers";
 
@@ -35,3 +42,18 @@ export const pinViews: PinViewType = {
   custom: new L.Icon(new Pin("blue")),
   tagged: new L.Icon(new Pin("violet")),
 };
+
+export function setLeafletHeavyGrain(context: LeafletContextValue, grain: HeavyGrain): void {
+  
+  const map = context.map!;
+  const lgr = context.layerGroup!.clearLayers();
+
+  const l = new LatLng(grain.location.lat, grain.location.lon);
+    L.marker(l, { icon: context.views.tagged, draggable: false }).addTo(lgr);
+
+    if (grain.tags.polygon) {
+      L.polygon(grain.tags.polygon.map((point) => new LatLng(point.lat, point.lon)), { color: "green" }).addTo(lgr);
+    }
+
+    map.flyTo(l, map.getZoom());
+}

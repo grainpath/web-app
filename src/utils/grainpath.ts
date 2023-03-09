@@ -21,16 +21,14 @@ export type Boundary = {
   target?: Point;
 };
 
-type LightGrainTags = {
-  name?: string;
-};
-
-type HeavyGrainTags = LightGrainTags & {
+type GrainTags = {
   image?: string;
+  polygon?: Point[];
   description?: string;
 };
 
-type FeaturedGrain = {
+type GrainBase = {
+  name: string;
   location: Point;
   keywords: string[];
 };
@@ -38,18 +36,16 @@ type FeaturedGrain = {
 /**
  * Grain representation essential for query construction.
  */
-export type LightGrain = FeaturedGrain & {
+export type LightGrain = GrainBase & {
   id?: string;
-  tags: LightGrainTags;
 };
 
 /**
  * Grain representation used for view construction and persistence.
  */
-export type HeavyGrain = FeaturedGrain & {
+export type HeavyGrain = GrainBase & {
   id: string;
-  polygon?: Point[];
-  tags: HeavyGrainTags;
+  tags: GrainTags;
 };
 
 /**

@@ -2,17 +2,17 @@ import { DeleteButton, FileButton, lineContainerProps, LineLabelField } from "..
 
 type LockerItemProps = {
   label: string;
-  onSee: () => void;
-  onDel: () => void;
-}
+  onDelete: () => void;
+  onDetail: () => void;
+};
 
-export default function LockerItem({ label, onSee, onDel }: LockerItemProps): JSX.Element {
-  
+export default function LockerItem({ label, onDelete, onDetail }: LockerItemProps): JSX.Element {
+
   return (
     <div {...lineContainerProps}>
-      <FileButton onClick={onSee} />
+      <FileButton onClick={onDetail} />
       <LineLabelField label={label} />
-      <DeleteButton onClick={onDel} />
+      <DeleteButton onClick={onDelete} />
     </div>
   );
 }

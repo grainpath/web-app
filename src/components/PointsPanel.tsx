@@ -21,7 +21,7 @@ export default function PointsPanel(): JSX.Element {
   const dispatch = useDispatch();
   const list = useAppSelector(state => state.points.list);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState<HeavyGrain | undefined>(undefined);
 
   useEffect(() => {
@@ -29,9 +29,8 @@ export default function PointsPanel(): JSX.Element {
     let ignore = false;
 
     const fetcher = async () => {
-
       let next;
-      const prev = list.find((grain) => grain.id === id); console.log(list);
+      const prev = list.find((grain) => grain.id === id);
 
       try {
         if (!prev) {

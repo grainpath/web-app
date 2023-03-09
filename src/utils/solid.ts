@@ -1,4 +1,4 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import {
   buildThing,
   createSolidDataset,
@@ -26,6 +26,26 @@ const SOLID_BASE_DIR = "grainpath";
 export const SOLID_POINTS_DATASET = SOLID_BASE_DIR + "/points";
 export const SOLID_SHAPES_DATASET = SOLID_BASE_DIR + "/shapes";
 
+export function initSolidSession(fi: () => void, fo: () => void): void {
+  const session = getDefaultSession().removeAllListeners();
+
+  session.onLogin(() => {
+    fi();
+    console.log("Session " + session.info.sessionId + " logged in.");
+  });
+  session.onLogout(() => {
+    fo();
+    console.log("Session " + session.info.sessionId + " logged out.");
+  });
+  session.onError(() => {
+    alert("Interaction with Solid ended up with an error.");
+  });
+  session.onSessionRestore(() => { alert("Solid session has been restored."); });
+  session.onSessionExpiration(() => { alert("Solid session has expired."); });
+
+  session.handleIncomingRedirect(window.location.href);
+}
+
 /**
  * Standard Solid fetch with fail upon non-existing dataset.
  */
@@ -41,48 +61,45 @@ export const fetchSolidDataset = async (url: string): Promise<SolidDataset | und
   return undefined;
 };
 
-export type LockerItem = {
-  label?: string;
+export type LockerPoint = {
   note?: string;
-  updated?: Date;
+  modified?: Date;
   grain?: HeavyGrain;
 };
 
-export function extractLockerPoint(id: string, thing: Thing | null): LockerItem {
+export function extractLockerPoint(thing: Thing | null): LockerPoint {
 
   // all (!)-items certainly exist
 
   return (!thing) ? {} : {
-    label: getStringNoLocale(thing, ns.skos.prefLabel)!,
     note: getStringNoLocale(thing, ns.skos.note)!,
-    updated: getDatetime(thing, ns.owl.updated)!,
+    modified: getDatetime(thing, ns.dct.modified)!,
     grain: {
-      id: id,
+      id: new URL(thing.url).hash.slice(1),
+      name: getStringNoLocale(thing, ns.rdfs.label)!,
       location: {
         lon: getDecimal(thing, ns.geo.long)!,
         lat: getDecimal(thing, ns.geo.lat)!
       } as Point,
       keywords: getStringNoLocaleAll(thing, ns.ov.keywords),
-      tags: {
-        name: getStringNoLocale(thing, ns.skos.altLabel) ?? undefined
-      }
+      tags: { }
     } as HeavyGrain
   };
 }
 
-export function composeLockerPoint(label: string, note: string, grain: HeavyGrain): Thing {
+export function extractLockerPointName(thing: Thing): string | null {
+  return getStringNoLocale(thing, ns.rdfs.label);
+}
+
+export function composeLockerPoint(note: string, grain: HeavyGrain): Thing {
 
   let builder = buildThing(createThing({ name: grain.id }))
     .setUrl(ns.rdf.type, ns.geo.Point)
-    .setStringNoLocale(ns.skos.prefLabel, label)
+    .setStringNoLocale(ns.rdfs.label, grain.name)
     .setStringNoLocale(ns.skos.note, note)
     .setDecimal(ns.geo.long, grain.location.lon)
     .setDecimal(ns.geo.lat, grain.location.lat)
-    .setDatetime(ns.owl.updated, new Date());
-
-  builder = (grain.tags.name)
-    ? builder.setStringNoLocale(ns.skos.altLabel, grain.tags.name)
-    : builder;
+    .setDatetime(ns.dct.modified, new Date());
 
   grain.keywords.forEach((keyword) => {
     builder = builder.addStringNoLocale(ns.ov.keywords, keyword);

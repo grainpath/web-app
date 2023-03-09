@@ -28,7 +28,7 @@ export type KeywordConstraint = BooleanConstraint | CollectConstraint | MeasureC
 export type Keyword = {
   label: string;
   constrs: KeywordConstraint[];
-}
+};
 
 export type SearchState = Boundary & {
   quantity: number;
