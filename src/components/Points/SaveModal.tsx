@@ -1,7 +1,11 @@
 import { useContext, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { fetch } from "@inrupt/solid-client-authn-browser";
-import { getThing, saveSolidDatasetAt, setThing } from "@inrupt/solid-client";
+import {
+  getThing,
+  saveSolidDatasetAt,
+  setThing
+} from "@inrupt/solid-client";
 
 import { AppContext } from "../../App";
 import { HeavyGrain } from "../../utils/grainpath";
@@ -39,10 +43,8 @@ export default function SaveModal({ grain, onHide }: SaveModalProps): JSX.Elemen
       onHide();
     }
     catch (ex) { alert(ex); }
-    finally { setLoading(false);  }
+    finally { setLoading(false); }
   };
-
-  const confirm = () => { save(); };
 
   return (
     <Modal show {...standardModalProps}>
@@ -51,7 +53,7 @@ export default function SaveModal({ grain, onHide }: SaveModalProps): JSX.Elemen
       </Modal.Body>
       <Modal.Footer>
         <Button disabled={loading} variant="danger" onClick={onHide}>Discard</Button>
-        <Button disabled={loading} variant="primary" onClick={confirm}>Confirm</Button>
+        <Button disabled={loading} variant="primary" onClick={() => { save(); }}>Confirm</Button>
       </Modal.Footer>
     </Modal>
   );

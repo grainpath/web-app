@@ -48,6 +48,10 @@ export type HeavyGrain = GrainBase & {
   tags: GrainTags;
 };
 
+export function heavy2light(grain: HeavyGrain): LightGrain {
+  return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightGrain;
+}
+
 /**
  * Standard @b fetch from GrainPath server, only JSON content is available.
  */

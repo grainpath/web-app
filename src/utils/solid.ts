@@ -1,4 +1,7 @@
-import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
+import {
+  fetch,
+  getDefaultSession
+} from "@inrupt/solid-client-authn-browser";
 import {
   buildThing,
   createSolidDataset,

@@ -5,7 +5,7 @@ import { AppContext } from "../../App";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPoint } from "../../features/searchSlice";
 import { point2view } from "../../utils/general";
-import { HeavyGrain } from "../../utils/grainpath";
+import { heavy2light, HeavyGrain } from "../../utils/grainpath";
 import { setLeafletHeavyGrain } from "../../utils/leaflet";
 import { standardContainerClassName } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
@@ -33,9 +33,7 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
 
   useEffect(() => setLeafletHeavyGrain(leaflet, grain), [leaflet, grain]);
 
-  const list = () => {
-    dispatch(appendPoint({ id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords }));
-  };
+  const list = () => { dispatch(appendPoint(heavy2light(grain))); };
 
   return (
     <>
@@ -56,7 +54,7 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
           grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0 0.2rem", display: "block" }} pill>{keyword}</Badge>)
         }
       </div>
-      { description && <div className="mt-2 mb-2"><small>{description}</small></div> }
+      { description && <div className={standardContainerClassName}><small>{description}</small></div> }
       <div className="mt-2" style={{ display: "flex", justifyContent: "space-evenly" }}>
         <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={list}>List</Button>
         <Button disabled={!isLoggedIn || !podCurr} onClick={() => setMod(true)}>Save</Button>
