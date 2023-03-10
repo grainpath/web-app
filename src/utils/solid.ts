@@ -88,13 +88,23 @@ export async function storeSolidDataset({ targ, data, hide, acti, save }: StoreS
   finally { acti(false); }
 }
 
-export type LockerPlace = {
+export type LockerPlaceItem = {
   note?: string;
   modified?: Date;
   place?: HeavyPlace;
 };
 
-export function extractLockerPlace(thing: Thing | null): LockerPlace {
+/**
+ * Extracts name for both places, and routes.
+ */
+export function extractLockerItemName(thing: Thing): string | null {
+  return getStringNoLocale(thing, ns.rdfs.label);
+}
+
+/**
+ * Extracts @b place, note and date of the latest modification from a Thing.
+ */
+export function extractLockerPlaceItem(thing: Thing | null): LockerPlaceItem {
 
   // all (!)-items certainly exist
 
@@ -114,11 +124,10 @@ export function extractLockerPlace(thing: Thing | null): LockerPlace {
   };
 }
 
-export function extractLockerPlaceName(thing: Thing): string | null {
-  return getStringNoLocale(thing, ns.rdfs.label);
-}
-
-export function composeLockerPlace(note: string, place: HeavyPlace): Thing {
+/**
+ * Produces an instance of a Thing from a place.
+ */
+export function composeLockerPlaceItem(note: string, place: HeavyPlace): Thing {
 
   let builder = buildThing(createThing({ name: place.id }))
     .setUrl(ns.rdf.type, ns.sbeo.PointOfInterest)
