@@ -4,16 +4,16 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { LOCKER_ADDR, SEARCH_ADDR } from "../utils/general";
-import { HeavyGrain, grainpathFetch, GRAINPATH_HEAVY_URL } from "../utils/grainpath";
+import { HeavyPlace, grainpathFetch, GRAINPATH_PLACE_URL } from "../utils/grainpath";
 import { useAppSelector } from "../features/hooks";
-import { appendList } from "../features/pointsSlice";
+import { appendList } from "../features/placesSlice";
 import { centerContainerProps, LockerButton, SearchButton } from "./PanelPrimitives";
-import HeavyGrainView from "./Points/HeavyGrainView";
+import HeavyPlaceView from "./Places/HeavyPlaceView";
 
 /**
- * Fetches and shows HeavyGrain by @b id, non-existent entities are reported.
+ * Fetches and shows HeavyPlace by @b id, non-existent entities are reported.
  */
-export default function PointsPanel(): JSX.Element {
+export default function PlacesPanel(): JSX.Element {
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function PointsPanel(): JSX.Element {
   const list = useAppSelector(state => state.points.list);
 
   const [loading, setLoading] = useState(true);
-  const [current, setCurrent] = useState<HeavyGrain | undefined>(undefined);
+  const [current, setCurrent] = useState<HeavyPlace | undefined>(undefined);
 
   useEffect(() => {
 
@@ -35,10 +35,10 @@ export default function PointsPanel(): JSX.Element {
       try {
         if (!prev) {
           setLoading(true);
-          const res = await grainpathFetch(GRAINPATH_HEAVY_URL, { id: id });
+          const res = await grainpathFetch(GRAINPATH_PLACE_URL, { id: id });
 
           switch (res.status) {
-            case 200: next = (await res.json()) as HeavyGrain; break;
+            case 200: next = (await res.json()) as HeavyPlace; break;
             case 404: break;
             default:  throw new Error("[Heavy Error] " + res.status + ": " + res.statusText);
           }
@@ -57,7 +57,7 @@ export default function PointsPanel(): JSX.Element {
   }, [id, list, dispatch]);
 
   const view = (current)
-    ? <HeavyGrainView grain={current} />
+    ? <HeavyPlaceView place={current} />
     : <Alert variant="warning">Point <b>{id}</b> has not been found.</Alert>;
 
   return (

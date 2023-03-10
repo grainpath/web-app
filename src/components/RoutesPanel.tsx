@@ -1,10 +1,10 @@
 import { Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/const";
-import { SearchButton, LockerButton } from "./PanelControl";
+import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/general";
+import { SearchButton, LockerButton } from "./PanelPrimitives";
 
-function ResultHead(): JSX.Element {
+function RoutesHead(): JSX.Element {
 
   const navigate = useNavigate();
 
@@ -16,19 +16,19 @@ function ResultHead(): JSX.Element {
   );
 }
 
-function ResultBody(): JSX.Element {
+function RoutesBody(): JSX.Element {
 
   return (
     <Offcanvas.Body></Offcanvas.Body>
   );
 }
 
-export default function ResultPanel(): JSX.Element {
+export default function RoutesPanel(): JSX.Element {
 
   return (
     <>
-      <ResultHead />
-      <ResultBody />
+      <RoutesHead />
+      <RoutesBody />
     </>
   );
 }

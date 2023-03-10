@@ -5,16 +5,16 @@ import L, { Icon, LatLng, Marker } from "leaflet";
 import { Button, Offcanvas, Tab, Tabs } from "react-bootstrap";
 
 import { AppContext } from "../App";
-import { LightGrain, Point } from "../utils/grainpath";
-import { LOCKER_ADDR, point2view, POINTS_ADDR } from "../utils/general";
+import { LightPlace, Point } from "../utils/grainpath";
+import { LOCKER_ADDR, point2view, PLACES_ADDR } from "../utils/general";
 import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/general";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { appendPoint, deletePoint, erase, setSource, setTarget, updatePoint } from "../features/searchSlice";
+import { appendPlace, deletePlace, erase, setSource, setTarget, updatePlace } from "../features/searchSlice";
 import EraseButton from "./Search/EraseButton";
 import { CountInput } from "./Search/CountInput";
 import { DistanceInput } from "./Search/DistanceInput";
 import { KeywordsInput } from "./Search/KeywordsInput";
-import { LightGrainPopup, LockerButton, RemovableMarkerLine, SteadyMarkerLine } from "./PanelPrimitives";
+import { LightPlacePopup, LockerButton, RemovableMarkerLine, SteadyMarkerLine } from "./PanelPrimitives";
 
 function SearchHead(): JSX.Element {
 
@@ -73,17 +73,17 @@ function SearchBody(): JSX.Element {
   }, [addPoint, dispatch, target, leaflet.views]);
 
   const ensureSequence = useCallback(() => {
-    search.sequence = sequence.map((g, i) => {
+    search.sequence = sequence.map((place, i) => {
 
-      const p = ReactDOMServer.renderToString(<LightGrainPopup grain={g} />);
-      const m = addPoint(g.location, (!!g.id) ? leaflet.views.tagged : leaflet.views.custom, !g.id).bindPopup(p);
+      const p = ReactDOMServer.renderToString(<LightPlacePopup place={place} />);
+      const m = addPoint(place.location, (!!place.id) ? leaflet.views.tagged : leaflet.views.custom, !place.id).bindPopup(p);
 
       m.addEventListener("popupopen", () => {
-        if (!!g.id) {
-          document.getElementById(`popup-${g.id}`)?.addEventListener("click", () => navigate(POINTS_ADDR + `/${g.id}`));
+        if (!!place.id) {
+          document.getElementById(`popup-${place.id}`)?.addEventListener("click", () => navigate(PLACES_ADDR + `/${place.id}`));
         }
       });
-      addDragendEvent(m, (point: Point) => dispatch(updatePoint({point: point, i: i})));
+      addDragendEvent(m, (point: Point) => dispatch(updatePlace({point: point, i: i})));
       return m;
     });
   }, [addPoint, navigate, dispatch, leaflet.views, search, sequence]);
@@ -118,7 +118,7 @@ function SearchBody(): JSX.Element {
         onMarker={() => handleBoundary(source, (point) => { dispatch(setSource(point)); })} />
       <SteadyMarkerLine kind="target" label={target ? point2view(target) : undefined}
         onMarker={() => handleBoundary(target, (point) => { dispatch(setTarget(point)); })} />
-      <Tabs defaultActiveKey="discover" fill className="mb-4 mt-4">
+      <Tabs className="mb-4 mt-4" defaultActiveKey="discover" fill>
         <Tab eventKey="discover" title="Discover">
           <CountInput />
           <DistanceInput />
@@ -128,10 +128,10 @@ function SearchBody(): JSX.Element {
           {
             sequence.map((g, i) => {
               return <RemovableMarkerLine key={i} kind={(!!g.id ? "tagged" : "custom")} label={g.name}
-                onMarker={() => handleSequence(i)} onDelete={() => { dispatch(deletePoint(i)); }} />
+                onMarker={() => handleSequence(i)} onDelete={() => { dispatch(deletePlace(i)); }} />
             })
           }
-          <Button onClick={() => { const cnt = getCenter(); dispatch(appendPoint({ name: point2view(cnt), location: cnt, keywords: [] } as LightGrain)); }} />
+          <Button onClick={() => { const cnt = getCenter(); dispatch(appendPlace({ name: point2view(cnt), location: cnt, keywords: [] } as LightPlace)); }} />
         </Tab>
       </Tabs>
     </Offcanvas.Body>
