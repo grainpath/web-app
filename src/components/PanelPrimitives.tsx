@@ -10,7 +10,7 @@ import {
   Storage
 } from "@mui/icons-material";
 
-import { LightGrain } from "../utils/grainpath";
+import { LightPlace } from "../utils/grainpath";
 
 export const standardContainerClassName = "mt-2 mb-2";
 
@@ -129,25 +129,25 @@ export function RemovableMarkerLine({ label, onDelete, ...rest }: RemovableMarke
   );
 }
 
-type LightGrainPopupProps = { grain: LightGrain; };
+type LightPlacePopupProps = { place: LightPlace; };
 
-export function LightGrainPopup({ grain }: LightGrainPopupProps): JSX.Element {
+export function LightPlacePopup({ place }: LightPlacePopupProps): JSX.Element {
 
-  const buttonId = (grain.id) ? `popup-${grain.id}` : undefined;
+  const buttonId = (place.id) ? `popup-${place.id}` : undefined;
 
   return (
     <>
-      <b>{grain.name}</b>
+      <b>{place.name}</b>
       {
-        (!!grain.id) &&
+        (!!place.id) &&
         <>
           <hr style={{opacity: 1.0, margin: "0.25rem 0"}} />
           <div {...popupContainerProps}>
-            <button id={buttonId} className="standard-button" style={{ borderRadius: "50%" }} disabled={!grain.id}>
+            <button id={buttonId} className="standard-button" style={{ borderRadius: "50%" }} disabled={!place.id}>
               <Info fontSize="large" />
             </button>
             <div className="mt-1 mb-1" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", width: "150px" }}>
-              { grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0.1rem", display: "block" }} pill>{keyword}</Badge>) }
+              { place.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0.1rem", display: "block" }} pill>{keyword}</Badge>) }
             </div>
           </div>
         </>
