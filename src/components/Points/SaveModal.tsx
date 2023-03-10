@@ -1,11 +1,6 @@
 import { useContext, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-import {
-  getThing,
-  saveSolidDatasetAt,
-  setThing
-} from "@inrupt/solid-client";
+import { getThing,  setThing, SolidDataset } from "@inrupt/solid-client";
 
 import { AppContext } from "../../App";
 import { HeavyGrain } from "../../utils/grainpath";
@@ -13,7 +8,8 @@ import { useAppSelector } from "../../features/hooks";
 import {
   composeLockerPoint,
   extractLockerPoint,
-  SOLID_POINTS_DATASET
+  SOLID_POINTS_DATASET,
+  storeSolidDataset
 } from "../../utils/solid";
 import { standardModalProps, UserInputPane } from "../PanelPrimitives";
 
@@ -33,17 +29,14 @@ export default function SaveModal({ grain, onHide }: SaveModalProps): JSX.Elemen
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState(point.note ?? "");
 
-  const save = async () => {
-    setLoading(true);
-    const newdata = setThing(olddata, composeLockerPoint(note, grain));
-
-    try {
-      const target = `${pod}${SOLID_POINTS_DATASET}`;
-      dataset.points = await saveSolidDatasetAt(target, newdata, { fetch: fetch })
-      onHide();
-    }
-    catch (ex) { alert(ex); }
-    finally { setLoading(false); }
+  const save = () => {
+    storeSolidDataset({
+      targ: `${pod}${SOLID_POINTS_DATASET}`,
+      data: setThing(olddata, composeLockerPoint(note, grain)),
+      hide: onHide,
+      acti: (b: boolean) => setLoading(b),
+      save: (d: SolidDataset) => dataset.points = d,
+    });
   };
 
   return (
@@ -52,7 +45,7 @@ export default function SaveModal({ grain, onHide }: SaveModalProps): JSX.Elemen
         <UserInputPane note={note} setNote={setNote} modified={point.modified} />
       </Modal.Body>
       <Modal.Footer>
-        <Button disabled={loading} variant="danger" onClick={onHide}>Discard</Button>
+        <Button disabled={loading} variant="danger" onClick={onHide} className="me-auto">Discard</Button>
         <Button disabled={loading} variant="primary" onClick={() => { save(); }}>Confirm</Button>
       </Modal.Footer>
     </Modal>

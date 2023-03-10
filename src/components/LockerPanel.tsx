@@ -5,7 +5,7 @@ import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { getThingAll, Thing } from "@inrupt/solid-client";
 
 import { AppContext } from "../App";
-import { SimpleButtonProps } from "./PanelPrimitives";
+import { lineContainerStyle, SimpleButtonProps } from "./PanelPrimitives";
 import { SEARCH_ADDR } from "../utils/general";
 import { SearchButton } from "./PanelPrimitives";
 import LockerItem from "./Locker/LockerItem";
@@ -28,13 +28,13 @@ function LockerHead(): JSX.Element {
 function ConfigureButton(props: SimpleButtonProps): JSX.Element {
 
   return (
-    <button {...props} className="standard-button" style={{ marginLeft: "10px" }} title="Settings">
+    <button {...props} className="standard-button" title="Pod configuration">
       <SettingsApplicationsIcon fontSize="large" />
     </button>
   );
 }
 
-type LockerPanesProps = { pod: string }
+type LockerPanesProps = { pod: string };
 
 function LockerPanes({ pod }: LockerPanesProps): JSX.Element {
 
@@ -49,28 +49,18 @@ function LockerPanes({ pod }: LockerPanesProps): JSX.Element {
     setThing(t); setPtmod(true);
   };
 
-  const deletePoint = (thing: Thing): void => {
-    console.log(thing.url);
-  };
-
-  const detailShape = (thing: Thing): void => {
-    setThing(thing);
-  };
-
-  const deleteShape = (thing: Thing): void => {
-    console.log(thing.url);
+  const detailShape = (t: Thing): void => {
+    console.log(t.url);
   };
 
   return (
     <>
       <Tabs className="mb-4 mt-4" defaultActiveKey="points" fill>
         <Tab eventKey="points" title="Points">
-          { pts.map((t, i) => <LockerItem key={i} label={extractLockerPointName(t)!}
-              onDetail={() => detailPoint(t)} onDelete={() => deletePoint(t)} />) }
+          { pts.map((t, i) => <LockerItem key={i} label={extractLockerPointName(t)!} onDelete={() => {}} onDetail={() => detailPoint(t)} />) }
         </Tab>
         <Tab eventKey="shapes" title="Shapes">
-          { shs.map((t, i) => <LockerItem key={i} label={extractLockerPointName(t)!}
-              onDetail={() => detailShape(t)} onDelete={() => deleteShape(t)} />) }
+          { shs.map((t, i) => <LockerItem key={i} label={extractLockerPointName(t)!} onDelete={() => {}} onDetail={() => detailShape(t)} />) }
         </Tab>
       </Tabs>
       { ptmod && <PointModal point={extractLockerPoint(thing!)} onHide={() => setPtmod(false)} /> }
@@ -86,7 +76,7 @@ function LockerContent(): JSX.Element {
 
   return (
     <>
-      <Form.Group style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="mt-2 mb-4">
+      <Form.Group {...lineContainerStyle} className="mt-2 mb-4">
         <Form.Control type="text" placeholder="Select Pod..." defaultValue={pod} readOnly />
         <ConfigureButton onClick={() => setMod(true)} />
       </Form.Group>

@@ -7,6 +7,7 @@ import { AppContext } from "../../App";
 import { POINTS_ADDR } from "../../utils/general";
 import { composeLockerPoint, LockerPoint, SOLID_POINTS_DATASET, storeSolidDataset } from "../../utils/solid";
 import {
+  keywordBadgeProps,
   standardContainerClassName,
   standardModalProps,
   UserInputPane
@@ -57,7 +58,7 @@ export function PointModal({ point, onHide }: PointModalProps): JSX.Element {
           </h5>
         </div>
         <div className="mt-3 mb-3" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-          { grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0.2rem" }}>{keyword}</Badge>) }
+          { grain.keywords.map((keyword, i) => <Badge key={i} {...keywordBadgeProps}>{keyword}</Badge>) }
         </div>
         <UserInputPane note={note} setNote={setNote} modified={point.modified} />
       </Modal.Body>

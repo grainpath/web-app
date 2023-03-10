@@ -7,7 +7,7 @@ import { appendPoint } from "../../features/searchSlice";
 import { point2view } from "../../utils/general";
 import { heavy2light, HeavyGrain } from "../../utils/grainpath";
 import { setLeafletHeavyGrain } from "../../utils/leaflet";
-import { standardContainerClassName } from "../PanelPrimitives";
+import { keywordBadgeProps, standardContainerClassName } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
 
 type HeavyGrainViewProps = {
@@ -50,9 +50,7 @@ export default function HeavyGrainView({ grain }: HeavyGrainViewProps): JSX.Elem
         </div>
       }
       <div className={standardContainerClassName} style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-        {
-          grain.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0 0.2rem", display: "block" }} pill>{keyword}</Badge>)
-        }
+        { grain.keywords.map((keyword, i) => <Badge key={i} {...keywordBadgeProps}>{keyword}</Badge>) }
       </div>
       { description && <div className={standardContainerClassName}><small>{description}</small></div> }
       <div className="mt-2" style={{ display: "flex", justifyContent: "space-evenly" }}>
