@@ -11,6 +11,7 @@ import {
   getSolidDataset,
   getStringNoLocale,
   getStringNoLocaleAll,
+  saveSolidDatasetAt,
   SolidDataset,
   Thing
 } from "@inrupt/solid-client";
@@ -28,6 +29,10 @@ export const SOLID_WELL_KNOWN_PROVIDERS: string[] = [
 const SOLID_BASE_DIR = "grainpath";
 export const SOLID_POINTS_DATASET = SOLID_BASE_DIR + "/points";
 export const SOLID_SHAPES_DATASET = SOLID_BASE_DIR + "/shapes";
+
+export function grain2url(grain: HeavyGrain, pod: string) {
+  return pod + SOLID_POINTS_DATASET + '#' + grain.id;
+}
 
 export function initSolidSession(fi: () => void, fo: () => void): void {
   const session = getDefaultSession().removeAllListeners();
@@ -52,7 +57,7 @@ export function initSolidSession(fi: () => void, fo: () => void): void {
 /**
  * Standard Solid fetch with fail upon non-existing dataset.
  */
-export const fetchSolidDataset = async (url: string): Promise<SolidDataset | undefined> => {
+export async function fetchSolidDataset(url: string): Promise<SolidDataset | undefined> {
 
   try {
     return await getSolidDataset(url, { fetch: fetch });
@@ -63,6 +68,25 @@ export const fetchSolidDataset = async (url: string): Promise<SolidDataset | und
 
   return undefined;
 };
+
+type StoreSolidDatasetProps = {
+  targ: string;
+  data: SolidDataset;
+  hide: () => void;
+  acti: (b: boolean) => void;
+  save: (d: SolidDataset) => void;
+};
+
+export async function storeSolidDataset({ targ, data, hide, acti, save }: StoreSolidDatasetProps): Promise<void> {
+
+  try {
+    acti(true);
+    save(await saveSolidDatasetAt(targ, data, { fetch: fetch }));
+    hide();
+  }
+  catch (ex) { alert(ex); }
+  finally { acti(false); }
+}
 
 export type LockerPoint = {
   note?: string;
