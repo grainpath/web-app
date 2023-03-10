@@ -88,8 +88,8 @@ export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) =
 
 export const SEARCH_ADDR = "/search";
 export const LOCKER_ADDR = "/locker";
-export const SHAPES_ADDR = "/shapes";
-export const POINTS_ADDR = "/points";
+export const PLACES_ADDR = "/places";
+export const ROUTES_ADDR = "/routes";
 
 // linked open vocabularies
 
@@ -99,6 +99,7 @@ export const ns = {
   ov: namespace("http://open.vocab.org/terms/"),
   rdf: namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
   rdfs: namespace("http://www.w3.org/2000/01/rdf-schema#"),
+  sbeo: namespace("https://w3id.org/sbeo#"),
   skos: namespace("http://www.w3.org/2004/02/skos/core#")
 };
 

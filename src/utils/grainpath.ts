@@ -1,7 +1,7 @@
 export const GRAINPATH_BASE_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
 export const GRAINPATH_AUTOCOMPLETE_URL = GRAINPATH_BASE_URL + "/autocomplete";
-export const GRAINPATH_HEAVY_URL = GRAINPATH_BASE_URL + "/heavy";
-export const GRAINPATH_GRAIN_URL = GRAINPATH_BASE_URL + "/grain";
+export const GRAINPATH_PLACE_URL = GRAINPATH_BASE_URL + "/place";
+export const GRAINPATH_STACK_URL = GRAINPATH_BASE_URL + "/stack";
 export const GRAINPATH_ROUTE_URL = GRAINPATH_BASE_URL + "/route";
 export const GRAINPATH_SHORT_URL = GRAINPATH_BASE_URL + "/short";
 
@@ -21,39 +21,39 @@ export type Boundary = {
   target?: Point;
 };
 
-type GrainTags = {
+type PlaceTags = {
   image?: string;
   polygon?: Point[];
   description?: string;
 };
 
-type GrainBase = {
+type PlaceBase = {
   name: string;
   location: Point;
   keywords: string[];
 };
 
 /**
- * Grain representation essential for query construction.
+ * Place representation essential for query construction.
  */
-export type LightGrain = GrainBase & {
+export type LightPlace = PlaceBase & {
   id?: string;
 };
 
 /**
- * Grain representation used for view construction and persistence.
+ * Place representation used for view construction and persistence.
  */
-export type HeavyGrain = GrainBase & {
+export type HeavyPlace = PlaceBase & {
   id: string;
-  tags: GrainTags;
+  tags: PlaceTags;
 };
 
-export function heavy2light(grain: HeavyGrain): LightGrain {
-  return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightGrain;
+export function heavy2light(grain: HeavyPlace): LightPlace {
+  return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightPlace;
 }
 
 /**
- * Standard @b fetch from GrainPath server, only JSON content is available.
+ * Standard @b fetch from an application server, only JSON content type is available.
  */
 export function grainpathFetch(url: string, body: any): Promise<Response> {
   const content = "application/json";

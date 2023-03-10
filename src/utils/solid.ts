@@ -17,7 +17,7 @@ import {
 } from "@inrupt/solid-client";
 
 import { ns } from "./general";
-import { HeavyGrain, Point } from "./grainpath";
+import { HeavyPlace, Point } from "./grainpath";
 
 export const SOLID_WELL_KNOWN_PROVIDERS: string[] = [
   "https://inrupt.net/",
@@ -27,11 +27,11 @@ export const SOLID_WELL_KNOWN_PROVIDERS: string[] = [
 ];
 
 const SOLID_BASE_DIR = "grainpath";
-export const SOLID_POINTS_DATASET = SOLID_BASE_DIR + "/points";
-export const SOLID_SHAPES_DATASET = SOLID_BASE_DIR + "/shapes";
+export const SOLID_PLACES_DATASET = SOLID_BASE_DIR + "/places";
+export const SOLID_ROUTES_DATASET = SOLID_BASE_DIR + "/routes";
 
-export function grain2url(grain: HeavyGrain, pod: string) {
-  return pod + SOLID_POINTS_DATASET + '#' + grain.id;
+export function place2url(grain: HeavyPlace, pod: string) {
+  return pod + SOLID_PLACES_DATASET + '#' + grain.id;
 }
 
 export function initSolidSession(fi: () => void, fo: () => void): void {
@@ -88,20 +88,20 @@ export async function storeSolidDataset({ targ, data, hide, acti, save }: StoreS
   finally { acti(false); }
 }
 
-export type LockerPoint = {
+export type LockerPlace = {
   note?: string;
   modified?: Date;
-  grain?: HeavyGrain;
+  place?: HeavyPlace;
 };
 
-export function extractLockerPoint(thing: Thing | null): LockerPoint {
+export function extractLockerPlace(thing: Thing | null): LockerPlace {
 
   // all (!)-items certainly exist
 
   return (!thing) ? {} : {
     note: getStringNoLocale(thing, ns.skos.note)!,
     modified: getDatetime(thing, ns.dct.modified)!,
-    grain: {
+    place: {
       id: new URL(thing.url).hash.slice(1),
       name: getStringNoLocale(thing, ns.rdfs.label)!,
       location: {
@@ -110,25 +110,25 @@ export function extractLockerPoint(thing: Thing | null): LockerPoint {
       } as Point,
       keywords: getStringNoLocaleAll(thing, ns.ov.keywords),
       tags: { }
-    } as HeavyGrain
+    } as HeavyPlace
   };
 }
 
-export function extractLockerPointName(thing: Thing): string | null {
+export function extractLockerPlaceName(thing: Thing): string | null {
   return getStringNoLocale(thing, ns.rdfs.label);
 }
 
-export function composeLockerPoint(note: string, grain: HeavyGrain): Thing {
+export function composeLockerPlace(note: string, place: HeavyPlace): Thing {
 
-  let builder = buildThing(createThing({ name: grain.id }))
-    .setUrl(ns.rdf.type, ns.geo.Point)
-    .setStringNoLocale(ns.rdfs.label, grain.name)
+  let builder = buildThing(createThing({ name: place.id }))
+    .setUrl(ns.rdf.type, ns.sbeo.PointOfInterest)
+    .setStringNoLocale(ns.rdfs.label, place.name)
     .setStringNoLocale(ns.skos.note, note)
-    .setDecimal(ns.geo.long, grain.location.lon)
-    .setDecimal(ns.geo.lat, grain.location.lat)
+    .setDecimal(ns.geo.long, place.location.lon)
+    .setDecimal(ns.geo.lat, place.location.lat)
     .setDatetime(ns.dct.modified, new Date());
 
-  grain.keywords.forEach((keyword) => {
+  place.keywords.forEach((keyword) => {
     builder = builder.addStringNoLocale(ns.ov.keywords, keyword);
   });
 
