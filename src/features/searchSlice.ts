@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Boundary, LightGrain, Point } from "../utils/grainpath";
+import { Boundary, LightPlace, Point } from "../utils/grainpath";
 
 type ConstraintBase = {
   tag: string;
@@ -34,7 +34,7 @@ export type SearchState = Boundary & {
   quantity: number;
   distance: number;
   keywords: Keyword[];
-  sequence: LightGrain[];
+  sequence: LightPlace[];
 };
 
 const initialState = () => {
@@ -50,14 +50,14 @@ export const searchSlice = createSlice({
     setTarget: (state, action: PayloadAction<Point>) => { state.target = action.payload; },
     setQuantity: (state, action: PayloadAction<number>) => { state.quantity = action.payload; },
     setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
-    appendPoint: (state, action: PayloadAction<LightGrain>) => { state.sequence.push(action.payload); },
-    deletePoint: (state, action: PayloadAction<number>) => {
+    appendPlace: (state, action: PayloadAction<LightPlace>) => { state.sequence.push(action.payload); },
+    deletePlace: (state, action: PayloadAction<number>) => {
       state.sequence = [ ...state.sequence.slice(0, action.payload), ...state.sequence.slice(action.payload + 1) ];
     },
-    updatePoint: (state, action: PayloadAction<{ point: Point, i: number}>) => {
+    updatePlace: (state, action: PayloadAction<{ point: Point, i: number}>) => {
       state.sequence[action.payload.i].location = action.payload.point;
     },
-    setSequence: (state, action: PayloadAction<LightGrain[]>) => { state.sequence = action.payload; },
+    setSequence: (state, action: PayloadAction<LightPlace[]>) => { state.sequence = action.payload; },
     insertKeyword: (state, action: PayloadAction<Keyword>) => {
       let i = state.keywords.findIndex((keyword) => keyword.label === action.payload.label);
       i = (i === -1) ? state.keywords.length : i;
@@ -75,9 +75,9 @@ export const {
   setTarget,
   setQuantity,
   setDistance,
-  appendPoint,
-  deletePoint,
-  updatePoint,
+  appendPlace,
+  deletePlace,
+  updatePlace,
   insertKeyword,
   deleteKeyword
 } = searchSlice.actions;
