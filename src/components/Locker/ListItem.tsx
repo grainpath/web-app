@@ -1,12 +1,12 @@
 import { DeleteButton, FileButton, lineContainerProps, LineLabelField } from "../PanelPrimitives";
 
-type LockerItemProps = {
+type ListItemProps = {
   label: string;
   onDelete: () => void;
   onDetail: () => void;
 };
 
-export default function LockerItem({ label, onDelete, onDetail }: LockerItemProps): JSX.Element {
+export default function ListItem({ label, onDelete, onDetail }: ListItemProps): JSX.Element {
 
   return (
     <div {...lineContainerProps}>

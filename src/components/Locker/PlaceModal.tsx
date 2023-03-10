@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import { Link as LinkIcon } from "@mui/icons-material";
 import { getThing, removeThing, setThing, SolidDataset } from "@inrupt/solid-client";
 import { AppContext } from "../../App";
-import { POINTS_ADDR } from "../../utils/general";
-import { composeLockerPoint, LockerPoint, SOLID_POINTS_DATASET, storeSolidDataset } from "../../utils/solid";
+import { PLACES_ADDR } from "../../utils/general";
+import { heavy2light } from "../../utils/grainpath";
+import { composeLockerPlaceItem, LockerPlaceItem, SOLID_PLACES_DATASET, storeSolidDataset } from "../../utils/solid";
 import {
   keywordBadgeProps,
   standardContainerClassName,
@@ -13,38 +14,37 @@ import {
   UserInputPane
 } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { appendPoint } from "../../features/searchSlice";
-import { heavy2light } from "../../utils/grainpath";
+import { appendPlace } from "../../features/searchSlice";
 
-type PointModalProps = { point: LockerPoint; onHide: () => void; };
+type PlaceModalProps = { item: LockerPlaceItem; onHide: () => void; };
 
-export function PointModal({ point, onHide }: PointModalProps): JSX.Element {
+export default function PlaceModal({ item, onHide }: PlaceModalProps): JSX.Element {
 
-  const grain = point.grain!;
+  const place = item.place!;
 
   const pod = useAppSelector(state => state.locker.podCurr)!;
   const dataset = useContext(AppContext).locker.data.get(pod)!;
-  const olddata = dataset.points;
+  const olddata = dataset.places;
 
-  const [note, setNote] = useState(point.note!);
+  const [note, setNote] = useState(item.note!);
   const [acti, setActi] = useState(false);
 
-  const target = `${pod}${SOLID_POINTS_DATASET}`;
+  const target = `${pod}${SOLID_PLACES_DATASET}`;
   const actiS = (b: boolean) => setActi(b);
-  const saveS = (d: SolidDataset) => dataset.points = d;
+  const saveS = (d: SolidDataset) => dataset.places = d;
   const props = { targ: target, acti: actiS, save: saveS, hide: onHide };
 
   const dispatch = useAppDispatch();
   const sequence = useAppSelector(state => state.search.sequence);
 
-  const list = () => { dispatch(appendPoint(heavy2light(grain))); };
+  const list = () => { dispatch(appendPlace(heavy2light(place))); };
 
   const save = () => {
-    storeSolidDataset({...props, data: setThing(olddata, composeLockerPoint(note, grain))});
+    storeSolidDataset({...props, data: setThing(olddata, composeLockerPlaceItem(note, place))});
   };
 
   const remove = () => {
-    storeSolidDataset({...props, data: removeThing(olddata, getThing(olddata, target + '#' + grain.id)!)});
+    storeSolidDataset({...props, data: removeThing(olddata, getThing(olddata, target + '#' + place.id)!)});
   };
 
   return (
@@ -53,18 +53,18 @@ export function PointModal({ point, onHide }: PointModalProps): JSX.Element {
       <Modal.Body>
         <div className={standardContainerClassName}>
           <h5>
-            {grain.name}
-            <sup><Link style={{ fontSize: "large" }} to={POINTS_ADDR + "/" + grain.id}><LinkIcon /></Link></sup>
+            {place.name}
+            <sup><Link style={{ fontSize: "large" }} to={PLACES_ADDR + "/" + place.id}><LinkIcon /></Link></sup>
           </h5>
         </div>
         <div className="mt-3 mb-3" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-          { grain.keywords.map((keyword, i) => <Badge key={i} {...keywordBadgeProps}>{keyword}</Badge>) }
+          { place.keywords.map((keyword, i) => <Badge key={i} {...keywordBadgeProps}>{keyword}</Badge>) }
         </div>
-        <UserInputPane note={note} setNote={setNote} modified={point.modified} />
+        <UserInputPane note={note} setNote={setNote} modified={item.modified} />
       </Modal.Body>
       <Modal.Footer>
         <Button disabled={acti} onClick={() => { remove(); }} className="me-auto" variant="danger">Delete</Button>
-        <Button disabled={!!sequence.find((gs) => gs.id === grain.id)} onClick={list}>List</Button>
+        <Button disabled={!!sequence.find((gs) => gs.id === place.id)} onClick={list}>List</Button>
         <Button disabled={acti} onClick={() => { save(); }}>Save</Button>
       </Modal.Footer>
     </Modal>

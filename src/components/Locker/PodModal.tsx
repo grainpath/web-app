@@ -7,14 +7,14 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setPodCurr } from "../../features/lockerSlice";
 import {
   fetchSolidDataset,
-  SOLID_POINTS_DATASET,
-  SOLID_SHAPES_DATASET
+  SOLID_PLACES_DATASET,
+  SOLID_ROUTES_DATASET
 } from "../../utils/solid";
 
 type PodModalProps = { onHide: () => void; };
 
 /**
- * Performs acquisition of both @b points and @b shapes datasets.
+ * Performs acquisition of both @b places and @b routes datasets.
  */
 export default function PodModal({ onHide }: PodModalProps): JSX.Element {
 
@@ -32,14 +32,14 @@ export default function PodModal({ onHide }: PodModalProps): JSX.Element {
     try {
       setLoading(true);
 
-      const points = await fetchSolidDataset(pod + SOLID_POINTS_DATASET);
-      const shapes = await fetchSolidDataset(pod + SOLID_SHAPES_DATASET);
+      const places = await fetchSolidDataset(pod + SOLID_PLACES_DATASET);
+      const routes = await fetchSolidDataset(pod + SOLID_ROUTES_DATASET);
 
-      if (!points || !shapes) {
+      if (!places || !routes) {
         return alert("[Solid Error] Cannot obtain datasets from the selected Solid Pod.");
       }
 
-      data.set(pod!, { points: points, shapes: shapes });
+      data.set(pod!, { places: places, routes: routes });
       dispatch(setPodCurr(pod!));
       onHide();
     }
