@@ -8,8 +8,8 @@ import { pinViews, PinViewType } from "../utils/leaflet";
  */
 
 type LockerDatasets = {
-  points: SolidDataset;
-  shapes: SolidDataset
+  places: SolidDataset;
+  routes: SolidDataset
 }
 
 export type LockerContextValue = {
