@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import lockerReducer from "./lockerSlice";
 import loggerReducer from "./loggerSlice";
 import pointsReducer from "./placesSlice";
-import routesReducer from "./routesSlice";
+import resultReducer from "./resultSlice";
 import searchReducer from "./searchSlice";
 
 export const store = configureStore({
@@ -11,7 +11,7 @@ export const store = configureStore({
     locker: lockerReducer,
     logger: loggerReducer,
     points: pointsReducer,
-    routes: routesReducer,
+    result: resultReducer,
     search: searchReducer
   }
 });

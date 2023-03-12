@@ -1,3 +1,5 @@
+import { KeywordConstraint } from "../features/searchSlice";
+
 export const GRAINPATH_BASE_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
 export const GRAINPATH_AUTOCOMPLETE_URL = GRAINPATH_BASE_URL + "/autocomplete";
 export const GRAINPATH_PLACE_URL = GRAINPATH_BASE_URL + "/place";
@@ -51,6 +53,19 @@ export type HeavyPlace = PlaceBase & {
 export function heavy2light(grain: HeavyPlace): LightPlace {
   return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightPlace;
 }
+
+/**
+ * 
+ */
+export type Result = {
+  name?: string;
+  distance?: number;
+  duration?: number;
+  places?: LightPlace[];
+  waypoints?: Point[];
+  polyline?: Point[];
+  constraints?: KeywordConstraint[];
+};
 
 /**
  * Standard @b fetch from an application server, only JSON content type is available.

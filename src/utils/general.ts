@@ -1,6 +1,6 @@
 import { LatLng } from "leaflet";
 import namespace from "@rdfjs/namespace";
-import { Point } from "./grainpath";
+import { HeavyPlace, Point } from "./grainpath";
 
 // user input
 
@@ -89,7 +89,7 @@ export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) =
 export const SEARCH_ADDR = "/search";
 export const LOCKER_ADDR = "/locker";
 export const PLACES_ADDR = "/places";
-export const ROUTES_ADDR = "/routes";
+export const RESULT_ADDR = "/result";
 
 // linked open vocabularies
 
@@ -143,3 +143,7 @@ export function latLng2point(l: LatLng): Point {
 export function swapImmutable<T>(arr: T[], l: number, r: number): T[] {
   return [ ...arr.slice(0, l), arr[r], ...arr.slice(l + 1, r), arr[l], ...arr.slice(r + 1) ];
 };
+
+export interface IUserStorage {
+  getPlace(id: string): HeavyPlace | undefined;
+}

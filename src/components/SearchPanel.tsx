@@ -1,12 +1,12 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as ReactDOMServer from "react-dom/server";
 import L, { Icon, LatLng, Marker } from "leaflet";
 import { Button, Offcanvas, Tab, Tabs } from "react-bootstrap";
 
 import { AppContext } from "../App";
-import { LightPlace, Point } from "../utils/grainpath";
-import { LOCKER_ADDR, point2view, PLACES_ADDR } from "../utils/general";
+import { grainpathFetch, GRAINPATH_SHORT_URL, LightPlace, Point, Result } from "../utils/grainpath";
+import { LOCKER_ADDR, point2view, PLACES_ADDR, RESULT_ADDR } from "../utils/general";
 import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/general";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { appendPlace, deletePlace, erase, setSource, setTarget, updatePlace } from "../features/searchSlice";
@@ -15,6 +15,7 @@ import { CountInput } from "./Search/CountInput";
 import { DistanceInput } from "./Search/DistanceInput";
 import { KeywordsInput } from "./Search/KeywordsInput";
 import { LightPlacePopup, LockerButton, RemovableMarkerLine, SteadyMarkerLine } from "./PanelPrimitives";
+import { setResult } from "../features/resultSlice";
 
 function SearchHead(): JSX.Element {
 
@@ -112,6 +113,19 @@ function SearchBody(): JSX.Element {
     search.sequence[i].openPopup();
   };
 
+  const [comm, setComm] = useState(false);
+
+  const short = async () => {
+    try {
+      setComm(true);
+      const response = await grainpathFetch(GRAINPATH_SHORT_URL, { source: source, target: target, waypoints: sequence.map(place => place.location) });
+      const result = (await response.json()) as Result;
+      dispatch(setResult(result));
+      navigate(RESULT_ADDR);
+    }
+    finally { setComm(false); }
+  };
+
   return (
     <Offcanvas.Body>
       <SteadyMarkerLine kind="source" label={source ? point2view(source) : undefined}
@@ -125,13 +139,12 @@ function SearchBody(): JSX.Element {
           <KeywordsInput />
         </Tab>
         <Tab eventKey="navigate" title="Navigate">
-          {
-            sequence.map((g, i) => {
+          { sequence.map((g, i) => {
               return <RemovableMarkerLine key={i} kind={(!!g.id ? "tagged" : "custom")} label={g.name}
                 onMarker={() => handleSequence(i)} onDelete={() => { dispatch(deletePlace(i)); }} />
-            })
-          }
-          <Button onClick={() => { const cnt = getCenter(); dispatch(appendPlace({ name: point2view(cnt), location: cnt, keywords: [] } as LightPlace)); }} />
+            })}
+          <Button onClick={() => { const cnt = getCenter(); dispatch(appendPlace({ name: point2view(cnt), location: cnt, keywords: [] } as LightPlace)); }}>A</Button>
+          <Button onClick={() => { short(); }} disabled={comm}>B</Button>
         </Tab>
       </Tabs>
     </Offcanvas.Body>
