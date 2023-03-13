@@ -29,7 +29,7 @@ export default function PlacesPanel(): JSX.Element {
     let ignore = false;
 
     const fetcher = async () => {
-      let next;
+      let next = undefined;
       const prev = list.find((grain) => grain.id === id);
 
       try {
