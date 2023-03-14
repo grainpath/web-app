@@ -3,7 +3,7 @@ import { Badge, Button, Image } from "react-bootstrap";
 
 import { AppContext } from "../../App";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { appendPlace } from "../../features/searchSlice";
+import { appendPlace } from "../../features/navigateSlice";
 import { point2view } from "../../utils/general";
 import { heavy2light, HeavyPlace } from "../../utils/grainpath";
 import { setLeafletHeavyPlace } from "../../utils/leaflet";
@@ -24,7 +24,7 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
   } = place.tags;
 
   const dispatch = useAppDispatch();
-  const sequence = useAppSelector(state => state.search.sequence);
+  const sequence = useAppSelector(state => state.navigate.sequence);
   const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
   const podCurr = useAppSelector(state => state.locker.podCurr);
 

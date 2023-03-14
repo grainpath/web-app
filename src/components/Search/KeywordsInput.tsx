@@ -4,9 +4,10 @@ import { AddCircleOutline, Save } from "@mui/icons-material";
 
 import { centerContainerProps, SimpleButtonProps } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { deleteKeyword, insertKeyword, Keyword, KeywordConstraint } from "../../features/searchSlice";
+import { deleteKeyword, insertKeyword } from "../../features/discoverSlice";
 import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/general";
 import { StandardChip, StandardTypeahead } from "./InputPrimitives";
+import { KeywordConstraint, KeywordFilter } from "../../utils/grainpath";
 
 const EXISTS_MESSAGE = "Keyword is already defined.";
 const OPTION_MESSAGE = "Select option from those appeared.";
@@ -44,12 +45,12 @@ function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
 function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Element {
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state.search).keywords.map(k => k.label);
+  const keywords = useAppSelector(state => state.discover).filters.map(filter => filter.keyword);
 
   const [keyword, setKeyword] = useState<string[]>((!!label) ? [ label ] : [ ]);
   const [statusK, setStatusK] = useState<{ valid: boolean; message: string | undefined }>({ valid: true, message: undefined });
 
-  const defaultConstrs = useAppSelector(state => (!!label) ? state.search.keywords.filter((keyword) => keyword.label === label)[0].constrs : [ ]);
+  const defaultConstrs = useAppSelector(state => (!!label) ? state.discover.filters.filter((filter) => filter.keyword === label)[0].constrs : [ ]);
   const [constrs, setConstrs] = useState(defaultConstrs);
 
   const defaultTag = "";
@@ -148,7 +149,7 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
       return setStatusK({ valid: false, message: EXISTS_MESSAGE });
     }
 
-    dispatch(insertKeyword({ label: keyword[0], constrs: constrs } as Keyword));
+    dispatch(insertKeyword({ keyword: keyword[0], constrs: constrs } as KeywordFilter));
     onHide();
   };
 
@@ -258,7 +259,7 @@ export function KeywordsInput(): JSX.Element {
   const [curr, setCurr] = useState<string | undefined>(undefined);
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state.search.keywords.map(obj => obj.label));
+  const keywords = useAppSelector(state => state.discover.filters.map(filter => filter.keyword));
 
   const modal = (label: string | undefined) => { setCurr(label); setShow(true); };
 

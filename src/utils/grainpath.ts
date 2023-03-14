@@ -1,5 +1,3 @@
-import { KeywordConstraint } from "../features/searchSlice";
-
 export const GRAINPATH_BASE_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
 export const GRAINPATH_AUTOCOMPLETE_URL = GRAINPATH_BASE_URL + "/autocomplete";
 export const GRAINPATH_PLACE_URL = GRAINPATH_BASE_URL + "/place";
@@ -53,6 +51,38 @@ export type HeavyPlace = PlaceBase & {
 export function heavy2light(grain: HeavyPlace): LightPlace {
   return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightPlace;
 }
+
+type ConstraintBase = {
+  tag: string;
+  relation?: string;
+};
+
+type BooleanConstraint = ConstraintBase & {
+  value?: boolean;
+};
+
+type CollectConstraint = ConstraintBase & {
+  value?: string;
+};
+
+type MeasureConstraint = ConstraintBase & {
+  value?: number;
+};
+
+type TextualConstraint = ConstraintBase & {
+  value?: string;
+};
+
+export type KeywordConstraint
+  = BooleanConstraint
+  | CollectConstraint
+  | MeasureConstraint
+  | TextualConstraint;
+
+export type KeywordFilter = {
+  keyword: string;
+  constrs: KeywordConstraint[];
+};
 
 /**
  * 

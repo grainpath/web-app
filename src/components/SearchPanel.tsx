@@ -3,15 +3,13 @@ import { useNavigate } from "react-router-dom";
 import * as ReactDOMServer from "react-dom/server";
 import L, { Icon, LatLng, Marker } from "leaflet";
 import { Button, Offcanvas, Tab, Tabs } from "react-bootstrap";
-
 import { AppContext } from "../App";
 import { grainpathFetch, GRAINPATH_SHORT_URL, LightPlace, Point, Result } from "../utils/grainpath";
 import { LOCKER_ADDR, point2view, PLACES_ADDR, RESULT_ADDR } from "../utils/general";
 import { ensureLatLngBounds, ensureMarkerBounds, latLng2point } from "../utils/general";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { appendPlace, deletePlace, erase, setSource, setTarget, updatePlace } from "../features/searchSlice";
-import EraseButton from "./Search/EraseButton";
-import { CountInput } from "./Search/CountInput";
+import { setSource, setTarget } from "../features/discoverSlice";
+import { appendPlace, deletePlace, replacePlace,  } from "../features/navigateSlice";
 import { DistanceInput } from "./Search/DistanceInput";
 import { KeywordsInput } from "./Search/KeywordsInput";
 import { LightPlacePopup, LockerButton, RemovableMarkerLine, SteadyMarkerLine } from "./PanelPrimitives";
@@ -25,7 +23,6 @@ function SearchHead(): JSX.Element {
   return (
     <Offcanvas.Header closeButton>
       <LockerButton onClick={() => navigate(LOCKER_ADDR)} />
-      <EraseButton onClick={() => dispatch(erase())} />
     </Offcanvas.Header>
   );
 }
@@ -36,9 +33,9 @@ function SearchBody(): JSX.Element {
   const dispatch = useAppDispatch();
   const { search, leaflet } = useContext(AppContext);
 
-  const source = useAppSelector(state => state.search.source);
-  const target = useAppSelector(state => state.search.target);
-  const sequence = useAppSelector(state => state.search.sequence);
+  const source = useAppSelector(state => state.discover.source);
+  const target = useAppSelector(state => state.discover.target);
+  const sequence = useAppSelector(state => state.navigate.sequence);
 
   const flyTo = (point: Point): void => {
     leaflet.map?.flyTo(new LatLng(point.lat, point.lon), leaflet.map?.getZoom());
@@ -61,15 +58,15 @@ function SearchBody(): JSX.Element {
 
   const ensureSource = useCallback(() => {
     if (!!source) {
-      const m = addPoint(source, leaflet.views.source, true);
-      addDragendEvent(m, (point: Point) => dispatch(setSource(point)));
+      const m = addPoint(source.location, leaflet.views.source, true);
+      addDragendEvent(m, (point: Point) => dispatch(setSource({ name: point2view(point), location: point, keywords: [] } as LightPlace)));
     }
   }, [addPoint, dispatch, source, leaflet.views]);
 
   const ensureTarget = useCallback(() => {
     if (!!target) {
-      const m = addPoint(target, leaflet.views.target, true);
-      addDragendEvent(m, (point: Point) => dispatch(setTarget(point)));
+      const m = addPoint(target.location, leaflet.views.target, true);
+      addDragendEvent(m, (point: Point) => dispatch(setTarget({ name: point2view(point), location: point, keywords: [] } as LightPlace)));
     }
   }, [addPoint, dispatch, target, leaflet.views]);
 
@@ -84,7 +81,7 @@ function SearchBody(): JSX.Element {
           document.getElementById(`popup-${place.id}`)?.addEventListener("click", () => navigate(PLACES_ADDR + `/${place.id}`));
         }
       });
-      addDragendEvent(m, (point: Point) => dispatch(updatePlace({point: point, i: i})));
+      addDragendEvent(m, (point: Point) => dispatch(replacePlace({place: { name: point2view(point), location: point, keywords: [] } as LightPlace, i: i})));
       return m;
     });
   }, [addPoint, navigate, dispatch, leaflet.views, search, sequence]);
@@ -128,13 +125,12 @@ function SearchBody(): JSX.Element {
 
   return (
     <Offcanvas.Body>
-      <SteadyMarkerLine kind="source" label={source ? point2view(source) : undefined}
-        onMarker={() => handleBoundary(source, (point) => { dispatch(setSource(point)); })} />
-      <SteadyMarkerLine kind="target" label={target ? point2view(target) : undefined}
-        onMarker={() => handleBoundary(target, (point) => { dispatch(setTarget(point)); })} />
+      <SteadyMarkerLine kind="source" label={source ? point2view(source.location) : undefined}
+        onMarker={() => handleBoundary(source?.location, (point) => { dispatch(setSource({name: point2view(point), location: point, keywords: []} as LightPlace)); })} />
+      <SteadyMarkerLine kind="target" label={target ? point2view(target.location) : undefined}
+        onMarker={() => handleBoundary(target?.location, (point) => { dispatch(setTarget({name: point2view(point), location: point, keywords: []} as LightPlace)); })} />
       <Tabs className="mb-4 mt-4" defaultActiveKey="discover" fill>
         <Tab eventKey="discover" title="Discover">
-          <CountInput />
           <DistanceInput />
           <KeywordsInput />
         </Tab>

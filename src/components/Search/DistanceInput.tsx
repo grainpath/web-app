@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { setDistance } from "../../features/searchSlice";
+import { setDistance } from "../../features/discoverSlice";
 
 export function DistanceInput(): JSX.Element {
 
@@ -10,7 +10,7 @@ export function DistanceInput(): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useAppDispatch();
-  const distance = useAppSelector(state => state.search.distance);
+  const distance = useAppSelector(state => state.discover.distance);
 
   useEffect(() => {
     if (inputRef.current) { inputRef.current!.value = distance.toString(); }

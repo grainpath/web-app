@@ -14,7 +14,7 @@ import {
   UserInputPane
 } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { appendPlace } from "../../features/searchSlice";
+import { appendPlace } from "../../features/navigateSlice";
 
 type PlaceModalProps = { item: LockerPlaceItem; onHide: () => void; };
 
@@ -35,7 +35,7 @@ export default function PlaceModal({ item, onHide }: PlaceModalProps): JSX.Eleme
   const props = { targ: target, acti: actiS, save: saveS, hide: onHide };
 
   const dispatch = useAppDispatch();
-  const sequence = useAppSelector(state => state.search.sequence);
+  const sequence = useAppSelector(state => state.navigate.sequence);
 
   const list = () => { dispatch(appendPlace(heavy2light(place))); };
 
