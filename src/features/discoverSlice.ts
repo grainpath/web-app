@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { KeywordFilter, LightPlace } from "../utils/grainpath";
+import { KeywordFilter, MaybePlace } from "../utils/grainpath";
 
-export type DiscoverState = {
-  source?: LightPlace;
-  target?: LightPlace;
-  center?: LightPlace;
+type DiscoverState = {
+  source?: MaybePlace;
+  target?: MaybePlace;
+  center?: MaybePlace;
   radius: number;
   distance: number;
   filters: KeywordFilter[];
@@ -18,11 +18,11 @@ export const discoverSlice = createSlice({
   name: "discover",
   initialState: initialState(),
   reducers: {
-    setSource: (state, action: PayloadAction<LightPlace>) => { state.source = action.payload; },
+    setSource: (state, action: PayloadAction<MaybePlace>) => { state.source = action.payload; },
     deleteSource: (state) => { state.source = undefined; },
-    setTarget: (state, action: PayloadAction<LightPlace>) => { state.target = action.payload; },
+    setTarget: (state, action: PayloadAction<MaybePlace>) => { state.target = action.payload; },
     deleteTarget: (state) => { state.target = undefined; },
-    setCenter: (state, action: PayloadAction<LightPlace>) => { state.center = action.payload; },
+    setCenter: (state, action: PayloadAction<MaybePlace>) => { state.center = action.payload; },
     deleteCenter: (state) => { state.center = undefined; },
     setRadius: (state, action: PayloadAction<number>) => { state.radius = action.payload; },
     setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },

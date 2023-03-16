@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import { AddCircleOutline, Save } from "@mui/icons-material";
+import { Add, AddCircleOutline, Save } from "@mui/icons-material";
 
 import { centerContainerProps, SimpleButtonProps } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
@@ -28,7 +28,7 @@ function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
 
   return (
     <button {...props} className="standard-button" title="add keyword">
-      <AddCircleOutline fontSize="large" />
+      <Add fontSize="large" />
     </button>
   );
 }
@@ -271,8 +271,6 @@ export function KeywordsInput(): JSX.Element {
           {keywords.map((keyword, i) => {
             return <StandardChip key={i} label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteKeyword(keyword))} />
           })}
-        </div>
-        <div {...centerContainerProps}>
           <AddKeywordButton onClick={() => modal(undefined)} />
         </div>
       </Form.Group>

@@ -13,20 +13,6 @@ export type Point = {
   lat: number;
 };
 
-/**
- * Every shape query should define first and last point.
- */
-export type Boundary = {
-  source?: Point;
-  target?: Point;
-};
-
-type PlaceTags = {
-  image?: string;
-  polygon?: Point[];
-  description?: string;
-};
-
 type PlaceBase = {
   name: string;
   location: Point;
@@ -36,21 +22,88 @@ type PlaceBase = {
 /**
  * Place representation essential for query construction.
  */
-export type LightPlace = PlaceBase & {
+export type MaybePlace = PlaceBase & {
   id?: string;
+}
+
+/**
+ * Place representation as an query response (both places, and routes).
+ */
+export type LightPlace = PlaceBase & {
+  id: string;
+};
+
+type PlaceAddress = {
+  country?: string;
+  settlement?: string;
+  district?: string;
+  place?: string;
+  house?: string;
+  postal_code?: string;
+};
+
+type PlacePayment = {
+  cash?: boolean;
+  card?: boolean;
+  amex?: boolean;
+  jcb?: boolean;
+  mastercard?: boolean;
+  visa?: boolean;
+  crypto?: boolean;
+};
+
+type PlaceTags = {
+  polygon?: Point[];
+  image?: string;
+  description?: string;
+  website?: string;
+  address?: PlaceAddress;
+  payment?: PlacePayment;
+  email?: string;
+  phone?: string;
+  delivery?: boolean;
+  drinking_water?: boolean;
+  internet_access?: boolean;
+  shower?: boolean;
+  smoking?: boolean;
+  takeaway?: boolean;
+  toilets?: boolean;
+  wheelchair?: boolean;
+  capacity?: number;
+  min_age?: number;
+  rank?: number;
+  fee?: boolean;
+  charge?: string[];
+  opening_hours?: string[];
+  clothes?: string[];
+  cuisine?: string[];
+  rental?: string[];
+};
+
+type PlaceLinked = {
+  osm?: string;
+  wikidata?: string;
+  geonames?: string;
+  dbpedia?: string;
+  yago?: string;
 };
 
 /**
- * Place representation used for view construction and persistence.
+ * Detailed place representation.
  */
-export type HeavyPlace = PlaceBase & {
-  id: string;
+export type HeavyPlace = LightPlace & {
   tags: PlaceTags;
+  linked: PlaceLinked;
 };
 
 export function heavy2light(grain: HeavyPlace): LightPlace {
   return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightPlace;
 }
+
+export type Boundary = {
+  source?: Point;
+  target?: Point;
+};
 
 type ConstraintBase = {
   tag: string;

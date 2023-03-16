@@ -62,22 +62,54 @@ html, body, #root, #map {
   align-items: center;
 }
 
-#source-marker {
+.source-marker {
   color: #2aad27;
 }
 
-#target-marker {
+.source-marker:hover {
+  color: green;
+}
+
+.target-marker {
   color: #cb2b3e;
 }
 
-#custom-marker {
+.target-marker:hover {
+  color: darkred;
+}
+
+.custom-marker {
   color: #2a81cb;
 }
 
-#tagged-marker {
+.custom-marker:hover {
+  color: #1e578a;
+}
+
+.adding-marker, .center-marker {
+  color: gray;
+}
+
+.adding-marker:hover, .center-marker:hover {
+  color: #5a5a5a;
+}
+
+.known-marker {
   color: #9c2bcb;
 }
 
-#adding-marker {
-  color: #888888;
+.known-marker:hover {
+  color: #751e9b;
+}
+
+.other-marker {
+  color: #2a81cb;
+}
+
+.other-marker:hover {
+  color: #1e578a;
+}
+
+.vacant-placeholder {
+  color: gray;
 }

@@ -4,9 +4,8 @@ import { Badge, Button, Image } from "react-bootstrap";
 import { AppContext } from "../../App";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPlace } from "../../features/navigateSlice";
-import { point2view } from "../../utils/general";
+import { point2text } from "../../utils/general";
 import { heavy2light, HeavyPlace } from "../../utils/grainpath";
-import { setLeafletHeavyPlace } from "../../utils/leaflet";
 import { keywordBadgeProps, standardContainerClassName } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
 
@@ -31,7 +30,10 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
   const leaflet = useContext(AppContext).leaflet;
   const [mod, setMod] = useState(false);
 
-  useEffect(() => setLeafletHeavyPlace(leaflet, place), [leaflet, place]);
+  useEffect(() => {
+    leaflet.newmap?.clear();
+    leaflet.newmap?.setHeavyPlace(place);
+  }, [leaflet, place]);
 
   const list = () => { dispatch(appendPlace(heavy2light(place))); };
 
@@ -40,7 +42,7 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
       <h4>{place.name}</h4>
       <hr style={{ opacity: opacity, margin: "0.5rem 0" }}/>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <small style={{ opacity: opacity }}>{point2view(place.location)}</small>
+        <small style={{ opacity: opacity }}>{point2text(place.location)}</small>
       </div>
       { image &&
         <div>

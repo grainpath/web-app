@@ -3,17 +3,13 @@ import L, { LatLng } from "leaflet";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 import { AppContext } from "../App";
+import { LeafletMap } from "../utils/leaflet";
 
-function FeatureSetter(): JSX.Element {
+function MapExtractor(): JSX.Element {
 
-  const pos = "bottomright";
+  const map = useMap();
   const { leaflet } = useContext(AppContext);
-
-  leaflet.map = useMap();
-  leaflet.zoom = leaflet.zoom ?? L.control.zoom({ position: pos }).addTo(leaflet.map!);
-  leaflet.geo = leaflet.geo ?? L.control.locate({ position: pos }).addTo(leaflet.map!);
-  leaflet.layerGroup = leaflet.layerGroup ?? L.layerGroup().addTo(leaflet.map!);
-
+  leaflet.newmap = leaflet.newmap ?? new LeafletMap(map);
   return (<></>);
 }
 
@@ -26,7 +22,7 @@ export default function MapControl(): JSX.Element {
   return (
     <MapContainer id={"map"} center={cnt} scrollWheelZoom={true} zoom={4} zoomControl={false}>
       <TileLayer url={url} attribution={att} />
-      <FeatureSetter />
+      <MapExtractor />
     </MapContainer>
   );
 }

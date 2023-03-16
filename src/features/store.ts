@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import panelReducer from "./panelSlice";
 import lockerReducer from "./lockerSlice";
 import loggerReducer from "./loggerSlice";
 import pointsReducer from "./placesSlice";
@@ -9,6 +10,7 @@ import navigateReducer from "./navigateSlice";
 
 export const store = configureStore({
   reducer: {
+    panel: panelReducer,
     locker: lockerReducer,
     logger: loggerReducer,
     points: pointsReducer,

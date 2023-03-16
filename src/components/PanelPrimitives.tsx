@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { Badge, Form } from "react-bootstrap";
 import {
+  AddLocation,
   DeleteOutline,
   DescriptionOutlined,
   Info,
@@ -10,12 +11,12 @@ import {
   Storage
 } from "@mui/icons-material";
 
-import { LightPlace } from "../utils/grainpath";
+import { MaybePlace } from "../utils/grainpath";
 
 export const standardContainerClassName = "mt-2 mb-2";
 
 export type SimpleButtonProps = {
-  onClick: React.MouseEventHandler<HTMLElement>;
+  onClick?: React.MouseEventHandler<Element>;
 };
 
 export const lineContainerStyle = {
@@ -25,11 +26,6 @@ export const lineContainerStyle = {
 export const lineContainerProps = {
   className: standardContainerClassName,
   style: lineContainerStyle.style
-};
-
-export const popupContainerProps = {
-  className: standardContainerClassName,
-  style: { display: "flex", alignItems: "center", gap: "0.2rem" } as React.CSSProperties
 };
 
 export const keywordBadgeProps = {
@@ -51,11 +47,15 @@ export const centerContainerProps = {
   style: { display: "flex", justifyContent: "center" } as React.CSSProperties
 };
 
-export function PanelButton({ onClick }: SimpleButtonProps): JSX.Element {
+type PanelButtoonProps = SimpleButtonProps & {
+  disabled: boolean;
+}
+
+export function PanelButton(props: PanelButtoonProps): JSX.Element {
 
   return (
     <div style={{ top: "10px", left: "10px", zIndex: 1000, position: "absolute" }}>
-      <button id="panel-button" className="standard-button control-button" onClick={onClick} title="Control panel">
+      <button {...props} id="panel-button" className="standard-button control-button" title="Control panel">
         <KeyboardCommandKey fontSize="large" />
       </button>
     </div>
@@ -129,31 +129,169 @@ export function RemovableMarkerLine({ label, onDelete, ...rest }: RemovableMarke
   );
 }
 
-type LightPlacePopupProps = { place: LightPlace; };
 
-export function LightPlacePopup({ place }: LightPlacePopupProps): JSX.Element {
 
-  const buttonId = (place.id) ? `popup-${place.id}` : undefined;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// type HoleMarkerProps = SimpleButtonProps & {
+//   classRef: string;
+// }
+
+type MarkerButtonPropsX = {
+  onMarker?: React.MouseEventHandler<Element>;
+}
+
+type HoleMarkerProps = MarkerButtonPropsX & {
+  classRef: string;
+}
+
+function HoleMarker({ classRef, onMarker }: HoleMarkerProps): JSX.Element {
+  return (<LocationOn className={`${classRef}-marker`} fontSize="large" onClick={onMarker} style={{ cursor: "pointer" }} />);
+}
+
+function SourceMarker(props: MarkerButtonPropsX): JSX.Element {
+  return (<HoleMarker {...props} classRef="source" />);
+}
+
+function TargetMarker(props: MarkerButtonPropsX): JSX.Element {
+  return (<HoleMarker {...props} classRef="target" />);
+}
+
+function CenterMarker(props: MarkerButtonPropsX): JSX.Element {
+  return (<HoleMarker {...props} classRef="center" />);
+}
+
+function KnownMarker(props: MarkerButtonPropsX): JSX.Element {
+  return (<HoleMarker {...props} classRef="known" />);
+}
+
+function OtherMarker(props: MarkerButtonPropsX): JSX.Element {
+  return (<HoleMarker {...props} classRef="other" />);
+}
+
+function AddingMarker(props: SimpleButtonProps): JSX.Element {
+  return (<AddLocation {...props} className="adding-marker" fontSize="large" />);
+}
+
+type ListItemLabelProps = {
+  label?: string;
+  className?: string;
+};
+
+function ListItemLabel({ label, className }: ListItemLabelProps): JSX.Element {
+  return (
+    <div className={className} style={{ display: "flex", alignItems: "center", width: "100%", boxSizing: "border-box", borderBottom: "solid #ced4da 1px" }}>
+      <span style={{ fontSize: "large" }}>{label}</span>
+    </div>
+  );
+}
+
+type FreeListItemProps = MarkerButtonPropsX & {
+  left: ReactElement;
+  label:  string;
+};
+
+function FreeListItem({ left, label, onMarker }: FreeListItemProps): JSX.Element {
+  const style = { display: "flex", gap: "0.2rem", alignItems: "stretch", cursor: "pointer" };
 
   return (
-    <>
-      <b>{place.name}</b>
-      {
-        (!!place.id) &&
-        <>
-          <hr style={{opacity: 1.0, margin: "0.25rem 0"}} />
-          <div {...popupContainerProps}>
-            <button id={buttonId} className="standard-button" style={{ borderRadius: "50%" }} disabled={!place.id}>
-              <Info fontSize="large" />
-            </button>
-            <div className="mt-1 mb-1" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", width: "150px" }}>
-              { place.keywords.map((keyword, i) => <Badge key={i} bg="success" style={{ margin: "0.1rem", display: "block" }} pill>{keyword}</Badge>) }
-            </div>
-          </div>
-        </>
-      }
-    </>
+    <div onClick={onMarker} className="mt-3 mb-3" style={style}>
+      <>
+        {left}
+        <ListItemLabel className="vacant-placeholder" label={label} />
+      </>
+    </div>
   );
+}
+
+export function FreeSourceMarkerItem(props: MarkerButtonPropsX): JSX.Element {
+  return (<FreeListItem {...props} left={<SourceMarker />} label="Select starting point..." />)
+}
+
+export function FreeTargetMarkerItem(props: MarkerButtonPropsX): JSX.Element {
+  return (<FreeListItem {...props} left={<TargetMarker />} label="Select destination..." />);
+}
+
+export function FreeCenterMarkerItem(props: MarkerButtonPropsX): JSX.Element {
+  return (<FreeListItem {...props} left={<CenterMarker />} label="Select position..." />);
+}
+
+export function FreeAddingMarkerItem(props: MarkerButtonPropsX): JSX.Element {
+  return (<FreeListItem {...props} left={<AddingMarker />} label="Append point..." />); 
+}
+
+type BusyListItemProps = {
+  left: ReactElement;
+  label: string;
+  right: ReactElement;
+};
+
+function BusyListItem({ left, label, right }: BusyListItemProps): JSX.Element {
+  const style = { display: "flex", gap: "0.2rem", alignItems: "stretch"};
+
+  return (
+    <div className="mt-4 mb-4" style={style}>
+      {left}
+      <ListItemLabel label={label} />
+      {right}
+    </div>
+  );
+}
+
+type RemovableListItemProps = {
+  left: ReactElement;
+  label: string;
+  onDelete: React.MouseEventHandler<Element>;
+};
+
+function RemovableListItem({ onDelete, ...rest }: RemovableListItemProps): JSX.Element {
+  return (
+    <BusyListItem {...rest} right={<DeleteOutline onClick={onDelete} className="center-marker" fontSize="large" />} /> // TODO: fix className
+  );
+}
+
+type RemovableMarkerItemProps = {
+  label: string;
+  onDelete: React.MouseEventHandler<Element>;
+  onMarker: React.MouseEventHandler<Element>;
+}
+
+export function RemovableKnownMarkerItem({ onMarker, ...rest }: RemovableMarkerItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<KnownMarker onMarker={onMarker} />} />);
+}
+
+export function RemovableOtherMarkerItem({ onMarker, ...rest }: RemovableMarkerItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<OtherMarker onMarker={onMarker} />} />);
+}
+
+export function RemovableSourceMarkerItem({ onMarker, ...rest }: RemovableMarkerItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<SourceMarker onMarker={onMarker} />} />);
+}
+
+export function RemovableTargetMarkerItem({ onMarker, ...rest }: RemovableMarkerItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<TargetMarker onMarker={onMarker} />} />);
 }
 
 export type StandardModalProps = {

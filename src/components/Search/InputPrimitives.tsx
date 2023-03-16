@@ -27,7 +27,7 @@ export function StandardChip(props: StandardChipProps): JSX.Element {
 
   return (
     <div style={{ margin: "2px", display: "inline-block" }}>
-      <Chip {...props} color="primary" />
+      <Chip {...props} color="success" />
     </div>
   );
 }

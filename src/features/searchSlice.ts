@@ -1,32 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type TabsType
-  = "discover"
-  | "navigate";
-
-type ModesType
-  = "places"
-  | "routes";
-
 type SearchState = {
-  tab: TabsType;
-  mode: ModesType;
+  tab: string;
+  mod: boolean;
 };
 
-function initialState() { return { tab: "discover", mode: "routes" } as SearchState; };
+function initialState() { return { tab: "discover", mod: true } as SearchState; };
 
 export const searchSlice = createSlice({
   name: "search",
   initialState: initialState(),
   reducers: {
-    setTab: (state, action: PayloadAction<TabsType>) => { state.tab = action.payload; },
-    setMode: (state, action: PayloadAction<ModesType>) => { state.mode = action.payload; }
+    setTab: (state, action: PayloadAction<string>) => { state.tab = action.payload; },
+    setMod: (state, action: PayloadAction<boolean>) => { state.mod = action.payload; }
   }
 });
 
 export const {
   setTab,
-  setMode
+  setMod
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

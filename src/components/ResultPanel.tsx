@@ -5,7 +5,6 @@ import { Alert, Form, Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../App";
 import { useAppSelector } from "../features/hooks";
-
 import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/general";
 import { Result } from "../utils/grainpath";
 import { SearchButton, LockerButton } from "./PanelPrimitives";
@@ -37,7 +36,7 @@ function ResultContent({ result }: ResultContentProps): JSX.Element {
 
 function ResultBody(): JSX.Element {
 
-  const layer = useContext(AppContext).leaflet.layerGroup!;
+  const layer = useContext(AppContext).leaflet.newmap!.getLayer();
   const result = useAppSelector(state => state.result);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
-import { Icon, LayerGroup, Map as LeafletMap, Marker } from "leaflet";
+import { Icon, LayerGroup, Map as X, Marker } from "leaflet";
 import { SolidDataset, UrlString } from "@inrupt/solid-client";
 
-import { pinViews, PinViewType } from "../utils/leaflet";
+import { LeafletMap, pinViews, PinViewType } from "../utils/leaflet";
 
 /**
  * Use application context for all non-serializable data!
@@ -21,14 +21,9 @@ export type SearchContextValue = {
 };
 
 export type LeafletContextValue = {
-  map?: LeafletMap;
   views: PinViewType;
-  layerGroup?: LayerGroup;
-
-  // single-purpose
-  zoom?: L.Control.Zoom;
-  geo?: L.Control.Locate;
-}
+  newmap?: LeafletMap;
+};
 
 export type AppContextValue = {
   locker: LockerContextValue;

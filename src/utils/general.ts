@@ -1,6 +1,6 @@
 import { LatLng } from "leaflet";
 import namespace from "@rdfjs/namespace";
-import { Point } from "./grainpath";
+import { MaybePlace, Point } from "./grainpath";
 
 // user input
 
@@ -108,9 +108,16 @@ export const ns = {
 /**
  * Constructs human-readable GPS representation.
  */
-export function point2view(point: Point): string {
+export function point2text(point: Point): string {
   const prec = 6;
   return `${point.lat.toFixed(prec)}N, ${point.lon.toFixed(prec)}E`;
+}
+
+/**
+ * Convert a point to an almost place.
+ */
+export function point2place(point: Point): MaybePlace {
+  return { name: point2text(point), location: point, keywords: [] };
 }
 
 const ensureLonBounds = (lon: number): number => Math.min(Math.max(lon, -180.0), +180.0);
@@ -131,13 +138,6 @@ export function ensureMarkerBounds(marker: L.Marker<any>): L.Marker<any> {
   const lls = marker.getLatLng();
   return marker.setLatLng(ensureLatLngBounds(lls));
 };
-
-/**
- * Transform Leaflet point to a standard.
- */
-export function latLng2point(l: LatLng): Point {
-  return { lon: l.lng, lat: l.lat } as Point;
-}
 
 /**
  * Swaps elements in an array and return its copy. The input array is not modified.
