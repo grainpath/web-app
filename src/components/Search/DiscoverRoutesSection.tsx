@@ -1,23 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Box, Button, Slider, Typography } from "@mui/material";
+import { Search, SwapVert } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../../App";
-import {
-  setSource,
-  setTarget
-} from "../../features/discoverSlice";
 import { PLACES_ADDR } from "../../utils/routing";
 import { point2place, point2text } from "../../utils/general";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { setSource, setTarget, setDistance } from "../../features/discoverSlice";
 import {
   FreeSourceListItem,
   FreeTargetListItem,
   RemovableSourceListItem,
   RemovableTargetListItem
 } from "../shared-list-items";
-import { DistanceInput } from "./DistanceInput";
+import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
 import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
-import { IconButton, Typography } from "@mui/material";
-import { Info, SwapVert } from "@mui/icons-material";
 
 export default function RoutesSection(): JSX.Element {
 
@@ -28,8 +26,9 @@ export default function RoutesSection(): JSX.Element {
   const map = useContext(AppContext).map!;
 
   const dispatch = useAppDispatch();
-  const source = useAppSelector(state => state.discover.source);
-  const target = useAppSelector(state => state.discover.target);
+  const mod = useAppSelector(state => state.search.mod);
+  const { disabled, loadRoutes } = useAppSelector(state => state.search);
+  const { source, target, distance } = useAppSelector(state => state.discover);
 
   useEffect(() => {
     const link = (id: string) => nav(PLACES_ADDR + `/${id}`);
@@ -49,33 +48,62 @@ export default function RoutesSection(): JSX.Element {
 
   const swap = () => { dispatch(setSource(target)); dispatch(setTarget(source)); }
 
+  const load = () => {
+    // TODO: Implement API call.
+  };
+
+  const marks = [ 5, 10, 15, 20, 25 ].map(m => { return { value: m, label: m } });
+
   return (
-    <>
-      <div className="mt-4" style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
-        <Typography>
-          Visit interesting places with features.<sup><Info fontSize="small" /></sup>
-        </Typography>
-      </div>
-      <div>
-        <div className="mt-3">
-          { (source)
-            ? <RemovableSourceListItem onMarker={() => { map.flyTo(source); }} label={point2text(source.location)} onDelete={() => { dispatch(setSource(undefined)); }} />
-            : <FreeSourceListItem onClick={() => { setModS(true); }} />
-          }
-        </div>
-        <div className="mt-1" style={{ display: "flex", justifyContent: "center" }}>
-          <IconButton size="small" onClick={() => { swap(); }}><SwapVert fontSize="inherit" /></IconButton>
-        </div>
-        <div>
-          { (target)
-            ? <RemovableTargetListItem onMarker={() => { map.flyTo(target); }} label={point2text(target.location)} onDelete={() => { dispatch(setTarget(undefined)); }} />
-            : <FreeTargetListItem onClick={() => { setModT(true); }} />
-          }
-        </div>
-      </div>
-      <DistanceInput />
+    <Box>
+      <Box sx={{ mt: 4 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "1.0rem" }}>
+            { (source)
+              ? <RemovableSourceListItem onMarker={() => { map.flyTo(source); }} label={point2text(source.location)} onDelete={() => { dispatch(setSource(undefined)); }} />
+              : <FreeSourceListItem onClick={() => { setModS(true); }} />
+            }
+            { (target)
+              ? <RemovableTargetListItem onMarker={() => { map.flyTo(target); }} label={point2text(target.location)} onDelete={() => { dispatch(setTarget(undefined)); }} />
+              : <FreeTargetListItem onClick={() => { setModT(true); }} />
+            }
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button sx={{ mt: 1, textTransform: "none" }} startIcon={<SwapVert />} size="small" onClick={() => { swap(); }}>Swap points</Button>
+        </Box>
+      </Box>
+      <Box sx={{ mt: 3 }}>
+        <Typography>Distance you are willing to walk (in <a href="https://en.wikipedia.org/wiki/Kilometre" target="_blank" title="kilometres">km</a>)</Typography>
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+          <Box sx={{ width: "94%" }}>
+            <Slider
+              min={0}
+              max={30}
+              step={0.1}
+              marks={marks}
+              value={distance}
+              valueLabelDisplay="auto"
+              onChange={(_, value) => { dispatch(setDistance(value as number)); }}
+            />
+          </Box>
+        </Box>
+      </Box>
+      <DiscoverKeywordsInput />
+      <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+        <LoadingButton
+          size="large"
+          variant="contained"
+          startIcon={<Search />}
+          loadingPosition="start"
+          title={"Discover a route"}
+          onClick={() => { load(); }}
+          loading={loadRoutes}
+          disabled={(mod && (!source || !target)) || (disabled && !loadRoutes)}
+        >
+          <span>Discover</span>
+        </LoadingButton>
+      </Box>
       { modS && <SelectMaybePlaceModal kind="source" hide={() => setModS(false)} func={(place) => dispatch(setSource(place))} /> }
       { modT && <SelectMaybePlaceModal kind="target" hide={() => setModT(false)} func={(place) => dispatch(setTarget(place))} /> }
-    </>
+    </Box>
   );
 }

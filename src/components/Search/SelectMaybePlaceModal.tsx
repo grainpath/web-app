@@ -33,7 +33,7 @@ export default function SelectMaybePlaceModal({ kind, hide, func }: SelectMaybeP
   };
 
   return (
-    <Modal {...SteadyModalPropsFactory.getStandard()} show onHide={hide}>
+    <Modal show keyboard centered onHide={hide}>
       <Modal.Header closeButton />
       <Modal.Body>
         <Typography>

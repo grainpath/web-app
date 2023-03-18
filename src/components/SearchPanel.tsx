@@ -1,13 +1,11 @@
+import { Box, Tab, Tabs } from "@mui/material";
 import { Offcanvas } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setTab } from "../features/searchSlice";
-import DiscoverButton from "./Search/DiscoverButton";
 import DiscoverModeSelector from "./Search/DiscoverModeSelector";
 import DiscoverRoutesSection from "./Search/DiscoverRoutesSection";
 import DiscoverPlacesSection from "./Search/DiscoverPlacesSection";
-import DiscoverKeywordsInput from "./Search/DiscoverKeywordsInput";
 import { NavigateButton } from "./Search/NavigateButton";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
 import NavigateSequence from "./Search/NavigateSequence";
 
 type TabPanelProps = {
@@ -28,8 +26,7 @@ function TabPanel({ children, value, index }: TabPanelProps) {
 export default function SearchPanel(): JSX.Element {
 
   const dispatch = useAppDispatch();
-  const mod = useAppSelector(state => state.search.mod);
-  const tab = useAppSelector(state => state.search.tab);
+  const { mod, tab } = useAppSelector(state => state.search);
 
   const style = { textTransform: "none", fontSize: "1.0rem" } as React.CSSProperties;
 
@@ -48,11 +45,9 @@ export default function SearchPanel(): JSX.Element {
         <TabPanel value={tab} index={0}>
           <DiscoverModeSelector />
           { (mod)
-            ? <DiscoverRoutesSection />
-            : <DiscoverPlacesSection />
+            ? (<DiscoverRoutesSection />)
+            : (<DiscoverPlacesSection />)
           }
-          <DiscoverKeywordsInput />
-          <DiscoverButton />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <NavigateSequence />
