@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Search } from "@mui/icons-material";
 import { AppContext } from "../../App";
@@ -51,16 +51,20 @@ export default function DiscoverPlacesSection(): JSX.Element {
       </Box>
       <Box sx={{ mt: 3 }}>
         <Typography>
-          Radius of a circle around a point (in <a href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres">km</a>)
+          Radius of a circle around a point (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>)
         </Typography>
-        <DiscoverDistanceSlider
-          max={15}
-          seq={[ 3, 6, 9, 12 ]}
-          distance={radius}
-          dispatch={(value) => { dispatch(setRadius(value)); }}
-        />
+        <Box sx={{ mt: 2 }}>
+          <DiscoverDistanceSlider
+            max={12}
+            seq={[ 2, 4, 6, 8, 10 ]}
+            distance={radius}
+            dispatch={(value) => { dispatch(setRadius(value)); }}
+          />
+        </Box>
       </Box>
-      <DiscoverKeywordsInput />
+      <Box sx={{ mt: 3 }}>
+        <DiscoverKeywordsInput />
+      </Box>
       <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <LoadingButton
           size="large"

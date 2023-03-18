@@ -12,7 +12,7 @@ export default function DiscoverDistanceSlider({ max, seq, distance, dispatch }:
   const marks = seq.map(m => { return { value: m, label: m }; });
 
   return (
-    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Box sx={{ width: "94%" }}>
         <Slider
           min={0}

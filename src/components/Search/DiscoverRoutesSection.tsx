@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { Search, SwapVert } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../../App";
@@ -72,15 +72,20 @@ export default function RoutesSection(): JSX.Element {
       </Box>
       <Box sx={{ mt: 3 }}>
         <Typography>
-          Distance you are willing to walk (in <a href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres">km</a>)
+          Distance you are willing to walk (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>)
         </Typography>
-        <DiscoverDistanceSlider
-          max={30}
-          seq={[ 5, 10, 15, 20, 25 ]}
-          distance={distance}
-          dispatch={(value) => { dispatch(setDistance(value)); }} />
+        <Box sx={{ mt: 2 }}>
+          <DiscoverDistanceSlider
+            max={30}
+            seq={[ 5, 10, 15, 20, 25 ]}
+            distance={distance}
+            dispatch={(value) => { dispatch(setDistance(value)); }}
+          />
+        </Box>
       </Box>
-      <DiscoverKeywordsInput />
+      <Box sx={{ mt: 3 }}>
+        <DiscoverKeywordsInput />
+      </Box>
       <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <LoadingButton
           size="large"
