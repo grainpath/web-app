@@ -2,7 +2,7 @@ import { IconButton } from "@mui/material";
 import { AddLocation, LocationOn } from "@mui/icons-material";
 
 type PinSize = "large" | "medium";
-export type PinKind = "known" | "other" | "source" | "target" | "center" | "adding";
+export type PinKind = "stored" | "tagged" | "source" | "target" | "adding" | "center" | "custom";
 
 type PinProps = {
   kind: PinKind;

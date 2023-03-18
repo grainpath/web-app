@@ -109,3 +109,6 @@ export function RemovableTargetListItem({ onMarker, ...rest }: ConcreteRemovable
   return (<RemovableListItem {...rest} left={<BusyPinListItem kind="target" onMarker={onMarker} />} />);
 }
 
+export function RemovableCustomListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<BusyPinListItem kind="custom" onMarker={onMarker} />} />);
+}

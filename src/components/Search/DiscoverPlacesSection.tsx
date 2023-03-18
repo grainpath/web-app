@@ -4,11 +4,12 @@ import { Box, Link, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Search } from "@mui/icons-material";
 import { AppContext } from "../../App";
-import { point2place } from "../../utils/general";
+import { MaybePlace } from "../../utils/grainpath";
+import { point2place, point2text } from "../../utils/general";
 import { PLACES_ADDR } from "../../utils/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setCenter, setRadius } from "../../features/discoverSlice";
-import { FreeCenterListItem } from "../shared-list-items";
+import { FreeCenterListItem, RemovableCustomListItem } from "../shared-list-items";
 import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
 import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
 import DiscoverDistanceSlider from "./DiscoverDistanceSlider";
@@ -37,15 +38,22 @@ export default function DiscoverPlacesSection(): JSX.Element {
     }
   }, [map, nav, dispatch, center, radius]);
 
+  const props = (place: MaybePlace) => {
+    return {
+      onMarker: () => { map.flyTo(place); },
+      onDelete: () => { dispatch(setCenter(undefined)); }
+    };
+  };
+
   const load = () => {
     // TODO: Implement API call.
-  };;
+  };
 
   return (
     <Box>
       <Box sx={{ mt: 4 }}>
         { (center)
-          ? <></>
+          ? <RemovableCustomListItem {...props(center)} label={point2text(center.location)} />
           : <FreeCenterListItem onClick={() => { setModC(true); }} />
         }
       </Box>

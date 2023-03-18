@@ -16,6 +16,8 @@ html, body, #root, #map {
   height: 100%;
 }
 
+/* v--- RECONSIDER STYLES BELOW ---v  */
+
 .standard-button {
   display: flex;
   align-items: center;
@@ -63,57 +65,30 @@ html, body, #root, #map {
   align-items: center;
 }
 
+/* ^--- RECONSIDER STYLES ABOVE ---^  */
 
-
-
-
-
-
-
-
-.grain-known-pin {
+.grain-stored-pin {
   color: #9c2bcb;
 }
 
-/* .grain-known-pin:hover {
-  color: #751e9b;
-} */
-
-.grain-other-pin {
+.grain-tagged-pin {
   color: #2a81cb;
 }
-
-/* .grain-other-pin:hover {
-  color: #1e578a;
-} */
 
 .grain-source-pin {
   color: #2aad27;
 }
 
-/* .grain-source-pin:hover {
-  color: green;
-} */
-
 .grain-target-pin {
   color: #cb2b3e;
 }
 
-/* .grain-target-pin:hover {
-  color: darkred;
-} */
-
 .grain-adding-pin,
 .grain-center-pin,
+.grain-custom-pin,
 .grain-action-btn {
   color: gray;
 }
-
-/* .grain-adding-pin:hover,
-.grain-center-pin:hover,
-.grain-action-btn:hover {
-  color: #5a5a5a;
-} */
 
 .grain-list-item {
   display: flex;
