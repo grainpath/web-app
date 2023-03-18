@@ -26,7 +26,7 @@ type StandardTypeaheadProps = {
 export function StandardChip(props: StandardChipProps): JSX.Element {
 
   return (
-    <div style={{ margin: "2px", display: "inline-block" }}>
+    <div style={{ display: "inline-block" }}>
       <Chip {...props} color="success" />
     </div>
   );

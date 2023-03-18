@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import { Add, Save } from "@mui/icons-material";
+import { Save } from "@mui/icons-material";
+import { Box, Button as Btn, Chip, Paper, Stack, Typography } from "@mui/material";
 import { centerContainerProps, SimpleButtonProps } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { deleteKeyword, insertKeyword } from "../../features/discoverSlice";
@@ -21,14 +22,6 @@ const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.
 type KeywordModalWindowProps = {
   label: string | undefined;
   onHide: () => void;
-}
-
-function AddKeywordButton(props: SimpleButtonProps): JSX.Element {
-  return (
-    <div {...props} className="grain-action-btn" title={"Add constraint"} style={{ display: "flex", justifyContent: "center", backgroundColor: "#f4f4f4", borderTop: "solid 1px #000000" }}>
-      <Add fontSize="large" />
-    </div>
-  );
 }
 
 function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
@@ -262,20 +255,22 @@ export default function DiscoverKeywordsInput(): JSX.Element {
   const modal = (label: string | undefined) => { setCurr(label); setShow(true); };
 
   return (
-    <>
-      <Form.Group className="mt-4 mb-4">
-        <Form.Label>What places do you want to visit?</Form.Label>
-        <div style={{ display: "flex" }}>
-          <div className="chips-container" style={{ width: "100%" }}>
+    <Box>
+      <Typography>Keywords you are looking for:</Typography>
+      <Box sx={{ mt: 1 }}>
+        <Paper variant="outlined">
+          <Stack direction="row" sx={{ flexWrap: "wrap" }}>
             { keywords.map((keyword, i) => {
-                return <StandardChip key={i} label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteKeyword(keyword))} />
+                return <Chip sx={{ m: 0.35, color: "black" }} key={i} color="primary" variant="outlined" label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteKeyword(keyword))} />
               })
             }
-            <AddKeywordButton onClick={() => modal(undefined)} />
-          </div>
-        </div>
-      </Form.Group>
+          </Stack>
+          <Btn size="large" sx={{ width: "100%" }} onClick={() => { modal(undefined); }}>
+            Add keyword
+          </Btn>
+        </Paper>
+      </Box>
       {show && <KeywordModalWindow label={curr} onHide={() => setShow(false)} />}
-    </>
+    </Box>
   );
 }
