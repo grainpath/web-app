@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Alert, Offcanvas, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { LOCKER_ADDR, SEARCH_ADDR } from "../utils/general";
+import { LOCKER_ADDR, SEARCH_ADDR } from "../utils/routing";
 import { HeavyPlace, grainpathFetch, GRAINPATH_PLACE_URL } from "../utils/grainpath";
 import { useAppSelector } from "../features/hooks";
 import { appendList } from "../features/placesSlice";

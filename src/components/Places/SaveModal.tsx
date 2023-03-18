@@ -11,7 +11,8 @@ import {
   SOLID_PLACES_DATASET,
   storeSolidDataset
 } from "../../utils/solid";
-import { standardModalProps, UserInputPane } from "../PanelPrimitives";
+import { UserInputPane } from "../PanelPrimitives";
+import { SteadyModalPropsFactory } from "../shared-types";
 
 type SaveModalProps = {
   place: HeavyPlace;
@@ -20,29 +21,29 @@ type SaveModalProps = {
 
 export default function SaveModal({ place, onHide }: SaveModalProps): JSX.Element {
 
-  const pod = useAppSelector(state => state.locker.podCurr)!;
-  const dataset = useContext(AppContext).locker.data.get(pod)!;
-  const olddata = dataset.places;
+  // const pod = useAppSelector(state => state.locker.podCurr)!;
+  // const dataset = useContext(AppContext).storage.data.get(pod)!;
+  // const olddata = dataset.places;
 
-  const item = extractLockerPlaceItem(getThing(olddata, pod + SOLID_PLACES_DATASET + "#" + place.id));
+  // const item = extractLockerPlaceItem(getThing(olddata, pod + SOLID_PLACES_DATASET + "#" + place.id));
 
   const [loading, setLoading] = useState(false);
-  const [note, setNote] = useState(item.note ?? "");
+  const [note, setNote] = useState(/* item.note ?? */ "");
 
   const save = () => {
-    storeSolidDataset({
-      targ: `${pod}${SOLID_PLACES_DATASET}`,
-      data: setThing(olddata, composeLockerPlaceItem(note, place)),
-      hide: onHide,
-      acti: (b: boolean) => setLoading(b),
-      save: (d: SolidDataset) => dataset.places = d,
-    });
+    // storeSolidDataset({
+    //   targ: `${pod}${SOLID_PLACES_DATASET}`,
+    //   data: setThing(olddata, composeLockerPlaceItem(note, place)),
+    //   hide: onHide,
+    //   acti: (b: boolean) => setLoading(b),
+    //   save: (d: SolidDataset) => dataset.places = d,
+    // });
   };
 
   return (
-    <Modal show {...standardModalProps}>
+    <Modal {...SteadyModalPropsFactory.getStandard()} show>
       <Modal.Body>
-        <UserInputPane note={note} setNote={setNote} modified={item.modified} />
+        <UserInputPane note={note} setNote={setNote} modified={/*item.modified*/undefined} />
       </Modal.Body>
       <Modal.Footer>
         <Button disabled={loading} variant="danger" onClick={onHide} className="me-auto">Discard</Button>

@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPlace } from "../../features/navigateSlice";
 import { point2text } from "../../utils/general";
 import { heavy2light, HeavyPlace } from "../../utils/grainpath";
-import { keywordBadgeProps, standardContainerClassName } from "../PanelPrimitives";
+import { keywordBadgeProps } from "../PanelPrimitives";
 import SaveModal from "./SaveModal";
 
 type HeavyPlaceViewProps = {
@@ -27,13 +27,14 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
   const isLoggedIn = useAppSelector(state => state.logger.isLoggedIn);
   const podCurr = useAppSelector(state => state.locker.podCurr);
 
-  const leaflet = useContext(AppContext).leaflet;
+  // const leaflet = useContext(AppContext).leaflet;
   const [mod, setMod] = useState(false);
 
   useEffect(() => {
-    leaflet.newmap?.clear();
-    leaflet.newmap?.setHeavyPlace(place);
-  }, [leaflet, place]);
+    // leaflet.map?.clear();
+    // leaflet.map?.setHeavyPlace(place);
+  }, [//leaflet,
+    place]);
 
   const list = () => { dispatch(appendPlace(heavy2light(place))); };
 
@@ -51,10 +52,10 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
           </a>
         </div>
       }
-      <div className={standardContainerClassName} style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+      <div className="mt-2" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
         { place.keywords.map((keyword, i) => <Badge key={i} {...keywordBadgeProps}>{keyword}</Badge>) }
       </div>
-      { description && <div className={standardContainerClassName}><small>{description}</small></div> }
+      { description && <div className="mt-2"><small>{description}</small></div> }
       <div className="mt-2" style={{ display: "flex", justifyContent: "space-evenly" }}>
         <Button disabled={!!sequence.find((p) => p.id === place.id)} onClick={list}>List</Button>
         <Button disabled={!isLoggedIn || !podCurr} onClick={() => setMod(true)}>Save</Button>

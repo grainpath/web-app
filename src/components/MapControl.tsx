@@ -3,13 +3,14 @@ import L, { LatLng } from "leaflet";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 import { AppContext } from "../App";
-import { LeafletMap } from "../utils/leaflet";
+import { MapFactory } from "../features/context";
 
 function MapExtractor(): JSX.Element {
 
   const map = useMap();
-  const { leaflet } = useContext(AppContext);
-  leaflet.newmap = leaflet.newmap ?? new LeafletMap(map);
+  const context = useContext(AppContext);
+  context.map = context.map ?? MapFactory.getMap(map);
+
   return (<></>);
 }
 

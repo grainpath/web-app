@@ -2,7 +2,7 @@ import { Offcanvas } from "react-bootstrap";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { showPanel, hidePanel } from "../features/panelSlice";
-import { LOCKER_ADDR, PLACES_ADDR, RESULT_ADDR, SEARCH_ADDR } from "../utils/general";
+import { LOCKER_ADDR, PLACES_ADDR, RESULT_ADDR, SEARCH_ADDR } from "../utils/routing";
 import { PanelButton } from "./PanelPrimitives";
 import SearchPanel from "./SearchPanel";
 import LockerPanel from "./LockerPanel";

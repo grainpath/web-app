@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Alert, Offcanvas } from "react-bootstrap";
 
-import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/general";
+import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/routing";
 import { SearchButton, LockerButton } from "./PanelPrimitives";
 
 export default function NotFoundPanel(): JSX.Element {

@@ -4,8 +4,8 @@ import { VCARD } from "@inrupt/vocab-common-rdf";
 import { getPodUrlAll, getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
 import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { Login } from "@mui/icons-material";
-
-import { SimpleButtonProps, StandardModalProps, standardModalProps } from "./PanelPrimitives";
+import { SteadyModalProps, SteadyModalPropsFactory } from "./shared-types";
+import { SimpleButtonProps } from "./PanelPrimitives";
 import { initSolidSession, SOLID_WELL_KNOWN_PROVIDERS } from "../utils/solid";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { erase, setPodList } from "../features/lockerSlice";
@@ -18,7 +18,7 @@ type ButtonProps = SimpleButtonProps & {
   isLoggedIn: boolean;
 }
 
-type DialogProps = StandardModalProps & {
+type DialogProps = SteadyModalProps & {
   show: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
@@ -139,8 +139,8 @@ export default function LoggerControl():JSX.Element {
 
   const click = !isLoggedIn ? () => setShowLi(true) : () => setShowLo(true);
 
-  const li: DialogProps = { ...standardModalProps, show: showLi, onClick: () => setShowLi(false) };
-  const lo: DialogProps = { ...standardModalProps, show: showLo, onClick: () => setShowLo(false) };
+  const li: DialogProps = { ...SteadyModalPropsFactory.getStandard(), show: showLi, onClick: () => setShowLi(false) };
+  const lo: DialogProps = { ...SteadyModalPropsFactory.getStandard(), show: showLo, onClick: () => setShowLo(false) };
 
   return (
     <>

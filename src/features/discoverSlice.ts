@@ -18,12 +18,9 @@ export const discoverSlice = createSlice({
   name: "discover",
   initialState: initialState(),
   reducers: {
-    setSource: (state, action: PayloadAction<MaybePlace>) => { state.source = action.payload; },
-    deleteSource: (state) => { state.source = undefined; },
-    setTarget: (state, action: PayloadAction<MaybePlace>) => { state.target = action.payload; },
-    deleteTarget: (state) => { state.target = undefined; },
-    setCenter: (state, action: PayloadAction<MaybePlace>) => { state.center = action.payload; },
-    deleteCenter: (state) => { state.center = undefined; },
+    setSource: (state, action: PayloadAction<MaybePlace | undefined>) => { state.source = action.payload; },
+    setTarget: (state, action: PayloadAction<MaybePlace | undefined>) => { state.target = action.payload; },
+    setCenter: (state, action: PayloadAction<MaybePlace | undefined>) => { state.center = action.payload; },
     setRadius: (state, action: PayloadAction<number>) => { state.radius = action.payload; },
     setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
     insertKeyword: (state, action: PayloadAction<KeywordFilter>) => {
@@ -39,11 +36,8 @@ export const discoverSlice = createSlice({
 
 export const {
   setSource,
-  deleteSource,
   setTarget,
-  deleteTarget,
   setCenter,
-  deleteCenter,
   setRadius,
   setDistance,
   insertKeyword,

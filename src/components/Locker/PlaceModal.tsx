@@ -4,17 +4,16 @@ import { Link } from "react-router-dom";
 import { Link as LinkIcon } from "@mui/icons-material";
 import { getThing, removeThing, setThing, SolidDataset } from "@inrupt/solid-client";
 import { AppContext } from "../../App";
-import { PLACES_ADDR } from "../../utils/general";
+import { PLACES_ADDR } from "../../utils/routing";
 import { heavy2light } from "../../utils/grainpath";
 import { composeLockerPlaceItem, LockerPlaceItem, SOLID_PLACES_DATASET, storeSolidDataset } from "../../utils/solid";
 import {
   keywordBadgeProps,
-  standardContainerClassName,
-  standardModalProps,
   UserInputPane
 } from "../PanelPrimitives";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { appendPlace } from "../../features/navigateSlice";
+import { SteadyModalPropsFactory } from "../shared-types";
 
 type PlaceModalProps = { item: LockerPlaceItem; onHide: () => void; };
 
@@ -22,17 +21,17 @@ export default function PlaceModal({ item, onHide }: PlaceModalProps): JSX.Eleme
 
   const place = item.place!;
 
-  const pod = useAppSelector(state => state.locker.podCurr)!;
-  const dataset = useContext(AppContext).locker.data.get(pod)!;
-  const olddata = dataset.places;
+  // const pod = useAppSelector(state => state.locker.podCurr)!;
+  // const dataset = useContext(AppContext).storage.data.get(pod)!;
+  // const olddata = dataset.places;
 
   const [note, setNote] = useState(item.note!);
   const [acti, setActi] = useState(false);
 
-  const target = `${pod}${SOLID_PLACES_DATASET}`;
-  const actiS = (b: boolean) => setActi(b);
-  const saveS = (d: SolidDataset) => dataset.places = d;
-  const props = { targ: target, acti: actiS, save: saveS, hide: onHide };
+  // const target = `${pod}${SOLID_PLACES_DATASET}`;
+  // const actiS = (b: boolean) => setActi(b);
+  // const saveS = (d: SolidDataset) => dataset.places = d;
+  // const props = { targ: target, acti: actiS, save: saveS, hide: onHide };
 
   const dispatch = useAppDispatch();
   const sequence = useAppSelector(state => state.navigate.sequence);
@@ -40,18 +39,18 @@ export default function PlaceModal({ item, onHide }: PlaceModalProps): JSX.Eleme
   const list = () => { dispatch(appendPlace(heavy2light(place))); };
 
   const save = () => {
-    storeSolidDataset({...props, data: setThing(olddata, composeLockerPlaceItem(note, place))});
+    // storeSolidDataset({...props, data: setThing(olddata, composeLockerPlaceItem(note, place))});
   };
 
   const remove = () => {
-    storeSolidDataset({...props, data: removeThing(olddata, getThing(olddata, target + '#' + place.id)!)});
+    // storeSolidDataset({...props, data: removeThing(olddata, getThing(olddata, target + '#' + place.id)!)});
   };
 
   return (
-    <Modal show onHide={onHide} {...standardModalProps}>
+    <Modal {...SteadyModalPropsFactory.getStandard()} show onHide={onHide}>
       <Modal.Header closeButton />
       <Modal.Body>
-        <div className={standardContainerClassName}>
+        <div className="mt-2">
           <h5>
             {place.name}
             <sup><Link style={{ fontSize: "large" }} to={PLACES_ADDR + "/" + place.id}><LinkIcon /></Link></sup>

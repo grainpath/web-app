@@ -18,7 +18,7 @@ type PodModalProps = { onHide: () => void; };
  */
 export default function PodModal({ onHide }: PodModalProps): JSX.Element {
 
-  const data = useContext(AppContext).locker.data;
+  // const data = useContext(AppContext).storage.data;
 
   const podCurr = useAppSelector(state => state.locker.podCurr);
   const podList = useAppSelector(state => state.locker.podList);
@@ -39,7 +39,7 @@ export default function PodModal({ onHide }: PodModalProps): JSX.Element {
         return alert("[Solid Error] Cannot obtain datasets from the selected Solid Pod.");
       }
 
-      data.set(pod!, { places: places, routes: routes });
+      // data.set(pod!, { places: places, routes: routes });
       dispatch(setPodCurr(pod!));
       onHide();
     }

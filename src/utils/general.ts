@@ -84,15 +84,6 @@ export const TAG_TO_TYPE: Map<string, TagEnum> = tag2entity(mapping, t => t.ty);
 
 export const TAG_TO_RELATION: Map<string, RelEnum[]> = tag2entity(mapping, (t) => t.rs);
 
-// client-side routing
-
-export const SEARCH_ADDR = "/search";
-export const LOCKER_ADDR = "/locker";
-export const PLACES_ADDR = "/places";
-export const RESULT_ADDR = "/result";
-export const ROUTES_RESULT_ADDR = RESULT_ADDR + "/routes";
-export const PLACES_RESULT_ADDR = RESULT_ADDR + "/places";
-
 // linked open vocabularies
 
 export const ns = {

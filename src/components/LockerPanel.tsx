@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, Form, Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-import { SEARCH_ADDR } from "../utils/general";
+import { SEARCH_ADDR } from "../utils/routing";
 import { useAppSelector } from "../features/hooks";
 import { lineContainerStyle, SimpleButtonProps } from "./PanelPrimitives";
 import { SearchButton } from "./PanelPrimitives";

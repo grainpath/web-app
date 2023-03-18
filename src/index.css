@@ -1,7 +1,8 @@
 :root {
-  --btn-border-color-normal: #dee2e6;
+  --btn-border-color: #dee2e6;
   --btn-background-color-hover: #f4f4f4;
   --btn-background-color-normal: white;
+  --cnt-border-color: #ced4da;
 }
 
 * {
@@ -20,7 +21,7 @@ html, body, #root, #map {
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
-  border: 1px solid var(--btn-border-color-normal);
+  border: 1px solid var(--btn-border-color);
   background-color: var(--btn-background-color-normal);
 }
 
@@ -41,7 +42,7 @@ html, body, #root, #map {
 
 .chips-container {
   min-height: 2.4rem;
-  border: 1px solid var(--btn-border-color-normal);
+  border: 1px solid var(--btn-border-color);
   border-radius: 0.375rem;
 }
 
@@ -62,54 +63,67 @@ html, body, #root, #map {
   align-items: center;
 }
 
-.source-marker {
-  color: #2aad27;
-}
 
-.source-marker:hover {
-  color: green;
-}
 
-.target-marker {
-  color: #cb2b3e;
-}
 
-.target-marker:hover {
-  color: darkred;
-}
 
-.custom-marker {
-  color: #2a81cb;
-}
 
-.custom-marker:hover {
-  color: #1e578a;
-}
 
-.adding-marker, .center-marker {
-  color: gray;
-}
 
-.adding-marker:hover, .center-marker:hover {
-  color: #5a5a5a;
-}
 
-.known-marker {
+.grain-known-pin {
   color: #9c2bcb;
 }
 
-.known-marker:hover {
+/* .grain-known-pin:hover {
   color: #751e9b;
-}
+} */
 
-.other-marker {
+.grain-other-pin {
   color: #2a81cb;
 }
 
-.other-marker:hover {
+/* .grain-other-pin:hover {
   color: #1e578a;
+} */
+
+.grain-source-pin {
+  color: #2aad27;
 }
 
-.vacant-placeholder {
+/* .grain-source-pin:hover {
+  color: green;
+} */
+
+.grain-target-pin {
+  color: #cb2b3e;
+}
+
+/* .grain-target-pin:hover {
+  color: darkred;
+} */
+
+.grain-adding-pin,
+.grain-center-pin,
+.grain-action-btn {
   color: gray;
+}
+
+/* .grain-adding-pin:hover,
+.grain-center-pin:hover,
+.grain-action-btn:hover {
+  color: #5a5a5a;
+} */
+
+.grain-list-item {
+  display: flex;
+  align-items: stretch;
+}
+
+.grain-list-item-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: solid 1px var(--cnt-border-color);
 }
