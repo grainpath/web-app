@@ -21,7 +21,7 @@ export default function MapControl(): JSX.Element {
   const att = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://grainpath.github.io/docs/" target="_blank">GrainPath Docs</a>';
 
   return (
-    <MapContainer id={"map"} center={cnt} scrollWheelZoom={true} zoom={4} zoomControl={false}>
+    <MapContainer id={"map"} center={cnt} scrollWheelZoom={true} zoom={11} zoomControl={false}>
       <TileLayer url={url} attribution={att} />
       <MapExtractor />
     </MapContainer>
