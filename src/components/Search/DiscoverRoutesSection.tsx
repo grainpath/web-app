@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Slider, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Search, SwapVert } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../../App";
@@ -16,6 +16,7 @@ import {
 } from "../shared-list-items";
 import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
 import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
+import DiscoverDistanceSlider from "./DiscoverDistanceSlider";
 
 export default function RoutesSection(): JSX.Element {
 
@@ -26,8 +27,7 @@ export default function RoutesSection(): JSX.Element {
   const map = useContext(AppContext).map!;
 
   const dispatch = useAppDispatch();
-  const mod = useAppSelector(state => state.search.mod);
-  const { disabled, loadRoutes } = useAppSelector(state => state.search);
+  const { mod, disabled, loadRoutes } = useAppSelector(state => state.search);
   const { source, target, distance } = useAppSelector(state => state.discover);
 
   useEffect(() => {
@@ -39,6 +39,7 @@ export default function RoutesSection(): JSX.Element {
         ? (map.addSource(source, false).withLink(link, source.id))
         : (map.addSource(source, true).withDrag(pt => dispatch(setSource(point2place(pt)))));
     }
+
     if (target) {
       (target.id)
         ? (map.addTarget(target, false).withLink(link, target.id))
@@ -51,8 +52,6 @@ export default function RoutesSection(): JSX.Element {
   const load = () => {
     // TODO: Implement API call.
   };
-
-  const marks = [ 5, 10, 15, 20, 25 ].map(m => { return { value: m, label: m } });
 
   return (
     <Box>
@@ -72,20 +71,14 @@ export default function RoutesSection(): JSX.Element {
         </Box>
       </Box>
       <Box sx={{ mt: 3 }}>
-        <Typography>Distance you are willing to walk (in <a href="https://en.wikipedia.org/wiki/Kilometre" target="_blank" title="kilometres">km</a>)</Typography>
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-          <Box sx={{ width: "94%" }}>
-            <Slider
-              min={0}
-              max={30}
-              step={0.1}
-              marks={marks}
-              value={distance}
-              valueLabelDisplay="auto"
-              onChange={(_, value) => { dispatch(setDistance(value as number)); }}
-            />
-          </Box>
-        </Box>
+        <Typography>
+          Distance you are willing to walk (in <a href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres">km</a>)
+        </Typography>
+        <DiscoverDistanceSlider
+          max={30}
+          seq={[ 5, 10, 15, 20, 25 ]}
+          distance={distance}
+          dispatch={(value) => { dispatch(setDistance(value)); }} />
       </Box>
       <DiscoverKeywordsInput />
       <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
