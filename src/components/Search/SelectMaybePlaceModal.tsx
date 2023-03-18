@@ -1,14 +1,12 @@
-import { Typography } from "@mui/material";
 import { useContext } from "react";
 import { Modal } from "react-bootstrap";
+import { Typography } from "@mui/material";
 import { AppContext } from "../../App";
-import { setSource } from "../../features/discoverSlice";
 import { useAppDispatch } from "../../features/hooks";
 import { blockPanel, unblockPanel } from "../../features/panelSlice";
 import { point2place } from "../../utils/general";
 import { MaybePlace, Point } from "../../utils/grainpath";
 import { PinKind, PlusPinButton } from "../shared-pin-buttons";
-import { SteadyModalPropsFactory } from "../shared-types";
 
 type SelectMaybePlaceModalProps = {
   kind: PinKind;

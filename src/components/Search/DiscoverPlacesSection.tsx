@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Search } from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { point2place } from "../../utils/general";
 import { PLACES_ADDR } from "../../utils/routing";
-import { setCenter, setRadius } from "../../features/discoverSlice";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { setCenter, setRadius } from "../../features/discoverSlice";
 import { FreeCenterListItem } from "../shared-list-items";
 import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
-import { LoadingButton } from "@mui/lab";
-import { Search } from "@mui/icons-material";
 import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
 import DiscoverDistanceSlider from "./DiscoverDistanceSlider";
 
