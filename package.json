@@ -67,6 +67,7 @@
     ]
   },
   "devDependencies": {
+    "@mui/lab": "^5.0.0-alpha.123",
     "@types/react-beautiful-dnd": "^13.1.3",
     "gh-pages": "^5.0.0",
     "react-beautiful-dnd": "^13.1.1"
