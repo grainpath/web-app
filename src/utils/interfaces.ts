@@ -3,14 +3,21 @@ import { LightPlace, MaybePlace, Point } from "./grainpath";
 export interface IPin {
 
   /**
-   * Calls `drag` on a new position.
-   */
-  withDrag(drag: (point: Point) => void): void;
-
-  /**
    * Ensures popup with /places link to some id.
    */
-  withLink(link: (id: string) => void, id: string): void;
+  withLink(link: (id: string) => void, id: string): IPin;
+
+  /**
+   * Calls `drag` on a new position.
+   */
+  withDrag(drag: (point: Point) => void): IPin;
+
+  /**
+   * Clear shapes and draw new circle.
+   * @param map Currently used map.
+   * @param radius (in meters!)
+   */
+  withCirc(map: IMap, radius: number): IPin;
 }
 
 export interface IMap {
@@ -19,6 +26,12 @@ export interface IMap {
    * Delete all existing, user-defined objects from a map.
    */
   clear(): void;
+
+  /**
+   * Delete all shapes (circles, polygons, polylines, etc.), markers should
+   * be left untouched.
+   */
+  clearShapes(): void;
 
   /**
    * Move map center to the place location and open popup. Prior to the flight,
@@ -58,7 +71,7 @@ export interface IMap {
 
   /**
    * @param center User-defined center of a circle.
-   * @param radius Maximum distance from a center (in meters!).
+   * @param radius Radius of a circle (in meters!).
    */
   drawCircle(center: Point, radius: number): void;
 

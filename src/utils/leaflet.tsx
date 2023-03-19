@@ -10,6 +10,7 @@ import L, {
 import * as ReactDOMServer from "react-dom/server";
 import { Badge } from "react-bootstrap";
 import { Link } from "@mui/icons-material";
+import { point2place } from "./general";
 import { IMap, IPin } from "./interfaces";
 import { LightPlace, MaybePlace, Point } from "./grainpath";
 
@@ -83,13 +84,27 @@ class MaybePlacePopupFactory {
   }
 }
 
-class LeafletPin implements IPin {
+class LeafletConverter {
 
   // see https://epsg.io/3857
-  private ensureLonBounds (lon: number): number { return Math.min(Math.max(lon, -180.0), +180.0); }
-  private ensureLatBounds (lat: number): number { return Math.min(Math.max(lat, -85.06), +85.06); }
+  private static ensureLonBounds (lon: number): number { return Math.min(Math.max(lon, -180.0), +180.0); }
+  private static ensureLatBounds (lat: number): number { return Math.min(Math.max(lat, -85.06), +85.06); }
 
-  public readonly place: MaybePlace;
+  public static latlng2point(ll: LatLng): Point {
+    return {
+      lon: LeafletConverter.ensureLonBounds(ll.lng),
+      lat: LeafletConverter.ensureLatBounds(ll.lat)
+    };
+  }
+
+  public static point2latlng(point: Point) {
+    return new LatLng(point.lat, point.lon);
+  }
+}
+
+class LeafletPin implements IPin {
+
+  public place: MaybePlace;
   public readonly marker: Marker<any>;
 
   /**
@@ -97,20 +112,31 @@ class LeafletPin implements IPin {
    * @param link typically a wrapper around `useNavigate` hook.
    * @param id any identifier that plays well with `link` function.
    */
-  public withLink(link: (id: string) => void, id: string): void {
+  public withLink(link: (id: string) => void, id: string): IPin {
     this.marker.addEventListener("popupopen", () => {
       document.getElementById(`popup-${id}`)?.addEventListener("click", () => link(id));
     });
+    return this;
   }
 
   /**
    * Action upon event on dragend (when user releases marker on a new position).
    */
-  public withDrag(drag: (point: Point) => void): void {
+  public withDrag(drag: (point: Point) => void): IPin {
     this.marker.addEventListener("dragend", () => {
-      const ll = this.marker.getLatLng();
-      drag({ lon: this.ensureLonBounds(ll.lng), lat: this.ensureLatBounds(ll.lat) });
+      this.place = point2place(LeafletConverter.latlng2point(this.marker.getLatLng()));
+      this.marker.bindPopup(MaybePlacePopupFactory.getPoint(this.place));
+      drag(this.place.location);
     });
+    return this;
+  }
+
+  public withCirc(map: IMap, radius: number): IPin {
+    this.marker.addEventListener("dragend", () => {
+      map.clearShapes();
+      map.drawCircle(LeafletConverter.latlng2point(this.marker.getLatLng()), radius);
+    });
+    return this;
   }
 
   constructor(place: MaybePlace, marker: Marker<any>) {
@@ -131,19 +157,12 @@ export class LeafletMap implements IMap {
   private readonly color: string = "green";
 
   private readonly map: Map;
-  private readonly palette: LayerGroup;
+  private readonly shapeLayer: LayerGroup;
+  private readonly markerLayer: LayerGroup;
   private pins: LeafletPin[];
 
-  private point2latlng(point: Point) {
-    return new LatLng(point.lat, point.lon);
-  }
-
-  private latlng2point(ll: LatLng): Point {
-    return { lon: ll.lng, lat: ll.lat };
-  }
-
   private addMarker(point: Point, icon: Icon<any>, draggable: boolean): Marker<any> {
-    return L.marker(new LatLng(point.lat, point.lon), { icon: icon, draggable: draggable }).addTo(this.palette);
+    return L.marker(new LatLng(point.lat, point.lon), { icon: icon, draggable: draggable }).addTo(this.markerLayer);
   }
 
   private addLightPlace(place: LightPlace, icon: Icon<LeafletFace>): LeafletPin {
@@ -169,7 +188,8 @@ export class LeafletMap implements IMap {
   constructor(map: Map) {
 
     this.map = map;
-    this.palette = L.layerGroup().addTo(map);
+    this.shapeLayer = L.layerGroup().addTo(map);
+    this.markerLayer = L.layerGroup().addTo(map);
     L.control.zoom({ position: pos }).addTo(map);
     L.control.locate({ position: pos }).addTo(map);
     this.pins = [];
@@ -177,8 +197,11 @@ export class LeafletMap implements IMap {
 
   public clear(): void {
     this.pins = [];
-    this.palette.clearLayers();
+    this.shapeLayer.clearLayers();
+    this.markerLayer.clearLayers();
   }
+
+  public clearShapes(): void { this.shapeLayer.clearLayers(); }
 
   public flyTo(place: MaybePlace): void {
     const pin = this.pins.find(pin => pin.place === place);
@@ -213,21 +236,21 @@ export class LeafletMap implements IMap {
     if (radius < 0.0) { return; }
     L.circle(new LatLng(center.lat, center.lon), {
       color: this.color, fillColor: this.color, fillOpacity: 0.2, radius: radius
-    }).addTo(this.palette);
+    }).addTo(this.shapeLayer);
   }
 
   public drawPolygon(polygon: Point[]): void {
     if (polygon.length < 4) { return; }
-    L.polygon(polygon.map(pt => this.point2latlng(pt)), {
+    L.polygon(polygon.map(pt => LeafletConverter.point2latlng(pt)), {
       color: this.color, fillColor: this.color, fillOpacity: 0.5
-    }).addTo(this.palette);
+    }).addTo(this.shapeLayer);
   }
 
   public drawPolyline(polyline: Point[]): void {
     if (polyline.length < 2) { return; }
-    L.polyline(polyline.map(pt => this.point2latlng(pt)), {
+    L.polyline(polyline.map(pt => LeafletConverter.point2latlng(pt)), {
       color: this.color, fillColor: this.color, fillOpacity: 0.5
-    }).addTo(this.palette);
+    }).addTo(this.shapeLayer);
   }
 
   public captureLocation(callback: (point: Point) => void): void {
@@ -236,7 +259,7 @@ export class LeafletMap implements IMap {
 
     this.map.once("click", (e) => {
       style.cursor = "";
-      callback(this.latlng2point(this.map.mouseEventToLatLng(e.originalEvent)));
+      callback(LeafletConverter.latlng2point(this.map.mouseEventToLatLng(e.originalEvent)));
     });
   }
 }

@@ -32,9 +32,9 @@ export default function DiscoverPlacesSection(): JSX.Element {
     if (center) {
       (center.id)
         ? (map.addStored({ ...center, id: center.id }).withLink(link, center.id))
-        : (map.addCustom(center, true).withDrag(pt => dispatch(setCenter(point2place(pt)))));
+        : (map.addCustom(center, true).withDrag(pt => dispatch(setCenter(point2place(pt)))).withCirc(map, radius * 1000));
 
-      map.drawCircle(center.location, radius * 1000.0);
+      map.drawCircle(center.location, radius * 1000);
     }
   }, [map, nav, dispatch, center, radius]);
 
