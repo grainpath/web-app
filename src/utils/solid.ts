@@ -15,7 +15,6 @@ import {
   SolidDataset,
   Thing
 } from "@inrupt/solid-client";
-
 import { ns } from "./general";
 import { HeavyPlace, Point } from "./grainpath";
 

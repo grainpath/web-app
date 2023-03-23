@@ -1,7 +1,6 @@
 import { useContext } from "react";
-import L, { LatLng } from "leaflet";
+import { LatLng } from "leaflet";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
-
 import { AppContext } from "../App";
 import { MapFactory } from "../features/context";
 

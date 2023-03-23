@@ -1,9 +1,10 @@
 export const GRAINPATH_BASE_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
-export const GRAINPATH_AUTOCOMPLETE_URL = GRAINPATH_BASE_URL + "/autocomplete";
+export const GRAINPATH_AUTOC_URL = GRAINPATH_BASE_URL + "/autoc";
+export const GRAINPATH_BOUND_URL = GRAINPATH_BASE_URL + "/bound";
 export const GRAINPATH_PLACE_URL = GRAINPATH_BASE_URL + "/place";
-export const GRAINPATH_STACK_URL = GRAINPATH_BASE_URL + "/stack";
 export const GRAINPATH_ROUTE_URL = GRAINPATH_BASE_URL + "/route";
 export const GRAINPATH_SHORT_URL = GRAINPATH_BASE_URL + "/short";
+export const GRAINPATH_STACK_URL = GRAINPATH_BASE_URL + "/stack";
 
 /**
  * Point in [WSG84] CRS.
@@ -97,7 +98,7 @@ export type HeavyPlace = LightPlace & {
 };
 
 export function heavy2light(grain: HeavyPlace): LightPlace {
-  return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords } as LightPlace;
+  return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords };
 }
 
 export type Boundary = {
@@ -110,14 +111,6 @@ type ConstraintBase = {
   relation?: string;
 };
 
-type BooleanConstraint = ConstraintBase & {
-  value?: boolean;
-};
-
-type CollectConstraint = ConstraintBase & {
-  value?: string;
-};
-
 type MeasureConstraint = ConstraintBase & {
   value?: number;
 };
@@ -126,15 +119,34 @@ type TextualConstraint = ConstraintBase & {
   value?: string;
 };
 
-export type KeywordConstraint
-  = BooleanConstraint
-  | CollectConstraint
-  | MeasureConstraint
+export type KeywordConstraint = MeasureConstraint
   | TextualConstraint;
 
 export type KeywordFilter = {
   keyword: string;
   constrs: KeywordConstraint[];
+};
+
+//////////////////////////////////////////////////////
+
+type NumericConstraint = {
+  min: number;
+  max: number;
+}
+
+type CollectConstraint = {
+  includes: string[];
+  excludes: string[];
+};
+
+type Constraint = {
+  name?: string;
+  keyword?: string;
+  tags: {
+    rental?: CollectConstraint;
+    clothes?: CollectConstraint;
+    cuisine?: CollectConstraint;
+  }
 };
 
 /**

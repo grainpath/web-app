@@ -10,7 +10,7 @@ import { PLACES_ADDR } from "../../utils/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setCenter, setRadius } from "../../features/discoverSlice";
 import { FreeCenterListItem, RemovableCustomListItem } from "../shared-list-items";
-import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
+import { SelectMaybePlaceModal } from "../shared-modals";
 import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
 import DiscoverDistanceSlider from "./DiscoverDistanceSlider";
 
@@ -19,34 +19,35 @@ export default function DiscoverPlacesSection(): JSX.Element {
   const [modC, setModC] = useState(false);
 
   const nav = useNavigate();
-  const map = useContext(AppContext).map!;
+  const map = useContext(AppContext).map;
 
   const dispatch = useAppDispatch();
   const { center, radius } = useAppSelector(state => state.discover);
-  const { mod, disabled, loadPlaces } = useAppSelector(state => state.search);
 
   useEffect(() => {
     const link = (id: string) => nav(PLACES_ADDR + `/${id}`);
-    map.clear();
+    map?.clear();
 
     if (center) {
       (center.id)
-        ? (map.addStored({ ...center, id: center.id }).withLink(link, center.id))
-        : (map.addCustom(center, true).withDrag(pt => dispatch(setCenter(point2place(pt)))).withCirc(map, radius * 1000));
+        ? (map?.addStored({ ...center, id: center.id }).withLink(link, center.id))
+        : (map?.addCustom(center, true).withDrag(pt => dispatch(setCenter(point2place(pt)))).withCirc(map, radius * 1000));
 
-      map.drawCircle(center.location, radius * 1000);
+      map?.drawCircle(center.location, radius * 1000);
     }
   }, [map, nav, dispatch, center, radius]);
 
   const props = (place: MaybePlace) => {
     return {
-      onMarker: () => { map.flyTo(place); },
+      onMarker: () => { map?.flyTo(place); },
       onDelete: () => { dispatch(setCenter(undefined)); }
     };
   };
 
+  const { loading } = useAppSelector(state => state.panel);
+
   const load = () => {
-    // TODO: Implement API call.
+    // TODO: Implement API call, with panel loading!
   };
 
   return (
@@ -65,6 +66,7 @@ export default function DiscoverPlacesSection(): JSX.Element {
           <DiscoverDistanceSlider
             max={12}
             seq={[ 2, 4, 6, 8, 10 ]}
+            step={0.1}
             distance={radius}
             dispatch={(value) => { dispatch(setRadius(value)); }}
           />
@@ -81,8 +83,8 @@ export default function DiscoverPlacesSection(): JSX.Element {
           loadingPosition="start"
           title={"Discover places"}
           onClick={() => { load(); }}
-          loading={loadPlaces}
-          disabled={(!mod && !center) || (disabled && !loadPlaces)}
+          loading={loading}
+          disabled={!center}
         >
           <span>Discover</span>
         </LoadingButton>

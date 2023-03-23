@@ -1,30 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type PanelState = {
   show: boolean;
-  disabled: boolean;
+  loading: boolean;
 };
 
-const initialState = () => {
-  return { show: true, disabled: false } as PanelState;
+const initialState = (): PanelState => {
+  return { show: false, loading: false };
 }
 
 export const panelSlice = createSlice({
   name: "panel",
   initialState: initialState(),
   reducers: {
-    showPanel: (state) => { state.show = true; },
+    showPanel: (state) => { state.show = true;  },
     hidePanel: (state) => { state.show = false; },
-    blockPanel: (state) => { state.show = false; state.disabled = true; },
-    unblockPanel: (state) => { state.show = true; state.disabled = false; }
+    setLoading: (state, action: PayloadAction<boolean>) => { state.loading = action.payload; }
   }
 });
 
 export const {
   showPanel,
   hidePanel,
-  blockPanel,
-  unblockPanel
+  setLoading
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

@@ -1,6 +1,5 @@
 import { Button } from "react-bootstrap";
 
-
 export function NavigateButton(): JSX.Element {
 
   const navigate = () => {

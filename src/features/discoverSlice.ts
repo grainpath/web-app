@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { KeywordFilter, MaybePlace } from "../utils/grainpath";
 
 type DiscoverState = {
+  mod: boolean;
   source?: MaybePlace;
   target?: MaybePlace;
   center?: MaybePlace;
@@ -10,14 +11,16 @@ type DiscoverState = {
   filters: KeywordFilter[];
 };
 
-const initialState = () => {
-  return { radius: 3.0, distance: 5.0, filters: [] } as DiscoverState;
+const initialState = (): DiscoverState => {
+  return { mod: true, radius: 3.0, distance: 5.0, filters: [] };
 };
 
 export const discoverSlice = createSlice({
   name: "discover",
   initialState: initialState(),
   reducers: {
+    setRoutes: (state) => { state.mod = true; },
+    setPlaces: (state) => { state.mod = false; },
     setSource: (state, action: PayloadAction<MaybePlace | undefined>) => { state.source = action.payload; },
     setTarget: (state, action: PayloadAction<MaybePlace | undefined>) => { state.target = action.payload; },
     setCenter: (state, action: PayloadAction<MaybePlace | undefined>) => { state.center = action.payload; },
@@ -35,6 +38,8 @@ export const discoverSlice = createSlice({
 });
 
 export const {
+  setRoutes,
+  setPlaces,
   setSource,
   setTarget,
   setCenter,

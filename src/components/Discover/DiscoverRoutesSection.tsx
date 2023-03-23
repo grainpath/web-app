@@ -14,8 +14,8 @@ import {
   RemovableSourceListItem,
   RemovableTargetListItem
 } from "../shared-list-items";
+import { SelectMaybePlaceModal } from "../shared-modals";
 import DiscoverKeywordsInput from "./DiscoverKeywordsInput";
-import SelectMaybePlaceModal from "./SelectMaybePlaceModal";
 import DiscoverDistanceSlider from "./DiscoverDistanceSlider";
 
 export default function RoutesSection(): JSX.Element {
@@ -24,33 +24,34 @@ export default function RoutesSection(): JSX.Element {
   const [modT, setModT] = useState(false);
 
   const nav = useNavigate();
-  const map = useContext(AppContext).map!;
+  const map = useContext(AppContext).map;
 
   const dispatch = useAppDispatch();
-  const { mod, disabled, loadRoutes } = useAppSelector(state => state.search);
   const { source, target, distance } = useAppSelector(state => state.discover);
 
   useEffect(() => {
     const link = (id: string) => nav(PLACES_ADDR + `/${id}`);
-    map.clear();
+    map?.clear();
 
     if (source) {
       (source.id)
-        ? (map.addSource(source, false).withLink(link, source.id))
-        : (map.addSource(source, true).withDrag(pt => dispatch(setSource(point2place(pt)))));
+        ? (map?.addSource(source, false).withLink(link, source.id))
+        : (map?.addSource(source, true).withDrag(pt => dispatch(setSource(point2place(pt)))));
     }
 
     if (target) {
       (target.id)
-        ? (map.addTarget(target, false).withLink(link, target.id))
-        : (map.addTarget(target, true).withDrag(pt => dispatch(setTarget(point2place(pt)))));
+        ? (map?.addTarget(target, false).withLink(link, target.id))
+        : (map?.addTarget(target, true).withDrag(pt => dispatch(setTarget(point2place(pt)))));
     }
   }, [nav, map, dispatch, source, target]);
 
   const swap = () => { dispatch(setSource(target)); dispatch(setTarget(source)); }
 
+  const { loading } = useAppSelector(state => state.panel);
+
   const load = () => {
-    // TODO: Implement API call.
+    // TODO: Implement API call, with panel loading!
   };
 
   return (
@@ -58,11 +59,11 @@ export default function RoutesSection(): JSX.Element {
       <Box sx={{ mt: 4 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "1.0rem" }}>
             { (source)
-              ? <RemovableSourceListItem onMarker={() => { map.flyTo(source); }} label={point2text(source.location)} onDelete={() => { dispatch(setSource(undefined)); }} />
+              ? <RemovableSourceListItem onMarker={() => { map?.flyTo(source); }} label={point2text(source.location)} onDelete={() => { dispatch(setSource(undefined)); }} />
               : <FreeSourceListItem onClick={() => { setModS(true); }} />
             }
             { (target)
-              ? <RemovableTargetListItem onMarker={() => { map.flyTo(target); }} label={point2text(target.location)} onDelete={() => { dispatch(setTarget(undefined)); }} />
+              ? <RemovableTargetListItem onMarker={() => { map?.flyTo(target); }} label={point2text(target.location)} onDelete={() => { dispatch(setTarget(undefined)); }} />
               : <FreeTargetListItem onClick={() => { setModT(true); }} />
             }
         </Box>
@@ -72,12 +73,13 @@ export default function RoutesSection(): JSX.Element {
       </Box>
       <Box sx={{ mt: 3 }}>
         <Typography>
-          Distance you are willing to walk (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>)
+          Maximum walking distance (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>):
         </Typography>
         <Box sx={{ mt: 2 }}>
           <DiscoverDistanceSlider
             max={30}
             seq={[ 5, 10, 15, 20, 25 ]}
+            step={0.2}
             distance={distance}
             dispatch={(value) => { dispatch(setDistance(value)); }}
           />
@@ -94,8 +96,8 @@ export default function RoutesSection(): JSX.Element {
           loadingPosition="start"
           title={"Discover a route"}
           onClick={() => { load(); }}
-          loading={loadRoutes}
-          disabled={(mod && (!source || !target)) || (disabled && !loadRoutes)}
+          loading={loading}
+          disabled={!source || !target}
         >
           <span>Discover</span>
         </LoadingButton>

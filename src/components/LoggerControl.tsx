@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Person } from "@mui/icons-material";
+import { Box, Button, ButtonProps, Icon, styled } from "@mui/material";
+import { Form, Modal } from "react-bootstrap";
 import { VCARD } from "@inrupt/vocab-common-rdf";
 import { getPodUrlAll, getSolidDataset, getStringNoLocale, getThing, Thing } from "@inrupt/solid-client";
 import { fetch, getDefaultSession } from "@inrupt/solid-client-authn-browser";
-import { Login } from "@mui/icons-material";
 import { SteadyModalProps, SteadyModalPropsFactory } from "./shared-types";
-import { SimpleButtonProps } from "./PanelPrimitives";
 import { initSolidSession, SOLID_WELL_KNOWN_PROVIDERS } from "../utils/solid";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { erase, setPodList } from "../features/lockerSlice";
@@ -14,22 +14,9 @@ import { setLoggedIn, setUserName } from "../features/loggerSlice";
 const SOLID_LOGO_FILENAME = "/solid/logo.svg";
 const ASSETS_FOLDER =  process.env.PUBLIC_URL + "/assets";
 
-type ButtonProps = SimpleButtonProps & {
-  isLoggedIn: boolean;
-}
-
 type DialogProps = SteadyModalProps & {
   show: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-}
-
-function StatusButton({ onClick, isLoggedIn }: ButtonProps): JSX.Element {
-
-  return (
-    <button id="login-button" className="standard-button control-button" onClick={onClick} title={ !isLoggedIn ? "Log in" : "Log out" }>
-      { !isLoggedIn ? <Login fontSize="large" /> : <img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} alt={SOLID_LOGO_FILENAME} /> }
-    </button>
-  );
 }
 
 function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
@@ -68,8 +55,8 @@ function LoginDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         }</datalist>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClick}>Close</Button>
-        <Button variant="primary" onClick={login} disabled={logging}>Login</Button>
+        <Button color="secondary" onClick={onClick}>Close</Button>
+        <Button color="primary" onClick={login} disabled={logging}>Login</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -117,12 +104,19 @@ function LogoutDialog({ onClick, ...rest }: DialogProps): JSX.Element {
         Logged in as <a href={session.info.webId} rel="noopener noreferrer" target="_blank">{label}</a>.
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClick}>Close</Button>
-        <Button variant="danger" onClick={() => session.logout()}>Logout</Button>
+        <Button color="secondary" onClick={onClick}>Close</Button>
+        <Button color="error" onClick={() => session.logout()}>Logout</Button>
       </Modal.Footer>
     </Modal>
   );
 }
+
+const LogBut = styled(Button)<ButtonProps>(() => ({
+  backgroundColor: "#FFFFFF",
+  "&:hover": {
+    backgroundColor: "#FFFFFF",
+  }
+}));
 
 export default function LoggerControl():JSX.Element {
 
@@ -143,11 +137,17 @@ export default function LoggerControl():JSX.Element {
   const lo: DialogProps = { ...SteadyModalPropsFactory.getStandard(), show: showLo, onClick: () => setShowLo(false) };
 
   return (
-    <>
-      <div style={{ top: "10px", right: "10px", zIndex: 1000, position: "absolute" }}>
-        <StatusButton onClick={click} isLoggedIn={isLoggedIn} />
-      </div>
-      { !isLoggedIn ? <LoginDialog {...li} /> : <LogoutDialog {...lo} /> }
-    </>
+    <Box sx={{ position: "absolute", top: "10px", right: "10px", zIndex: 1000 }}>
+      <LogBut startIcon={!isLoggedIn ? <Icon sx={{ display: "flex" }}><img src={ASSETS_FOLDER + SOLID_LOGO_FILENAME} /></Icon> : (<Person />)} variant="outlined" onClick={click} color="primary">
+        Log in
+      </LogBut>
+      {  }
+    </Box>
+    // <>
+    //   <div style={{ top: "10px", right: "10px", zIndex: 1000, position: "absolute" }}>
+    //     <StatusButton onClick={click} isLoggedIn={isLoggedIn} />
+    //   </div>
+    //   { !isLoggedIn ? <LoginDialog {...li} /> : <LogoutDialog {...lo} /> }
+    // </>
   );
 }

@@ -111,25 +111,6 @@ export function point2place(point: Point): MaybePlace {
   return { name: point2text(point), location: point, keywords: [] };
 }
 
-const ensureLonBounds = (lon: number): number => Math.min(Math.max(lon, -180.0), +180.0);
-const ensureLatBounds = (lat: number): number => Math.min(Math.max(lat, -85.06), +85.06);
-
-/**
- * Ensure LatLng within EPSG:3857, see https://epsg.io/3857.
- */
-export function ensureLatLngBounds(latLng: L.LatLng): L.LatLng {
-  return new LatLng(ensureLatBounds(latLng.lat), ensureLonBounds(latLng.lng));
-}
-
-/**
- * Ensure marker within EPSG:3857, see https://epsg.io/3857.
- * @param marker raised dragend event.
- */
-export function ensureMarkerBounds(marker: L.Marker<any>): L.Marker<any> {
-  const lls = marker.getLatLng();
-  return marker.setLatLng(ensureLatLngBounds(lls));
-};
-
 /**
  * Swaps elements in an array and return its copy. The input array is not modified.
  */

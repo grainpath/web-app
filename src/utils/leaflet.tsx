@@ -8,11 +8,11 @@ import L, {
   PointExpression
 } from "leaflet";
 import * as ReactDOMServer from "react-dom/server";
-import { Badge } from "react-bootstrap";
 import { Link } from "@mui/icons-material";
 import { point2place } from "./general";
 import { IMap, IPin } from "./interfaces";
 import { LightPlace, MaybePlace, Point } from "./grainpath";
+import { Chip } from "@mui/material";
 
 const pos = "bottomright";
 const dir = process.env.PUBLIC_URL + "/assets/markers";
@@ -26,6 +26,11 @@ enum Color {
 }
 
 class LeafletFace implements BaseIconOptions {
+
+  static preload(url: string) { const img = new Image(); img.src = url; return img; };
+
+  private markerImage: HTMLImageElement;
+  private shadowImage: HTMLImageElement;
 
   iconUrl?: string;
   shadowUrl?: string;
@@ -42,6 +47,10 @@ class LeafletFace implements BaseIconOptions {
     this.iconAnchor = [12, 41];
     this.shadowSize = [41, 41];
     this.popupAnchor = [1, -34];
+
+    // prevent garbage collection
+    this.markerImage = LeafletFace.preload(this.iconUrl);
+    this.shadowImage = LeafletFace.preload(this.shadowUrl);
   }
 };
 
@@ -66,7 +75,9 @@ function LightPlacePopup({ place }: LightPlacePopupProps): JSX.Element {
       <div className="mt-2 mb-2" style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
         <Link id={place.id} fontSize="large" style={{ cursor: "pointer" }} />
         <div className="mt-1 mb-1" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", width: "150px" }}>
-          {place.keywords.map((k, i) => <Badge key={i} bg="success" style={{ margin: "0.1rem", display: "block" }} pill>{k}</Badge>)}
+          {place.keywords.map((k, i) =>
+            <Chip key={i} label={k} color="primary" size="small" variant="outlined" style={{ margin: "0.1rem", display: "block" }} />)
+          }
         </div>
       </div>
     </>

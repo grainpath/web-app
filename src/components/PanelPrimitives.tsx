@@ -35,25 +35,6 @@ export function LineLabelField({ label }: LineLabelFieldProps): JSX.Element {
   return (<Form.Control type="text" value={label} readOnly />);
 }
 
-export const centerContainerProps = {
-  style: { display: "flex", justifyContent: "center" } as React.CSSProperties
-};
-
-type PanelButtonProps = SimpleButtonProps & {
-  disabled: boolean;
-}
-
-export function PanelButton(props: PanelButtonProps): JSX.Element {
-
-  return (
-    <div style={{ top: "10px", left: "10px", zIndex: 1000, position: "absolute" }}>
-      <button {...props} id="panel-button" className="standard-button control-button" title="Control panel">
-        <KeyboardCommandKey fontSize="large" />
-      </button>
-    </div>
-  );
-}
-
 type StandardButtonProps = {
   icon: ReactElement;
   title?: string;

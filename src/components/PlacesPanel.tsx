@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Alert, Offcanvas, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { LOCKER_ADDR, SEARCH_ADDR } from "../utils/routing";
+import { DISCOVER_ADDR, FAVORITE_ADDR } from "../utils/routing";
 import { HeavyPlace, grainpathFetch, GRAINPATH_PLACE_URL } from "../utils/grainpath";
 import { useAppSelector } from "../features/hooks";
 import { appendList } from "../features/placesSlice";
-import { centerContainerProps, LockerButton, SearchButton } from "./PanelPrimitives";
+import { LockerButton, SearchButton } from "./PanelPrimitives";
 import HeavyPlaceView from "./Places/HeavyPlaceView";
 
 /**
@@ -62,11 +62,11 @@ export default function PlacesPanel(): JSX.Element {
   return (
     <>
       <Offcanvas.Header closeButton>
-        <SearchButton onClick={() => navigate(SEARCH_ADDR)} />
-        <LockerButton onClick={() => navigate(LOCKER_ADDR)} />
+        <SearchButton onClick={() => navigate(DISCOVER_ADDR)} />
+        <LockerButton onClick={() => navigate(FAVORITE_ADDR)} />
       </Offcanvas.Header>
       <Offcanvas.Body>
-        { loading ? <div {...centerContainerProps}><Spinner animation="grow" role="status" /></div> : view }
+        { loading ? <div><Spinner animation="grow" role="status" /></div> : view }
       </Offcanvas.Body>
     </>
   );

@@ -1,13 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import { Save } from "@mui/icons-material";
-import { Box, Button as Btn, Chip, Paper, Stack, Typography } from "@mui/material";
-import { centerContainerProps, SimpleButtonProps } from "../PanelPrimitives";
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  Button as Btn,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Paper,
+  Slide,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { deleteKeyword, insertKeyword } from "../../features/discoverSlice";
 import { EXISTING_TAGS, RelView, TagEnum, TAG_TO_RELATION, TAG_TO_TYPE } from "../../utils/general";
-import { StandardChip, StandardTypeahead } from "./InputPrimitives";
-import { KeywordConstraint, KeywordFilter } from "../../utils/grainpath";
+import { StandardChip, StandardTypeahead } from "../Search/InputPrimitives";
+import { grainpathFetch, GRAINPATH_AUTOC_URL, KeywordConstraint, KeywordFilter } from "../../utils/grainpath";
+import React from "react";
+import { TransitionProps } from "@mui/material/transitions";
 
 const EXISTS_MESSAGE = "Keyword is already defined.";
 const OPTION_MESSAGE = "Select option from those appeared.";
@@ -22,15 +40,6 @@ const isTagTextual = (tag: string): boolean => (TAG_TO_TYPE.get(tag) ?? TagEnum.
 type KeywordModalWindowProps = {
   label: string | undefined;
   onHide: () => void;
-}
-
-function SaveKeywordButton(props: SimpleButtonProps): JSX.Element {
-
-  return(
-    <button {...props} className="standard-button" title="Save tag">
-      <Save fontSize="large" />
-    </button>
-  );
 }
 
 function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Element {
@@ -144,16 +153,33 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
     onHide();
   };
 
+  const options = [ { label: "a" }, { label: "b" } ];
+
   return (
-    <Modal show={true} backdrop="static" centered={true} keyboard={false}>
+    <Modal show centered keyboard={false} backdrop="static">
       <Modal.Body>
+        <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+          <Typography>This condition will select places associated with keyword</Typography>
+          <Autocomplete options={options} renderInput={(params) => (<TextField {...params} placeholder="Start typing..." variant="standard" />)} />
+          <Typography>and (optional) properties:</Typography>
+          <Paper>
+            c
+          </Paper>
+        </Box>
         <Form.Group className="mt-2 mb-2">
           <Form.Label>Keyword</Form.Label>
           { (!!label)
             ? <Form.Control type="text" placeholder={label} disabled readOnly />
-            : <StandardTypeahead index="keywords" label={label} set={setKeyword} feedback={statusK.message}
-                touch={() => setStatusK({ valid: true, message: undefined })} id="keyword-typeahead-input"
-                className={statusK.valid ? undefined : "is-invalid"} isInvalid={!statusK.valid} />
+            : <StandardTypeahead
+                index="keywords"
+                label={label}
+                set={setKeyword}
+                feedback={statusK.message}
+                touch={() => setStatusK({ valid: true, message: undefined })}
+                id="keyword-typeahead-input"
+                className={statusK.valid ? undefined : "is-invalid"}
+                isInvalid={!statusK.valid}
+              />
           }
         </Form.Group>
         <Form.Group className="mt-2 mb-2">
@@ -232,8 +258,8 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
             </Col>
           }
         </Form.Group>
-        <div {...centerContainerProps}>
-          <SaveKeywordButton onClick={() => save()} />
+        <div>
+          <Button onClick={() => save()}>Save</Button>
         </div>
       </Modal.Body>
       <Modal.Footer>
@@ -241,6 +267,133 @@ function KeywordModalWindow({ label, onHide }: KeywordModalWindowProps): JSX.Ele
         <Button variant="primary" onClick={confirm}>Confirm</Button>
       </Modal.Footer>
     </Modal>
+  );
+}
+
+/**
+ * 
+ */
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>,
+  ) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+//   const handleEntering = () => {
+//     if (radioGroupRef.current != null) {
+//       radioGroupRef.current.focus();
+//     }
+//   };
+
+//   const handleCancel = () => {
+//     onClose();
+//   };
+
+//   const handleOk = () => {
+//     onClose(value);
+//   };
+
+//   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     setValue((event.target as HTMLInputElement).value);
+//   };
+
+//   return (
+//     <Dialog
+//       open={open}
+//       {...other}
+//     >
+//       <DialogTitle>Phone Ringtone</DialogTitle>
+//       <DialogContent dividers>
+//         <RadioGroup
+//           ref={radioGroupRef}
+//           aria-label="ringtone"
+//           name="ringtone"
+//           value={value}
+//           onChange={handleChange}
+//         >
+//           {options.map((option) => (
+//             <FormControlLabel
+//               value={option}
+//               key={option}
+//               control={<Radio />}
+//               label={option}
+//             />
+//           ))}
+//         </RadioGroup>
+//       </DialogContent>
+//       <DialogActions>
+//         <Button autoFocus onClick={handleCancel}>
+//           Cancel
+//         </Button>
+//         <Button onClick={handleOk}>Ok</Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// }
+
+type AutocItem = {
+  keyword: string;
+  tags: string;
+};
+
+function KeywordDialog({ label, onHide }: KeywordModalWindowProps): JSX.Element {
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [input, setInput] = useState("");
+  const [value, setValue] = useState<AutocItem | null>(null);
+  const [options, setOptions] = useState<AutocItem[]>([]);
+
+  useEffect(() => {
+
+    if (!input.length) { setOptions(value ? [value] : []); return; }
+
+    grainpathFetch(GRAINPATH_AUTOC_URL, { count: 3, prefix: input.toLocaleLowerCase() })
+      .then((res) => res.json())
+      .then((jsn) => jsn as AutocItem[])
+      .then((obj) => setOptions(obj));
+  }, [ input ]);
+
+  const discard = () => { onHide(); };
+
+  const confirm = () => { onHide(); };
+
+  return (
+    <Dialog fullScreen={fullScreen} open>
+      <DialogTitle>Add condition</DialogTitle>
+      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <DialogContentText>
+          Enter a keyword that places should associate with.
+        </DialogContentText>
+        <Autocomplete
+          freeSolo
+          value={value}
+          options={options}
+          filterOptions={(x) => x}
+          noOptionsText="No keywords"
+          onInputChange={(_, v) => { setInput(v); }}
+          renderInput={(params) => <TextField {...params} placeholder="Start typing..." />}
+          getOptionLabel={(o) => (typeof o === "string") ? o : o.keyword}
+          isOptionEqualToValue={(o, v) => { return o.keyword === v.keyword }}
+          onChange={(_, v: any) => { setValue(v as AutocItem); }}
+        />
+        <DialogContentText>
+          Select (optional) properties to specify search even more.
+        </DialogContentText>
+        { (value)
+          ? (<></>)
+          : (<Alert severity="info">Properties are keyword-specific.</Alert>)
+        }
+      </DialogContent>
+      <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Btn onClick={discard} color="error">Discard</Btn>
+        <Btn onClick={confirm} color="primary">Confirm</Btn>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -256,8 +409,8 @@ export default function DiscoverKeywordsInput(): JSX.Element {
 
   return (
     <Box>
-      <Typography>Keywords you are looking for:</Typography>
-      <Box sx={{ mt: 1 }}>
+      <Typography>Plan a route passing through:</Typography>
+      <Box sx={{ mt: 2.5 }}>
         <Paper variant="outlined">
           <Stack direction="row" sx={{ flexWrap: "wrap" }}>
             { keywords.map((keyword, i) => {
@@ -266,11 +419,11 @@ export default function DiscoverKeywordsInput(): JSX.Element {
             }
           </Stack>
           <Btn size="large" sx={{ width: "100%" }} onClick={() => { modal(undefined); }}>
-            Add keyword
+            Add condition
           </Btn>
         </Paper>
       </Box>
-      {show && <KeywordModalWindow label={curr} onHide={() => setShow(false)} />}
+      {show && <KeywordDialog label={curr} onHide={() => setShow(false)} />}
     </Box>
   );
 }

@@ -1,11 +1,8 @@
-import L from "leaflet";
-import { LatLng } from "leaflet";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Alert, Form, Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../App";
 import { useAppSelector } from "../features/hooks";
-import { SEARCH_ADDR, LOCKER_ADDR } from "../utils/routing";
+import { DISCOVER_ADDR, FAVORITE_ADDR } from "../utils/routing";
 import { Result } from "../utils/grainpath";
 import { SearchButton, LockerButton } from "./PanelPrimitives";
 
@@ -15,8 +12,8 @@ function ResultHead(): JSX.Element {
 
   return (
     <Offcanvas.Header closeButton>
-      <SearchButton onClick={() => navigate(SEARCH_ADDR)} />
-      <LockerButton onClick={() => navigate(LOCKER_ADDR)} />
+      <SearchButton onClick={() => navigate(DISCOVER_ADDR)} />
+      <LockerButton onClick={() => navigate(FAVORITE_ADDR)} />
     </Offcanvas.Header>
   );
 }
