@@ -1,10 +1,7 @@
 import { Map as LeafletRawMap } from "leaflet"
 import { LeafletMap } from "../utils/leaflet";
 import { IMap, IStorage } from "../utils/interfaces";
-import {
-  AutocItem,
-  BoundItem
-} from "../utils/grainpath";
+import { AutocItem } from "../utils/grainpath";
 
 /**
  * Use application context for all non-serializable data!
@@ -15,7 +12,6 @@ type AppContextValue = {
   storage?: IStorage;
   grain: {
     autoc: Map<string, AutocItem[]>;
-    bound?: BoundItem;
   }
 };
 

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -28,72 +28,84 @@ import {
   useTheme
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { deleteKeyword, insertKeyword } from "../../features/discoverSlice";
+import { deleteCondition, insertCondition, setBounds } from "../../features/discoverSlice";
 import {
   AutocFeatures,
   AutocItem,
   BoundItem,
   BoundItemNumeric,
-  grainpathFetch,
-  GRAINPATH_AUTOC_URL,
-  GRAINPATH_BOUND_URL,
-  KeywordFilter,
-  KeywordFilterBoolean,
-  KeywordFilterCollect,
-  KeywordFilterExisten,
-  KeywordFilterNumeric,
-  KeywordFilterTextual
+  GrainPathFetcher,
+  KeywordCondition,
+  KeywordBooleanFilter,
+  KeywordCollectFilter,
+  KeywordExistenFilter,
+  KeywordNumericFilter,
+  KeywordTextualFilter,
+  KeywordFilters,
 } from "../../utils/grainpath";
 import { AppContext } from "../../App";
 import { ExpandMore } from "@mui/icons-material";
 
-type ExistenFieldProps = {
+type FeatureCheckBoxProps = {
   label: string;
-  setter: (v: KeywordFilterExisten | undefined) => void;
+  toggle: () => void;
+  checked: boolean;
 };
 
-function ExistenField({ label, setter }: ExistenFieldProps): JSX.Element {
+function FeatureCheckBox({ label, toggle, checked }: FeatureCheckBoxProps): JSX.Element {
+  return (
+    <FormControlLabel
+      label={label.replace("_", " ")}
+      control={<Checkbox checked={checked} onChange={toggle} />}
+    />
+  );
+}
 
-  const [checked, setChecked] = useState(false);
-  const toggle = () => { setChecked(!checked); };
-  useEffect(() => { setter(checked ? {} : undefined); }, [checked])
+type ExistenFieldProps = {
+  label: string;
+  setter: (v: KeywordExistenFilter | undefined) => void;
+  initial: KeywordExistenFilter | undefined;
+};
+
+function ExistenField({ label, setter, initial }: ExistenFieldProps): JSX.Element {
+
+  const [check, setCheck] = useState(!!initial);
+
+  const toggle = () => { setCheck(!check); };
+
+  useEffect(() => { setter(check ? {} : undefined) }, [check, setter]);
 
   return (
     <FormGroup sx={{ display: "inline-block" }}>
-      <FormControlLabel
-        label={label.replace("_", " ")}
-        control={<Checkbox checked={checked} onChange={toggle} />}
-      />
+      <FeatureCheckBox label={label} checked={check} toggle={toggle} />
     </FormGroup>
   );
 }
 
 type BooleanFieldProps = {
   label: string;
-  setter: (v: KeywordFilterBoolean | undefined) => void;
+  setter: (v: KeywordBooleanFilter | undefined) => void;
+  initial: KeywordBooleanFilter | undefined;
 };
 
-function BooleanField({ label, setter }: BooleanFieldProps): JSX.Element {
+function BooleanField({ label, setter, initial }: BooleanFieldProps): JSX.Element {
 
-  const [value, setValue] = useState(0);
+  const flag = initial === undefined;
 
-  const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(!flag);
+  const [value, setValue] = useState((flag || !!initial) ? 1 : 0);
+
   const toggle = () => { setCheck(!check); };
 
-  useEffect(() => {
-    console.log(value)
-  }, [value])
+  useEffect(() => { setter(check ? (!!value) : undefined) }, [check, value, setter]);
 
   return (
     <Stack direction="row" justifyContent="space-between" flexWrap="wrap">
-      <FormControlLabel
-        label={label.replace("_", " ")}
-        control={<Checkbox checked={check} onChange={toggle} />}
-      />
+      <FeatureCheckBox label={label} checked={check} toggle={toggle} />
       <FormControl>
         <RadioGroup row value={value} onChange={(e) => { setValue(parseInt(e.target.value)); }}>
-          <FormControlLabel disabled={!check} value={0} control={<Radio />} label="Yes" />
-          <FormControlLabel disabled={!check} value={1} control={<Radio />} label="No" />
+          <FormControlLabel disabled={!check} value={1} control={<Radio />} label="Yes" />
+          <FormControlLabel disabled={!check} value={0} control={<Radio />} label="No" />
         </RadioGroup>
       </FormControl>
     </Stack>
@@ -102,20 +114,24 @@ function BooleanField({ label, setter }: BooleanFieldProps): JSX.Element {
 
 type NumericFieldProps = {
   label: string;
-  setter: (v: KeywordFilterNumeric | undefined) => void;
+  setter: (v: KeywordNumericFilter | undefined) => void;
+  initial: KeywordNumericFilter | undefined;
 };
 
-function NumericField({ label, setter }: NumericFieldProps): JSX.Element {
+function NumericField({ label, setter, initial }: NumericFieldProps): JSX.Element {
 
-  const bound = (useContext(AppContext).grain.bound as any)[label] as BoundItemNumeric;
+  const bound = (useAppSelector(state => state.discover.bounds) as any)[label] as KeywordNumericFilter;
 
-  const [value, setValue] = useState([bound.min, bound.max]);
-  const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(!!initial);
+  const [value, setValue] = useState(initial ? [ initial.min, initial.max ] : [ bound.min, bound.max ]);
+
   const toggle = () => { setCheck(!check); };
 
-  const change = (e: Event, v: number | number[]) => {
-    setValue(v as number[]);
-  }
+  const change = (_: Event, v: number | number[]) => { setValue(v as number[]); };
+
+  useEffect(() => {
+    setter(check ? { min: value[0], max: value[1] } : undefined);
+  }, [check, value, setter]);
 
   return (
     <Stack spacing={3}>
@@ -141,36 +157,30 @@ function NumericField({ label, setter }: NumericFieldProps): JSX.Element {
 
 type TextualFieldProps = {
   label: string;
-  setter: (v: KeywordFilterTextual | undefined) => void;
+  setter: (v: KeywordTextualFilter | undefined) => void;
+  initial: KeywordTextualFilter | undefined;
 }
 
-function TextualField({ label, setter }: TextualFieldProps) {
+function TextualField({ label, setter, initial }: TextualFieldProps) {
 
-  const [check, setCheck] = useState(false);
-  const [value, setValue] = useState<string | undefined>(undefined);
+  const [check, setCheck] = useState(!!initial);
+  const [value, setValue] = useState(initial ?? "");
 
   const toggle = () => { setCheck(!check); };
 
+  useEffect(() => { setter(check ? value : undefined); }, [check, value, setter]);
+
   return (
     <Stack spacing={1} direction="row">
-      <FormControlLabel
-        label={label.replace("_", " ")}
-        control={<Checkbox checked={check} onChange={toggle} />}
-      />
-      <TextField
-        fullWidth
-        size="small"
-        value={value}
-        disabled={!check}
-        onChange={(e) => { setValue(e.target.value); }}
-      />
+      <FeatureCheckBox label={label} checked={check} toggle={toggle} />
+      <TextField fullWidth size="small" value={value} disabled={!check} onChange={(e) => { setValue(e.target.value); }} />
     </Stack>
   );
 }
 
 type CollectFieldProps = {
   label: string;
-  setter: (v: KeywordFilterCollect | undefined) => void;
+  setter: (v: KeywordCollectFilter | undefined) => void;
 }
 
 function CollectField({ label, setter }: CollectFieldProps): JSX.Element {
@@ -180,81 +190,96 @@ function CollectField({ label, setter }: CollectFieldProps): JSX.Element {
 
 type FeatureListProps = {
   value: AutocItem;
-  filter?: any;
+  filters: any; // (!)
 };
 
-function FeatureList({ value, filter }: FeatureListProps): JSX.Element {
+/**
+ * Renders five different types of features in a `type-unsafe` manner.
+ */
+function FeatureList({ value, filters }: FeatureListProps): JSX.Element {
 
   const expandIcon = <ExpandMore />
+  const { es, bs, ns, ts, cs } = AutocFeatures.group(value.features);
+
+  const bounds = useAppSelector(state => state.discover.bounds);
 
   return(
     <Box>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={expandIcon}>
-          <Typography>Should have</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Stack spacing={1} direction="row" justifyContent="center" sx={{ flexWrap: "wrap" }}>
-            { value.features.getExistens().map((e, i) => {
-                return <ExistenField key={i} label={e} setter={(v) => { filter.features[e] = v; } } />
-              })
-            }
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={expandIcon}>
-          <Typography>With / Without</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Stack spacing={1}>
-            { value.features.getBooleans().map((b, i) => {
-                return <BooleanField key={i} label={b} setter={(v) => { filter.features[b] = v; } } />
-              })
-            }
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={expandIcon}>
-          <Typography>Numerical</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Stack spacing={3}>
-            { value.features.getNumerics().map((n, i) => {
-                return <NumericField key={i} label={n} setter={(v) => { filter.features[n] = v; }} />
-              })
-            }
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={expandIcon}>
-          <Typography>
-            Contains
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Stack>
-            { value.features.getTextuals().map((t, i) => {
-                return <TextualField key={i} label={t} setter={(v) => { filter.features[t] = v; }} />
-              })
-            }
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={expandIcon}>
-          <Typography>
-            Include / Exclude
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Stack>
-
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
+      { (es.length > 0) &&
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={expandIcon}>
+            <Typography>Should have</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={1} direction="row" justifyContent="center" sx={{ flexWrap: "wrap" }}>
+              { es.map((e, i) => {
+                  return <ExistenField key={i} label={e} setter={(v) => { filters[e] = v; } } initial={filters[e]} />
+                })
+              }
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      }
+      { (bs.length > 0) &&
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={expandIcon}>
+            <Typography>Yes / No</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={1}>
+              { bs.map((b, i) => {
+                  return <BooleanField key={i} label={b} setter={(v) => { filters[b] = v; } } initial={filters[b]} />
+                })
+              }
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      }
+      { (ns.length > 0 && bounds) &&
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={expandIcon}>
+            <Typography>Numeric</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={3}>
+              { ns.map((n, i) => {
+                  return <NumericField key={i} label={n} setter={(v) => { filters[n] = v; }} initial={filters[n]} />
+                })
+              }
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      }
+      { (ts.length > 0) &&
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={expandIcon}>
+            <Typography>Contains text</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack>
+              { ts.map((t, i) => {
+                  return <TextualField key={i} label={t} setter={(v) => { filters[t] = v; }} initial={filters[t]} />
+                })
+              }
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      }
+      { (cs.length > 0) &&
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={expandIcon}>
+            <Typography>Include / Exclude</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack>
+              { cs.map((c, i) => {
+                  return <CollectField key={i} label={c} setter={(v) => { filters[c] = v; }} />
+                })
+              }
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      }
     </Box>
   );
 }
@@ -266,56 +291,63 @@ type KeywordModalWindowProps = {
 
 function KeywordDialog({ label, onHide }: KeywordModalWindowProps): JSX.Element {
 
-  const grain = useContext(AppContext).grain;
-
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const autoc = useContext(AppContext).grain.autoc;
+
+  const dispatch = useAppDispatch();
+  const { bounds, conditions } = useAppSelector(state => state.discover);
+
+  const findCond = useCallback((keyword: string | undefined) => {
+    return conditions.find((cond) => cond.keyword === keyword);
+  }, [conditions]);
+
+  const ctorFilters = (c: KeywordCondition | undefined): KeywordFilters => {
+    return c ? structuredClone(c.filters) : {};
+  };
+
   const [input, setInput] = useState("");
-  const [value, setValue] = useState<AutocItem | null>(null);
+  const [mount, setMount] = useState(true);
+  const [error, setError] = useState(false);
+  const [value, setValue] = useState<AutocItem | null>(findCond(label) ?? null);
   const [loading, setLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<AutocItem[]>([]);
 
-  useEffect(() => {
-    if (!grain.bound) {
-      grainpathFetch(GRAINPATH_BOUND_URL, {})
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`[Fetch error] ${res.status}: ${res.statusText}`);
-          }
-          return res.json()
-        })
-        .then((jsn) => { grain.bound = jsn as BoundItem })
-        .catch((ex) => { alert(ex); });
-    }
-  }, [grain]);
+  const filters = ctorFilters(findCond(value?.keyword));
 
+  // hard reset of the filter component
+  useEffect(() => { if (!mount) { setMount(true); } }, [mount]);
+
+  // fetch bounds for numerics and collections
+  useEffect(() => {
+    if (!bounds) {
+      GrainPathFetcher.fetchBound()
+        .then((obj) => { if (obj) { dispatch(setBounds(obj)); } });
+    }
+  }, [dispatch, bounds]);
+
+  // fetch autocomplete options based on the user input
   useEffect(() => {
     const prefix = input.toLocaleLowerCase();
-
     if (!prefix.length) { setOptions(value ? [value] : []); return; }
 
-    const cached = grain.autoc.get(prefix);
+    const cached = autoc.get(prefix);
     if (cached) { setOptions(cached); return; }
 
-    grainpathFetch(GRAINPATH_AUTOC_URL, { count: 3, prefix: prefix })
-      .then((res) => res.json())
-      .then((jsn) => {
-        return (jsn as { keyword: string; features: string[] }[]).map((item) => {
-          return {
-            keyword: item.keyword,
-            features: new AutocFeatures(new Set(item.features))
-          } as AutocItem
-        })})
-      .then((obj) => {
-        grain.autoc.set(prefix, obj);
-        setOptions(obj);
-      });
-  }, [input, grain.autoc, value]);
+    new Promise((res, _) => { res(setLoading(true)); })
+      .then(() => GrainPathFetcher.fetchAutoc(prefix))
+      .then((items) => {
+        if (items) { autoc.set(prefix, items); setOptions(items); }
+      })
+      .finally(() => { setLoading(false); });
+  }, [input, value, autoc]);
 
-  const discard = () => { onHide(); };
-
-  const confirm = () => { onHide(); };
+  // store selected feature with filter
+  const confirm = () => {
+    if (value) { dispatch(insertCondition({ ...value, filters: filters })); }
+    onHide();
+  };
 
   return (
     <Dialog fullScreen={fullScreen} open>
@@ -326,27 +358,34 @@ function KeywordDialog({ label, onHide }: KeywordModalWindowProps): JSX.Element 
         </DialogContentText>
         <Autocomplete
           value={value}
+          disabled={!!label}
           options={options}
           loading={loading}
-          noOptionsText="No keywords"
           filterOptions={(x) => x}
-          onChange={(_, v) => { setValue(v); }}
+          noOptionsText="No keywords"
+          onChange={(_, v) => {
+            setValue(v);
+            setMount(false);
+            setError(!!findCond(v?.keyword));
+          }}
           onInputChange={(_, v) => { setInput(v); }}
           getOptionLabel={(o) => o.keyword ?? ""}
-          renderInput={(params) => <TextField {...params} placeholder="Start typing..." />}
+          renderInput={(params) => {
+            return <TextField {...params} error={error} helperText={error ? "Keyword already appears in the list." : undefined} placeholder="Start typing..." />;
+          }}
           isOptionEqualToValue={(o, v) => { return o.keyword === v.keyword }}
         />
         <DialogContentText>
-          Select (optional) features to customize condition further.
+          Select (optional) features to customize this condition further.
         </DialogContentText>
-        { (value)
-          ? (<FeatureList value={value} filter={{ keyword: value.keyword, features: {} }} />)
+        { (!error && mount && value)
+          ? (<FeatureList value={value} filters={filters} />)
           : (<Alert severity="info">Features are keyword-specific.</Alert>)
         }
       </DialogContent>
       <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={discard} color="error">Discard</Button>
-        <Button onClick={confirm} color="primary" disabled={!value}>Confirm</Button>
+        <Button onClick={() => { onHide(); }} color="error">Discard</Button>
+        <Button onClick={confirm} color="primary" disabled={!value || error}>Confirm</Button>
       </DialogActions>
     </Dialog>
   );
@@ -358,7 +397,7 @@ export default function DiscoverKeywordsInput(): JSX.Element {
   const [curr, setCurr] = useState<string | undefined>(undefined);
 
   const dispatch = useAppDispatch();
-  const keywords = useAppSelector(state => state.discover.filters.map(filter => filter.keyword));
+  const keywords = useAppSelector(state => state.discover.conditions.map(filter => filter.keyword));
 
   const modal = (label: string | undefined) => { setCurr(label); setShow(true); };
 
@@ -369,7 +408,7 @@ export default function DiscoverKeywordsInput(): JSX.Element {
         <Paper variant="outlined">
           <Stack direction="row" sx={{ flexWrap: "wrap" }}>
             { keywords.map((keyword, i) => {
-                return <Chip sx={{ m: 0.35, color: "black" }} key={i} color="primary" variant="outlined" label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteKeyword(keyword))} />
+                return <Chip sx={{ m: 0.35, color: "black" }} key={i} color="primary" variant="outlined" label={keyword} onClick={() => modal(keyword)} onDelete={() => dispatch(deleteCondition(keyword))} />
               })
             }
           </Stack>

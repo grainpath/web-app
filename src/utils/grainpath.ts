@@ -1,10 +1,10 @@
-export const GRAINPATH_BASE_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
-export const GRAINPATH_AUTOC_URL = GRAINPATH_BASE_URL + "/autoc";
-export const GRAINPATH_BOUND_URL = GRAINPATH_BASE_URL + "/bound";
-export const GRAINPATH_PLACE_URL = GRAINPATH_BASE_URL + "/place";
-export const GRAINPATH_ROUTE_URL = GRAINPATH_BASE_URL + "/route";
-export const GRAINPATH_SHORT_URL = GRAINPATH_BASE_URL + "/short";
-export const GRAINPATH_STACK_URL = GRAINPATH_BASE_URL + "/stack";
+const GRAINPATH_BASIS_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REACT_APP_API_VERSION!;
+export const GRAINPATH_AUTOC_URL = GRAINPATH_BASIS_URL + "/autoc";
+const GRAINPATH_BOUND_URL = GRAINPATH_BASIS_URL + "/bound";
+export const GRAINPATH_PLACE_URL = GRAINPATH_BASIS_URL + "/place";
+const GRAINPATH_ROUTE_URL = GRAINPATH_BASIS_URL + "/route";
+const GRAINPATH_SHORT_URL = GRAINPATH_BASIS_URL + "/short";
+const GRAINPATH_STACK_URL = GRAINPATH_BASIS_URL + "/stack";
 
 /**
  * Point in [WSG84] CRS.
@@ -102,6 +102,13 @@ export function heavy2light(grain: HeavyPlace): LightPlace {
   return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords };
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export type AutocItem = {
+  keyword: string;
+  features: string[];
+};
+
 export class AutocFeatures {
 
   private static supportedExistens = new Set([
@@ -152,81 +159,63 @@ export class AutocFeatures {
       .reduce((s, item) => { if (s2.has(item)) { s.add(item) } return s; }, new Set<string>());
   }
 
-  private readonly existens: Set<string>;
-  private readonly booleans: Set<string>;
-  private readonly numerics: Set<string>;
-  private readonly textuals: Set<string>;
-  private readonly collects: Set<string>;
-
-  constructor(features: Set<string>) {
-    this.existens = new Set(AutocFeatures.union(AutocFeatures.supportedExistens, features));
-    this.booleans = new Set(AutocFeatures.union(AutocFeatures.supportedBooleans, features));
-    this.numerics = new Set(AutocFeatures.union(AutocFeatures.supportedNumerics, features));
-    this.textuals = new Set(AutocFeatures.union(AutocFeatures.supportedTextuals, features));
-    this.collects = new Set(AutocFeatures.union(AutocFeatures.supportedCollects, features));
+  public static group(features: string[]) {
+    return {
+      es: Array.from(AutocFeatures.union(AutocFeatures.supportedExistens, new Set(features))),
+      bs: Array.from(AutocFeatures.union(AutocFeatures.supportedBooleans, new Set(features))),
+      ns: Array.from(AutocFeatures.union(AutocFeatures.supportedNumerics, new Set(features))),
+      ts: Array.from(AutocFeatures.union(AutocFeatures.supportedTextuals, new Set(features))),
+      cs: Array.from(AutocFeatures.union(AutocFeatures.supportedCollects, new Set(features))),
+    };
   }
-
-  public getExistens(): string[] { return Array.from(this.existens); }
-
-  public getBooleans(): string[] { return Array.from(this.booleans); }
-
-  public getNumerics(): string[] { return Array.from(this.numerics); }
-
-  public getTextuals(): string[] { return Array.from(this.textuals); }
-
-  public getCollects(): string[] { return Array.from(this.collects); }
 }
 
-export type AutocItem = {
-  keyword: string;
-  features: AutocFeatures;
-};
+export type KeywordExistenFilter = {};
 
-export type KeywordFilterExisten = {};
+export type KeywordBooleanFilter = boolean;
 
-export type KeywordFilterBoolean = boolean;
-
-export type KeywordFilterNumeric = {
+export type KeywordNumericFilter = {
   min: number;
   max: number;
 };
 
-export type KeywordFilterCollect = {
+export type KeywordTextualFilter = string;
+
+export type KeywordCollectFilter = {
   includes: string[],
   excludes: string[];
 };
 
-export type KeywordFilterTextual = string;
+export type KeywordFilters = {
+  image?: KeywordExistenFilter;
+  description?: KeywordExistenFilter;
+  website?: KeywordExistenFilter;
+  address?: KeywordExistenFilter;
+  payment?: KeywordExistenFilter;
+  email?: KeywordExistenFilter;
+  phone?: KeywordExistenFilter;
+  charge?: KeywordExistenFilter;
+  opening_hours: KeywordExistenFilter;
+  fee?: KeywordBooleanFilter;
+  delivery?: KeywordBooleanFilter;
+  drinking_water?: KeywordBooleanFilter;
+  internet_access?: KeywordBooleanFilter;
+  shower?: KeywordBooleanFilter;
+  smoking?: KeywordBooleanFilter;
+  takeaway?: KeywordBooleanFilter;
+  toilets?: KeywordBooleanFilter;
+  wheelchair?: KeywordBooleanFilter;
+  rank?: KeywordNumericFilter;
+  capacity?: KeywordNumericFilter;
+  minimum_age?: KeywordNumericFilter;
+  name?: KeywordTextualFilter;
+  clothes?: KeywordCollectFilter;
+  cuisine?: KeywordCollectFilter;
+  rental?: KeywordCollectFilter;
+}
 
-export type KeywordFilter = {
-  keyword: string;
-  features: {
-    image?: KeywordFilterExisten;
-    description?: KeywordFilterExisten;
-    website?: KeywordFilterExisten;
-    address?: KeywordFilterExisten;
-    payment?: KeywordFilterExisten;
-    email?: KeywordFilterExisten;
-    phone?: KeywordFilterExisten;
-    charge?: KeywordFilterExisten;
-    opening_hours: KeywordFilterExisten;
-    fee?: KeywordFilterBoolean;
-    delivery?: KeywordFilterBoolean;
-    drinking_water?: KeywordFilterBoolean;
-    internet_access?: KeywordFilterBoolean;
-    shower?: KeywordFilterBoolean;
-    smoking?: KeywordFilterBoolean;
-    takeaway?: KeywordFilterBoolean;
-    toilets?: KeywordFilterBoolean;
-    wheelchair?: KeywordFilterBoolean;
-    rank?: KeywordFilterNumeric;
-    capacity?: KeywordFilterNumeric;
-    minimum_age?: KeywordFilterNumeric;
-    name?: KeywordFilterTextual;
-    clothes?: KeywordFilterCollect;
-    cuisine?: KeywordFilterCollect;
-    rental?: KeywordFilterCollect;
-  };
+export type KeywordCondition = AutocItem & {
+  filters: KeywordFilters;
 };
 
 export type BoundItemNumeric = {
@@ -244,8 +233,7 @@ export type BoundItem = {
 };
 
 /**
- * Standard `POST` @b fetch from an application server, only JSON content
- * type is available.
+ * TO BE REMOVED!
  */
 export function grainpathFetch(url: string, body: any): Promise<Response> {
   const content = "application/json";
@@ -255,4 +243,68 @@ export function grainpathFetch(url: string, body: any): Promise<Response> {
     headers: { "Accept": content, "Content-Type": content },
     body: JSON.stringify(body)
   });
+}
+
+/**
+ * GrainPath-specific API calls.
+ */
+export class GrainPathFetcher {
+
+  /**
+   * Standard `POST` @b fetch from an application server, only JSON content
+   * type is available.
+   */
+  private static fetchBasis(url: string, body: any): Promise<Response> {
+    const content = "application/json";
+
+    return fetch(url, {
+      method: "POST",
+      headers: { "Accept": content, "Content-Type": content },
+      body: JSON.stringify(body)
+    });
+  }
+
+  private static acceptResponse(res: Response): Response {
+    if (!res.ok) {
+      throw new Error(`[Fetch error] ${res.status}: ${res.statusText}`);
+    }
+    return res;
+  }
+
+  /**
+   * Fetches autocomplete items based on provided prefix.
+   */
+  public static async fetchAutoc(prefix: string): Promise<AutocItem[] | undefined> {
+    try {
+      const res = await GrainPathFetcher
+        .fetchBasis(GRAINPATH_AUTOC_URL, { count: 3, prefix: prefix });
+      return await this.acceptResponse(res).json();
+    }
+    catch (ex) { alert(ex); return undefined; }
+  }
+
+  public static fetchBound(): Promise<BoundItem | undefined> {
+    return GrainPathFetcher
+      .fetchBasis(GRAINPATH_BOUND_URL, {})
+      .then((res) => {
+        return this.acceptResponse(res).json();
+      })
+      .catch((ex) => { alert(ex); return undefined; });
+  }
+
+  public static fetchPlace(): Promise<void> {
+    return new Promise((res, rej) => res());
+  }
+
+  public static fetchRoute(): Promise<void> {
+    return new Promise((res, rej) => res());
+  }
+
+  public static fetchShort(): Promise<void> {
+    return new Promise((res, rej) => res());
+  }
+
+  public static fetchStack(): Promise<void> {
+    return new Promise((res, rej) => res());
+  }
 }
