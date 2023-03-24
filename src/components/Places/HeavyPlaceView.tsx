@@ -20,7 +20,7 @@ export default function HeavyPlaceView({ place }: HeavyPlaceViewProps): JSX.Elem
   const {
     description,
     image
-  } = place.tags;
+  } = place.features;
 
   const dispatch = useAppDispatch();
   const sequence = useAppSelector(state => state.navigate.sequence);

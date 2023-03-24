@@ -1,4 +1,3 @@
-import { LatLng } from "leaflet";
 import namespace from "@rdfjs/namespace";
 import { MaybePlace, Point } from "./grainpath";
 

@@ -53,8 +53,9 @@ type PlacePayment = {
   crypto?: boolean;
 };
 
-type PlaceTags = {
+type PlaceFeatures = {
   polygon?: Point[];
+  name?: string;
   image?: string;
   description?: string;
   website?: string;
@@ -62,6 +63,9 @@ type PlaceTags = {
   payment?: PlacePayment;
   email?: string;
   phone?: string;
+  charge?: string[];
+  opening_hours?: string[];
+  fee?: boolean;
   delivery?: boolean;
   drinking_water?: boolean;
   internet_access?: boolean;
@@ -70,12 +74,9 @@ type PlaceTags = {
   takeaway?: boolean;
   toilets?: boolean;
   wheelchair?: boolean;
-  capacity?: number;
-  min_age?: number;
   rank?: number;
-  fee?: boolean;
-  charge?: string[];
-  opening_hours?: string[];
+  capacity?: number;
+  minimum_age?: number;
   clothes?: string[];
   cuisine?: string[];
   rental?: string[];
@@ -93,77 +94,158 @@ type PlaceLinked = {
  * Detailed place representation.
  */
 export type HeavyPlace = LightPlace & {
-  tags: PlaceTags;
   linked: PlaceLinked;
+  features: PlaceFeatures;
 };
 
 export function heavy2light(grain: HeavyPlace): LightPlace {
   return { id: grain.id, name: grain.name, location: grain.location, keywords: grain.keywords };
 }
 
-export type Boundary = {
-  source?: Point;
-  target?: Point;
-};
+export class AutocFeatures {
 
-type ConstraintBase = {
-  tag: string;
-  relation?: string;
-};
+  private static supportedExistens = new Set([
+    "image",
+    "description",
+    "website",
+    "address",
+    "payment",
+    "email",
+    "phone",
+    "charge",
+    "opening_hours"
+  ]);
 
-type MeasureConstraint = ConstraintBase & {
-  value?: number;
-};
+  private static supportedBooleans = new Set([
+    "fee",
+    "delivery",
+    "drinking_water",
+    "internet_access",
+    "shower",
+    "smoking",
+    "takeaway",
+    "toilets",
+    "wheelchair"
+  ]);
 
-type TextualConstraint = ConstraintBase & {
-  value?: string;
-};
+  private static supportedNumerics = new Set([
+    "rank",
+    "capacity",
+    "minimum_age"
+  ]);
 
-export type KeywordConstraint = MeasureConstraint
-  | TextualConstraint;
+  private static supportedTextuals = new Set([
+    "name"
+  ]);
 
-export type KeywordFilter = {
-  keyword: string;
-  constrs: KeywordConstraint[];
-};
+  private static supportedCollects = new Set([
+    "clothes",
+    "cuisine",
+    "rental"
+  ]);
 
-//////////////////////////////////////////////////////
+  private static set2list(s: Set<string>): string[] { return [ ...Array.from(s) ]; }
 
-type NumericConstraint = {
-  min: number;
-  max: number;
+  private static union(s1: Set<string>, s2: Set<string>): Set<string> {
+    return this
+      .set2list(s1)
+      .reduce((s, item) => { if (s2.has(item)) { s.add(item) } return s; }, new Set<string>());
+  }
+
+  private readonly existens: Set<string>;
+  private readonly booleans: Set<string>;
+  private readonly numerics: Set<string>;
+  private readonly textuals: Set<string>;
+  private readonly collects: Set<string>;
+
+  constructor(features: Set<string>) {
+    this.existens = new Set(AutocFeatures.union(AutocFeatures.supportedExistens, features));
+    this.booleans = new Set(AutocFeatures.union(AutocFeatures.supportedBooleans, features));
+    this.numerics = new Set(AutocFeatures.union(AutocFeatures.supportedNumerics, features));
+    this.textuals = new Set(AutocFeatures.union(AutocFeatures.supportedTextuals, features));
+    this.collects = new Set(AutocFeatures.union(AutocFeatures.supportedCollects, features));
+  }
+
+  public getExistens(): string[] { return Array.from(this.existens); }
+
+  public getBooleans(): string[] { return Array.from(this.booleans); }
+
+  public getNumerics(): string[] { return Array.from(this.numerics); }
+
+  public getTextuals(): string[] { return Array.from(this.textuals); }
+
+  public getCollects(): string[] { return Array.from(this.collects); }
 }
 
-type CollectConstraint = {
-  includes: string[];
+export type AutocItem = {
+  keyword: string;
+  features: AutocFeatures;
+};
+
+export type KeywordFilterExisten = {};
+
+export type KeywordFilterBoolean = boolean;
+
+export type KeywordFilterNumeric = {
+  min: number;
+  max: number;
+};
+
+export type KeywordFilterCollect = {
+  includes: string[],
   excludes: string[];
 };
 
-type Constraint = {
-  name?: string;
-  keyword?: string;
-  tags: {
-    rental?: CollectConstraint;
-    clothes?: CollectConstraint;
-    cuisine?: CollectConstraint;
-  }
+export type KeywordFilterTextual = string;
+
+export type KeywordFilter = {
+  keyword: string;
+  features: {
+    image?: KeywordFilterExisten;
+    description?: KeywordFilterExisten;
+    website?: KeywordFilterExisten;
+    address?: KeywordFilterExisten;
+    payment?: KeywordFilterExisten;
+    email?: KeywordFilterExisten;
+    phone?: KeywordFilterExisten;
+    charge?: KeywordFilterExisten;
+    opening_hours: KeywordFilterExisten;
+    fee?: KeywordFilterBoolean;
+    delivery?: KeywordFilterBoolean;
+    drinking_water?: KeywordFilterBoolean;
+    internet_access?: KeywordFilterBoolean;
+    shower?: KeywordFilterBoolean;
+    smoking?: KeywordFilterBoolean;
+    takeaway?: KeywordFilterBoolean;
+    toilets?: KeywordFilterBoolean;
+    wheelchair?: KeywordFilterBoolean;
+    rank?: KeywordFilterNumeric;
+    capacity?: KeywordFilterNumeric;
+    minimum_age?: KeywordFilterNumeric;
+    name?: KeywordFilterTextual;
+    clothes?: KeywordFilterCollect;
+    cuisine?: KeywordFilterCollect;
+    rental?: KeywordFilterCollect;
+  };
+};
+
+export type BoundItemNumeric = {
+  min: number;
+  max: number;
+};
+
+export type BoundItem = {
+  clothes: string[];
+  cuisine: string[];
+  rental: string[];
+  rank: BoundItemNumeric;
+  capacity: BoundItemNumeric;
+  minimum_age: BoundItemNumeric;
 };
 
 /**
- * 
- */
-export type Result = {
-  name?: string;
-  distance?: number;
-  duration?: number;
-  places?: LightPlace[];
-  waypoints?: Point[];
-  polyline?: Point[];
-  constraints?: KeywordConstraint[];
-};
-
-/**
- * Standard @b fetch from an application server, only JSON content type is available.
+ * Standard `POST` @b fetch from an application server, only JSON content
+ * type is available.
  */
 export function grainpathFetch(url: string, body: any): Promise<Response> {
   const content = "application/json";

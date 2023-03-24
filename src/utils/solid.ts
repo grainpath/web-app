@@ -118,7 +118,7 @@ export function extractLockerPlaceItem(thing: Thing | null): LockerPlaceItem {
         lat: getDecimal(thing, ns.geo.lat)!
       } as Point,
       keywords: getStringNoLocaleAll(thing, ns.ov.keywords),
-      tags: { }
+      features: { }
     } as HeavyPlace
   };
 }
