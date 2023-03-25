@@ -27,13 +27,12 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { deleteCondition, insertCondition, setBounds } from "../../features/discoverSlice";
 import {
   AutocFeatures,
   AutocItem,
-  BoundItem,
-  BoundItemNumeric,
   GrainPathFetcher,
   KeywordCondition,
   KeywordBooleanFilter,
@@ -44,7 +43,6 @@ import {
   KeywordFilters,
 } from "../../utils/grainpath";
 import { AppContext } from "../../App";
-import { ExpandMore } from "@mui/icons-material";
 
 type FeatureCheckBoxProps = {
   label: string;
@@ -168,7 +166,7 @@ function TextualField({ label, setter, initial }: TextualFieldProps) {
 
   const toggle = () => { setCheck(!check); };
 
-  useEffect(() => { setter(check ? value : undefined); }, [check, value, setter]);
+  useEffect(() => { setter((check && value.length > 0) ? value : undefined); }, [check, value, setter]);
 
   return (
     <Stack spacing={1} direction="row">
@@ -178,14 +176,65 @@ function TextualField({ label, setter, initial }: TextualFieldProps) {
   );
 }
 
+type CollectAutocompleteProps = {
+  label: string;
+  value: string[];
+  options: string[];
+  disabled: boolean;
+  onChange: (v: string[]) => void;
+};
+
+function CollectAutocomplete({ label, onChange, ...rest }: CollectAutocompleteProps): JSX.Element {
+  return (
+    <Autocomplete
+      {...rest}
+      multiple
+      fullWidth
+      onChange={(_, v) => onChange(v)}
+      renderInput={(params) => <TextField {...params} label={label} /> }
+    />
+  )
+}
+
 type CollectFieldProps = {
   label: string;
   setter: (v: KeywordCollectFilter | undefined) => void;
+  initial: KeywordCollectFilter | undefined;
 }
 
-function CollectField({ label, setter }: CollectFieldProps): JSX.Element {
+function CollectField({ label, setter, initial }: CollectFieldProps): JSX.Element {
 
-  return (<></>);
+  const bound = (useAppSelector(state => state.discover.bounds) as any)[label] as string[];
+
+  const [check, setCheck] = useState(!!initial);
+  const [includes, setIncludes] = useState(initial ? initial.includes : []);
+  const [excludes, setExcludes] = useState(initial ? initial.excludes : []);
+
+  const toggle = () => { setCheck(!check); };
+
+  useEffect(() => {
+    setter(check ? { includes: includes, excludes: excludes } : undefined);
+  }, [check, includes, excludes, setter]);
+
+  return (
+    <Stack spacing={3} direction="column">
+      <FeatureCheckBox label={label} checked={check} toggle={toggle} />
+      <CollectAutocomplete
+        label="Includes"
+        value={includes}
+        options={bound}
+        disabled={!check}
+        onChange={(v) => { setIncludes(v); }}
+      />
+      <CollectAutocomplete
+        label="Excludes"
+        value={excludes}
+        options={bound}
+        disabled={!check}
+        onChange={(v) => { setExcludes(v); }}
+      />
+    </Stack>
+  );
 }
 
 type FeatureListProps = {
@@ -265,7 +314,7 @@ function FeatureList({ value, filters }: FeatureListProps): JSX.Element {
           </AccordionDetails>
         </Accordion>
       }
-      { (cs.length > 0) &&
+      { (cs.length > 0 && bounds) &&
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={expandIcon}>
             <Typography>Include / Exclude</Typography>
@@ -273,7 +322,7 @@ function FeatureList({ value, filters }: FeatureListProps): JSX.Element {
           <AccordionDetails>
             <Stack>
               { cs.map((c, i) => {
-                  return <CollectField key={i} label={c} setter={(v) => { filters[c] = v; }} />
+                  return <CollectField key={i} label={c} setter={(v) => { filters[c] = v; }} initial={filters[c]} />
                 })
               }
             </Stack>
