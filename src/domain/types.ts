@@ -1,24 +1,24 @@
 /**
  * Point in [WGS84] CRS.
  */
-type WgsPoint = {
+export type WgsPoint = {
   lon: number;
   lat: number;
 };
 
 /**
- * Attributes for known something (point, place, route, etc.).
+ * Attributes for stored something (point, place, route, etc.).
  */
-type KnownAttributes = {
+type StoredAttributes = {
   name: string;
   note: string;
   updated: Date;
 };
 
 /**
- * Every location has these attributes.
+ * Every point-like object has these attributes.
  */
-type LocationAttributes = {
+type PlaceAttributes = {
   name: string;
   location: WgsPoint;
   keywords: string[];
@@ -26,35 +26,26 @@ type LocationAttributes = {
 };
 
 /**
- * User-defined point representation.
+ * Standard server-defined place representation.
  */
-export type Point = LocationAttributes & {
-  pointId: string;
+export type Place = PlaceAttributes & {
+  grainId: string;
 };
 
 /**
- * Point representation as per stored in the IStorage.
+ * Place as per represented in the user interface.
  */
-export type KnownPoint = Point & KnownAttributes;
-
-/**
- * Server-defined place representation.
- */
-export type Place = LocationAttributes & {
-  placeId: string;
-};
-
-/**
- * Place representation as per stored in the IStorage.
- */
-export type KnownPlace = Place & KnownAttributes;
-
-/**
- * Location as per represented in the user interface.
- */
-export type Location = LocationAttributes & {
-  pointId?: string;
+export type UiPlace = PlaceAttributes & {
   placeId?: string;
+  grainId?: string;
+};
+
+/**
+ * Place as per stored in the IStorage.
+ */
+export type StoredPlace = PlaceAttributes & StoredAttributes & {
+  placeId: string;
+  grainId?: string;
 };
 
 /**
@@ -99,7 +90,6 @@ type EntityPayment = {
  */
 type EntityAttributes = {
   polygon?: WgsPoint[];
-  name?: string;
   image?: string;
   description?: string;
   website?: string;
@@ -127,10 +117,9 @@ type EntityAttributes = {
 };
 
 /**
- * Place representation extended with links and place-specific attributes.
+ * Place representation with links and entity-extended attributes.
  */
-export type Entity = LocationAttributes & {
-  placeId: string;
+export type Entity = Place & {
   linked: EntityLinked;
   attributes: EntityAttributes;
 };
@@ -287,24 +276,30 @@ type Path = {
 /**
  * Any result upon direction request, known or new.
  */
-export type DirectResult = {
+export type DirectionAttributes = StoredAttributes & {
   path: Path;
-  directId: string;
-  sequence: Location[];
+  sequence: UiPlace[];
+};
+
+/**
+ * Direction in the user interface, either stored or not.
+ */
+export type UiDirection = DirectionAttributes & {
+  directionId?: string;
 };
 
 /**
  * Direction result as per stored in the IStorage.
  */
-export type KnownDirectResult = DirectResult & {
-  known: KnownAttributes;
+export type StoredDirection = DirectionAttributes & {
+  directionId: string;
 };
 
 /**
  * Places request.
  */
 export type PlacesRequest = {
-  center: Location;
+  center: UiPlace;
   radius: number;
   conditions: PlaceCondition[];
 };
@@ -320,20 +315,23 @@ export type PlacesResult = PlacesRequest & {
  * Routes request.
  */
 export type RoutesRequest = {
-  source: Location;
-  target: Location;
+  source: UiPlace;
+  target: UiPlace;
   distance: number;
   conditions: PlaceCondition[];
 };
 
-export type Route = RoutesRequest & {
+type RouteAttributes = RoutesRequest & StoredAttributes & {
   path: Path;
-  routeId: string;
   waypoints: Place[];
 };
 
-export type RoutesResult = Route[];
-
-export type KnownRoute = Route & {
-  known: KnownAttributes;
+export type UiRoute = RouteAttributes & {
+  routeId?:string
 };
+
+export type StoredRoute = RouteAttributes & {
+  routeId: string;
+};
+
+export type RoutesResult = UiRoute[];
