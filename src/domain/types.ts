@@ -9,8 +9,7 @@ export type WgsPoint = {
 /**
  * Attributes for stored something (point, place, route, etc.).
  */
-type StoredAttributes = {
-  name: string;
+type PlaceStoredAttributes = {
   note: string;
   updated: Date;
 };
@@ -43,9 +42,10 @@ export type UiPlace = PlaceAttributes & {
 /**
  * Place as per stored in the IStorage.
  */
-export type StoredPlace = PlaceAttributes & StoredAttributes & {
+export type StoredPlace = PlaceAttributes & {
   placeId: string;
   grainId?: string;
+  stored: PlaceStoredAttributes;
 };
 
 /**
@@ -276,7 +276,7 @@ type Path = {
 /**
  * Any result upon direction request, known or new.
  */
-export type DirectionAttributes = StoredAttributes & {
+export type DirectionAttributes = {
   path: Path;
   sequence: UiPlace[];
 };
@@ -288,11 +288,16 @@ export type UiDirection = DirectionAttributes & {
   directionId?: string;
 };
 
+type DirectionStoredAttributes = PlaceStoredAttributes & {
+  name: string;
+};
+
 /**
  * Direction result as per stored in the IStorage.
  */
 export type StoredDirection = DirectionAttributes & {
   directionId: string;
+  stored: DirectionStoredAttributes;
 };
 
 /**
@@ -321,7 +326,7 @@ export type RoutesRequest = {
   conditions: PlaceCondition[];
 };
 
-type RouteAttributes = RoutesRequest & StoredAttributes & {
+type RouteAttributes = RoutesRequest & {
   path: Path;
   waypoints: Place[];
 };
@@ -330,8 +335,9 @@ export type UiRoute = RouteAttributes & {
   routeId?:string
 };
 
+type RouteStoredAttributes = DirectionAttributes;
+
 export type StoredRoute = RouteAttributes & {
   routeId: string;
+  stored: RouteStoredAttributes;
 };
-
-export type RoutesResult = UiRoute[];
