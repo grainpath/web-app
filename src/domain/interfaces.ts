@@ -1,4 +1,4 @@
-import { LightPlace, MaybePlace, Point } from "./grainpath";
+import { LightPlace, MaybePlace, Point } from "./types";
 
 export interface IPin {
 
@@ -96,7 +96,5 @@ export interface IStorage {
   /**
    * Existence of a particular item in the database.
    */
-  has(id: string): boolean;
-
-  get(id: string): boolean;
+  has(grainId: string): boolean;
 }
