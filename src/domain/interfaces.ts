@@ -36,13 +36,13 @@ export interface IMap {
 
   /**
    * Move map center to the place location and open popup. Prior to the flight,
-   * place should be created in the map.
+   * place should be created in a map.
    */
   flyTo(place: UiPlace): void;
 
   /**
    * Pins of this kind are always non-draggable.
-   * @param place describe an object stored in the IStorage.
+   * @param place describe an object stored in an IStorage.
    */
   addStored(place: UiPlace): IPin;
 
@@ -87,9 +87,9 @@ export interface IMap {
   drawPolyline(polyline: WgsPoint[]): void;
 
   /**
-   * @param handle callback should be called with user-clicked position.
+   * @param callback called with user-clicked position.
    */
-  captureLocation(handle: (point: WgsPoint) => void): void;
+  captureLocation(callback: (point: WgsPoint) => void): void;
 }
 
 /**
