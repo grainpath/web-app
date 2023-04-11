@@ -24,13 +24,6 @@ const GRAINPATH_PLACES_URL = GRAINPATH_BASIS_URL + "/places";
  */
 export class GrainPathFetcher {
 
-  private static acceptResponse(res: Response): Response {
-    if (!res.ok) {
-      throw new Error(`[Fetch error] ${res.status}: ${res.statusText}`);
-    }
-    return res;
-  }
-
   /**
    * Standard `POST` @b fetch from an application server, only JSON content
    * type is available.
@@ -38,35 +31,35 @@ export class GrainPathFetcher {
   private static async fetch(url: string, body: any): Promise<any> {
     const content = "application/json";
 
-    const res = await fetch(url, {
+    const rs = await fetch(url, {
       method: "POST",
       headers: { "Accept": content, "Content-Type": content },
       body: JSON.stringify(body)
     });
-    return this.acceptResponse(res).json();
+    switch (rs.status) {
+      case 200: return rs.json();
+      case 404: return undefined;
+    //case 400:
+    //case 500:
+      default: throw new Error(`[Fetch error] ${rs.status}: ${rs.statusText}`);
+    }
   }
 
   /**
    * Fetch autocomplete items based on provided prefix.
    */
   public static async fetchAutocs(prefix: string): Promise<KeywordAutoc[] | undefined> {
-    try {
-      const jsn = await GrainPathFetcher
-        .fetch(GRAINPATH_AUTOCS_URL, { count: 3, prefix: prefix });
-      return jsn.items;
-    }
-    catch (ex) { alert(ex); return undefined; }
+    const jsn = await GrainPathFetcher
+      .fetch(GRAINPATH_AUTOCS_URL, { count: 3, prefix: prefix });
+    return jsn?.items;
   }
 
   /**
    * Fetch current bounds for selected attributes.
    */
   public static async fetchBounds(): Promise<Bounds | undefined> {
-    try {
-      return await GrainPathFetcher
-        .fetch(GRAINPATH_BOUNDS_URL, {});
-    }
-    catch (ex) { alert(ex); return undefined; }
+    return await GrainPathFetcher
+      .fetch(GRAINPATH_BOUNDS_URL, {});
   }
 
   /**
@@ -74,46 +67,34 @@ export class GrainPathFetcher {
    */
   public static async fetchDirect(sequence: UiPlace[]): Promise<UiDirection | undefined> {
     const waypoints = sequence.map((l) => l.location);
-    try {
-      const jsn = await GrainPathFetcher
+    const jsn = await GrainPathFetcher
         .fetch(GRAINPATH_DIRECT_URL, { waypoints: waypoints });
-      return { sequence: sequence, path: jsn };
-    }
-    catch (ex) { alert(ex); return undefined; }
+      return (jsn) ? { sequence: sequence, path: jsn } : undefined;
   }
 
   /**
    * Fetch entity (place with extended information) by id.
    */
   public static async fetchEntity(placeId: string): Promise<Entity | undefined> {
-    try {
-      return await GrainPathFetcher
-        .fetch(GRAINPATH_ENTITY_URL, { placeId: placeId });
-    }
-    catch (ex) { alert(ex); return undefined; }
+    return await GrainPathFetcher
+      .fetch(GRAINPATH_ENTITY_URL, { placeId: placeId });
   }
 
   /**
    * Fetch places satisfying user-defined conditions.
    */
   public static async fetchPlaces(request: PlacesRequest): Promise<PlacesResult | undefined> {
-    try {
-      const jsn = await GrainPathFetcher
-        .fetch(GRAINPATH_PLACES_URL, request);
-      return { ...request, ...jsn };
-    }
-    catch (ex) { alert(ex); return undefined; }
+    const jsn = await GrainPathFetcher
+      .fetch(GRAINPATH_PLACES_URL, request);
+    return (jsn) ? { ...request, ...jsn } : undefined;
   }
 
   /**
    * Fetch routes visiting places that satisfy user-defined conditions.
    */
   public static async fetchRoutes(request: RoutesRequest): Promise<UiRoute[] | undefined> {
-    try {
-      const jsn = await GrainPathFetcher
-        .fetch(GRAINPATH_ROUTES_URL, request);
-      return jsn.routes.map((route: any) => { return { ...request, ...route }; });
-    }
-    catch (ex) { alert(ex); return undefined; }
+    const jsn = await GrainPathFetcher
+      .fetch(GRAINPATH_ROUTES_URL, request);
+    return (jsn) ? jsn.routes.map((route: any) => { return { ...request, ...route }; }) : undefined;
   }
 }
