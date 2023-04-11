@@ -1,21 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit";
 import panelReducer from "./panelSlice";
-import lockerReducer from "./lockerSlice";
 import loggerReducer from "./loggerSlice";
-import pointsReducer from "./placesSlice";
-import resultReducer from "./resultSlice";
-import discoverReducer from "./discoverSlice";
-import navigateReducer from "./navigateSlice";
+import searchDirectReducer from "./searchDirectSlice";
+import searchPlacesReducer from "./searchPlacesSlice";
+import searchRoutesReducer from "./searchRoutesSlice";
+import resultDirectReducer from "./resultDirectSlice";
+import resultPlacesReducer from "./resultPlacesSlice";
+import resultRoutesReducer from "./resultRoutesSlice";
 
 export const store = configureStore({
   reducer: {
     panel: panelReducer,
-    locker: lockerReducer,
     logger: loggerReducer,
-    points: pointsReducer,
-    result: resultReducer,
-    discover: discoverReducer,
-    navigate: navigateReducer
+    searchDirect: searchDirectReducer,
+    searchPlaces: searchPlacesReducer,
+    searchRoutes: searchRoutesReducer,
+    resultDirect: resultDirectReducer,
+    resultPlaces: resultPlacesReducer,
+    resultRoutes: resultRoutesReducer
   }
 });
 
