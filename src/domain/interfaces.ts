@@ -99,47 +99,47 @@ export interface IStorage {
 
   // [C]reate
 
-  createPlace(place: StoredPlace): void;
+  createPlace(place: StoredPlace): Promise<void>;
 
-  createRoute(route: StoredRoute): void;
+  createRoute(route: StoredRoute): Promise<void>;
 
-  createDirection(direction: StoredDirection): void;
+  createDirection(direction: StoredDirection): Promise<void>;
 
   // [R]ead
 
   /**
    * Get place by locally defined Id.
    */
-  tryGetPlace(placeId: string): StoredPlace | undefined;
+  tryGetPlace(placeId: string): Promise<StoredPlace | undefined>;
 
   /**
    * Get place by remote Id.
    */
-  tryGetGrain(grainId: string): StoredPlace | undefined;
+  tryGetGrain(grainId: string): Promise<StoredPlace | undefined>;
 
   /**
    * Get route by locally defined Id.
    */
-  tryGetRoute(routeId: string): StoredRoute | undefined;
+  tryGetRoute(routeId: string): Promise<StoredRoute | undefined>;
 
   /**
    * Get direction by locally defined Id.
    */
-  tryGetDirection(directionId: string): StoredDirection | undefined;
+  tryGetDirection(directionId: string): Promise<StoredDirection | undefined>;
 
   // [U]pdate
 
-  update(place: StoredPlace): void;
+  updatePlace(place: StoredPlace): Promise<void>;
 
-  update(route: StoredRoute): void;
+  updateRoute(route: StoredRoute): Promise<void>;
 
-  update(direction: StoredDirection): void;
+  updateDirection(direction: StoredDirection): Promise<void>;
 
   // [D]elete
 
-  deletePlace(placeId: string): void;
+  deletePlace(placeId: string): Promise<void>;
 
-  deleteRoute(routeId: string): void;
+  deleteRoute(routeId: string): Promise<void>;
 
-  deleteDirection(directionId: string): void;
+  deleteDirection(directionId: string): Promise<void>;
 }

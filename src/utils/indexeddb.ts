@@ -57,37 +57,43 @@ export class IndexedDbStorage implements IStorage {
     return IndexedDbStorage.create(direction, IndexedDbStorage.directions);
   }
 
-  public tryGetPlace(placeId: string): StoredPlace | undefined {
+  public tryGetPlace(placeId: string): Promise<StoredPlace | undefined> {
     throw new Error("Method not implemented.");
   }
 
-  public tryGetGrain(grainId: string): StoredPlace | undefined {
+  public tryGetGrain(grainId: string): Promise<StoredPlace | undefined> {
     throw new Error("Method not implemented.");
   }
 
-  public tryGetRoute(routeId: string): StoredRoute | undefined {
+  public tryGetRoute(routeId: string): Promise<StoredRoute | undefined> {
     throw new Error("Method not implemented.");
   }
 
-  tryGetDirection(directionId: string): StoredDirection | undefined {
+  tryGetDirection(directionId: string): Promise<StoredDirection | undefined> {
     throw new Error("Method not implemented.");
   }
 
-  updatePlace(place: StoredPlace): void {
+  updatePlace(place: StoredPlace): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
-  updateRoute(route: StoredRoute): void {
+  updateRoute(route: StoredRoute): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
-  updateDirection(direction: StoredDirection): void {
+  updateDirection(direction: StoredDirection): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
-  deletePlace(placeId: string): void {
+  deletePlace(placeId: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
-  deleteRoute(routeId: string): void {
+  deleteRoute(routeId: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
-  deleteDirection(directionId: string): void {
+  deleteDirection(directionId: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 }
