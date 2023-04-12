@@ -4,7 +4,7 @@ import { StoredDirection, StoredPlace, StoredRoute } from "../domain/types";
 /**
  * Wrapper over standard (k, v) collection.
  */
-export class InMemoryStorage implements IStorage {
+export class InmemStorage implements IStorage {
 
   private readonly places = new Map<string, StoredPlace>();
   private readonly routes = new Map<string, StoredRoute>();

@@ -2,7 +2,8 @@ import { Map as LeafletRawMap } from "leaflet"
 import { LeafletMap } from "../utils/leaflet";
 import { KeywordAutoc } from "../domain/types";
 import { IMap, IStorage } from "../domain/interfaces";
-import { IndexedDbStorage } from "../utils/indexeddb";
+import { IndexStorage } from "../utils/indexStorage";
+import { InmemStorage } from "../utils/inmemStorage";
 
 /**
  * Use application context for all non-serializable data!
@@ -16,6 +17,12 @@ type AppContextValue = {
   }
 };
 
+class StorageFactory {
+  static getStorage(): IStorage {
+    return indexedDB ? new IndexStorage() : new InmemStorage();
+  }
+}
+
 export class MapFactory {
 
   /**
@@ -26,7 +33,7 @@ export class MapFactory {
 }
 
 export const context: AppContextValue = {
-  storage: new IndexedDbStorage(),
+  storage: StorageFactory.getStorage(),
   grain: {
     autoc: new Map<string, KeywordAutoc[]>()
   }
