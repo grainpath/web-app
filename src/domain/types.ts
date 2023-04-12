@@ -147,7 +147,7 @@ export type Bounds = {
 /**
  * Filter for checking attribute existence.
  */
-type KeywordFilterExisten = {};
+export type KeywordFilterExisten = {};
 
 /**
  * Possible attributes checked for existence.
@@ -167,7 +167,7 @@ type KeywordFilterExistens = {
 /**
  * Filter for boolean attributes.
  */
-type KeywordFilterBoolean = boolean;
+export type KeywordFilterBoolean = boolean;
 
 /**
  * Possible boolean attributes.
@@ -187,7 +187,7 @@ type KeywordFilterBooleans = {
 /**
  * Filter for numeric attributes.
  */
-type KeywordFilterNumeric = {
+export type KeywordFilterNumeric = {
   min: number;
   max: number;
 };
@@ -204,7 +204,7 @@ type KeywordFilterNumerics = {
 /**
  * Filter for textual attributes with "contains" semantics.
  */
-type KeywordFilterTextual = string;
+export type KeywordFilterTextual = string;
 
 /**
  * Possible textual attributes.
@@ -216,7 +216,7 @@ type KeywordFilterTextuals = {
 /**
  * Filter for collections with "include" and "exclude" semantics.
  */
-type KeywordFilterCollect = {
+export type KeywordFilterCollect = {
   includes: string[],
   excludes: string[];
 };
@@ -233,7 +233,7 @@ type KeywordFilterCollects = {
 /**
  * All possible keyword filters.
  */
-type KeywordFilters = {
+export type KeywordFilters = {
   existens: KeywordFilterExistens;
   booleans: KeywordFilterBooleans;
   numerics: KeywordFilterNumerics;
@@ -246,7 +246,7 @@ type KeywordFilters = {
  */
 export type KeywordAutoc = {
   keyword: string;
-  attributes: string[];
+  attributeList: string[];
 };
 
 /**
@@ -261,7 +261,7 @@ export type PlaceCondition = {
  * User-defined condition restricting search.
  */
 export type KeywordCondition = PlaceCondition & {
-  attributes: string[];
+  attributeList: string[];
 };
 
 /**

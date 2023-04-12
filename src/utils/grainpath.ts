@@ -25,7 +25,7 @@ const GRAINPATH_PLACES_URL = GRAINPATH_BASIS_URL + "/places";
 export class GrainPathFetcher {
 
   /**
-   * Standard `POST` @b fetch from an application server, only JSON content
+   * Standard `POST` @b fetch from an application server. Only JSON content
    * type is available.
    */
   private static async fetch(url: string, body: any): Promise<any> {
