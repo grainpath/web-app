@@ -18,10 +18,11 @@ export const placesSlice = createSlice({
     clear: () => { return initialState(); },
     setCenter: (state, action: PayloadAction<UiPlace | undefined>) => { state.center = action.payload; },
     setRadius: (state, action: PayloadAction<number>) => { state.radius = action.payload; },
-    deleteCondition: (state, action: PayloadAction<string>) => {
-      state.conditions = state.conditions.filter((c) => c.keyword !== action.payload);
+    deleteCondition: (state, action: PayloadAction<number>) => {
+      const i = action.payload;
+      state.conditions = [...state.conditions.slice(0, i), ...state.conditions.slice(i + 1)];
     },
-    insertCondition: (state, action: PayloadAction<{ i: number; condition: KeywordCondition }>) => {
+    insertCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
       const { i, condition } = action.payload;
       state.conditions = [...state.conditions.slice(0, i), condition, ...state.conditions.slice(i + 1)];
     }

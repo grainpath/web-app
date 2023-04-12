@@ -20,12 +20,13 @@ export const searchRoutesSlice = createSlice({
     setSource: (state, action: PayloadAction<UiPlace | undefined>) => { state.source = action.payload; },
     setTarget: (state, action: PayloadAction<UiPlace | undefined>) => { state.target = action.payload; },
     setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
-    deleteCondition: (state, action: PayloadAction<string>) => {
-      state.conditions = state.conditions.filter((c) => c.keyword !== action.payload);
+    deleteCondition: (state, action: PayloadAction<number>) => {
+      const i = action.payload;
+      state.conditions = [...state.conditions.slice(0, i), ...state.conditions.slice(i + 1)];
     },
-    insertCondition: (state, action: PayloadAction<{ index: number; condition: KeywordCondition }>) => {
-      const { index, condition } = action.payload;
-      state.conditions = [...state.conditions.slice(0, index), condition, ...state.conditions.slice(index + 1)];
+    insertCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
+      const { i, condition } = action.payload;
+      state.conditions = [...state.conditions.slice(0, i), condition, ...state.conditions.slice(i + 1)];
     }
   }
 });
