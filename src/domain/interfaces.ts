@@ -107,25 +107,11 @@ export interface IStorage {
 
   // [R]ead
 
-  /**
-   * Get place by local Id.
-   */
-  tryGetPlace(placeId: string): Promise<StoredPlace | undefined>;
+  getAllPlaces(): Promise<StoredPlace[]>;
 
-  /**
-   * Get place by grain Id.
-   */
-  tryGetGrain(grainId: string): Promise<StoredPlace | undefined>;
+  getAllRoutes(): Promise<StoredRoute[]>;
 
-  /**
-   * Get route by local Id.
-   */
-  tryGetRoute(routeId: string): Promise<StoredRoute | undefined>;
-
-  /**
-   * Get direction by local Id.
-   */
-  tryGetDirection(directionId: string): Promise<StoredDirection | undefined>;
+  getAllDirections(): Promise<StoredDirection[]>;
 
   // [U]pdate
 
@@ -142,12 +128,4 @@ export interface IStorage {
   deleteRoute(routeId: string): Promise<void>;
 
   deleteDirection(directionId: string): Promise<void>;
-
-  // [A]ll
-
-  getAllPlaces(): Promise<StoredPlace[]>;
-
-  getAllRoutes(): Promise<StoredRoute[]>;
-
-  getAllDirections(): Promise<StoredDirection[]>;
 }
