@@ -40,8 +40,8 @@ import {
 import { IdGenerator, point2place } from "../../utils/helpers";
 import {
   FreeCenterListItem,
-  PinItemWithMenu,
-  RemovableCustomListItem
+  MenuPinListItem,
+  RemovablePinListItem
 } from "../shared-list-items";
 import { DeleteModal, EditModal } from "../shared-modals";
 import { FavouriteStub } from "./FavouriteStub";
@@ -135,7 +135,7 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
 
   return (
     <Box>
-      <PinItemWithMenu
+      <MenuPinListItem
         kind="stored"
         onMarker={onMarker}
         label={place.name}
@@ -209,7 +209,7 @@ function CustomPlaceDialog(): JSX.Element {
         </summary>
         <Stack direction="column" gap={2} sx={{ mt: 2 }}>
           {place
-            ? <RemovableCustomListItem onMarker={() => clickMarker(place)} onDelete={removeMarker} label={place.name} />
+            ? <RemovablePinListItem kind="custom" onMarker={() => clickMarker(place)} onDelete={removeMarker} label={place.name} />
             : <FreeCenterListItem onClick={addMarker} />
           }
           <TextField
@@ -231,6 +231,8 @@ function CustomPlaceDialog(): JSX.Element {
 }
 
 type PlacesContentProps = {
+
+  /** */
   places: StoredPlace[];
 };
 

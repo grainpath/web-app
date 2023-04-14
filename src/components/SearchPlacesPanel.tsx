@@ -63,10 +63,8 @@ export default function SearchPlacesPanel(): JSX.Element {
         })
       }))
       .then((res) => {
-        if (res) {
-          dispatch(setResult(res));
-          nav(RESULT_PLACES_ADDR);
-        }
+        dispatch(setResult(res));
+        nav(RESULT_PLACES_ADDR);
       })
       .catch((ex) => alert(ex))
       .finally(() => { setBlock(false); });
@@ -115,6 +113,7 @@ export default function SearchPlacesPanel(): JSX.Element {
         <Box sx={{ mt: 4, display: "flex", justifyContent: "space-evenly" }}>
           <Button
             color="error"
+            title="Clear form"
             onClick={() => { dispatch(clear()); }}
           >
             Clear
@@ -124,12 +123,12 @@ export default function SearchPlacesPanel(): JSX.Element {
             variant="contained"
             startIcon={<Search />}
             loadingPosition="start"
-            title={"Discover places"}
+            title={"Search places"}
             onClick={() => { load(); }}
             loading={block}
-            disabled={!center}
+            disabled={!center || !(conditions.length > 0)}
           >
-            <span>Discover</span>
+            <span>Search</span>
           </LoadingButton>
         </Box>
         {modC &&

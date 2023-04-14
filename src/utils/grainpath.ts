@@ -69,7 +69,7 @@ export class GrainPathFetcher {
     const waypoints = sequence.map((l) => l.location);
     const jsn = await GrainPathFetcher
         .fetch(GRAINPATH_DIRECT_URL, { waypoints: waypoints });
-      return (jsn) ? { sequence: sequence, path: jsn } : undefined;
+      return (jsn) ? { name: "", path: jsn, sequence: sequence } : undefined;
   }
 
   /**
@@ -85,8 +85,8 @@ export class GrainPathFetcher {
    */
   public static async fetchPlaces(request: PlacesRequest): Promise<PlacesResult | undefined> {
     const jsn = await GrainPathFetcher
-      .fetch(GRAINPATH_PLACES_URL, request);
-    return (jsn) ? { ...request, ...jsn } : undefined;
+      .fetch(GRAINPATH_PLACES_URL, { ...request, center: request.center.location });
+    return (jsn) ? { ...request, places: jsn } : undefined;
   }
 
   /**
@@ -95,6 +95,6 @@ export class GrainPathFetcher {
   public static async fetchRoutes(request: RoutesRequest): Promise<UiRoute[] | undefined> {
     const jsn = await GrainPathFetcher
       .fetch(GRAINPATH_ROUTES_URL, request);
-    return (jsn) ? jsn.routes.map((route: any) => { return { ...request, ...route }; }) : undefined;
+    return (jsn) ? jsn.routes.map((route: any) => { return { name: "", ...request, ...route }; }) : undefined;
   }
 }
