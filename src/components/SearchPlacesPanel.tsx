@@ -1,25 +1,31 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Link, Typography } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../App";
 import { UiPlace } from "../domain/types";
 import { RESULT_PLACES_ADDR } from "../domain/routing";
 import { GrainPathFetcher } from "../utils/grainpath";
-import { point2place, point2text } from "../utils/helpers";
+import { point2place } from "../utils/helpers";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setLoading } from "../features/panelSlice";
+import { setBlock } from "../features/panelSlice";
 import { setResult } from "../features/resultPlacesSlice";
-import { setCenter, setRadius } from "../features/searchPlacesSlice";
+import {
+  deleteCondition,
+  insertCondition,
+  setCenter,
+  setRadius
+} from "../features/searchPlacesSlice";
+import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
-import { SelectMaybePlaceModal } from "./shared-modals";
 import {
   FreeCenterListItem,
   RemovableCustomListItem
 } from "./shared-list-items";
-import DiscoverKeywordsInput from "./Discover/DiscoverKeywordsInput";
-import DiscoverDistanceSlider from "./Discover/DiscoverDistanceSlider";
+import KeywordsBox from "./Search/KeywordsBox";
+import DistanceSlider from "./Search/DistanceSlider";
+import { clear } from "../features/searchPlacesSlice";
 
 export default function SearchPlacesPanel(): JSX.Element {
 
@@ -52,10 +58,10 @@ export default function SearchPlacesPanel(): JSX.Element {
     };
   };
 
-  const { loading } = useAppSelector(state => state.panel);
+  const { block } = useAppSelector(state => state.panel);
 
   const load = () => {
-    new Promise((res, _) => res(setLoading(true)))
+    new Promise((res, _) => res(setBlock(true)))
       .then(() => GrainPathFetcher.fetchPlaces({
         center: center!,
         radius: meters,
@@ -69,26 +75,27 @@ export default function SearchPlacesPanel(): JSX.Element {
           nav(RESULT_PLACES_ADDR);
         }
       })
-      .finally(() => { setLoading(false); });
+      .catch((ex) => alert(ex))
+      .finally(() => { setBlock(false); });
   };
 
   return (
     <Box>
-      <LogoCloseMenu logo={() => { }} />
+      <LogoCloseMenu onLogo={() => { }} />
       <MainMenu value={1} />
-      <Box>
+      <Box sx={{ mx: 2 }}>
         <Box sx={{ mt: 4 }}>
           { (center)
-            ? <RemovableCustomListItem {...props(center)} label={point2text(center.location)} />
+            ? <RemovableCustomListItem {...props(center)} label={center.name} />
             : <FreeCenterListItem onClick={() => { setModC(true); }} />
           }
         </Box>
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: 4 }}>
           <Typography>
-            Radius of a circle around a point (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>)
+            Radius of a circle around a point (in <Link href="https://en.wikipedia.org/wiki/Kilometre" rel="noopener noreferrer" target="_blank" title="kilometres" underline="hover">km</Link>):
           </Typography>
-          <Box sx={{ mt: 2 }}>
-            <DiscoverDistanceSlider
+          <Box sx={{ mt: 4 }}>
+            <DistanceSlider
               max={12}
               seq={[ 2, 4, 6, 8, 10 ]}
               step={0.1}
@@ -97,10 +104,23 @@ export default function SearchPlacesPanel(): JSX.Element {
             />
           </Box>
         </Box>
-        <Box sx={{ mt: 3 }}>
-          <DiscoverKeywordsInput />
+        <Box sx={{ mt: 4 }}>
+          <Typography>Find places satisfying the following conditions:</Typography>
         </Box>
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ mt: 4 }}>
+          <KeywordsBox
+            conditions={conditions}
+            deleteCondition={(i) => dispatch(deleteCondition(i))}
+            insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
+          />
+        </Box>
+        <Box sx={{ mt: 4, display: "flex", justifyContent: "space-evenly" }}>
+          <Button
+            color="error"
+            onClick={() => { dispatch(clear()); }}
+          >
+            Clear
+          </Button>
           <LoadingButton
             size="large"
             variant="contained"
@@ -108,16 +128,16 @@ export default function SearchPlacesPanel(): JSX.Element {
             loadingPosition="start"
             title={"Discover places"}
             onClick={() => { load(); }}
-            loading={loading}
+            loading={block}
             disabled={!center}
           >
             <span>Discover</span>
           </LoadingButton>
         </Box>
         {modC &&
-          <SelectMaybePlaceModal
+          <SelectPlaceModal
             kind="center"
-            hide={() => { setModC(false); }}
+            onHide={() => { setModC(false); }}
             func={(place) => { dispatch(setCenter(place)) }}
           />
         }

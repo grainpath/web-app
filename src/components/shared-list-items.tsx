@@ -1,7 +1,8 @@
 import { ReactElement } from "react";
 import { DeleteOutline } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
-import { HolePinButton, PinKind } from "./shared-pin-buttons";
+import { PinKind } from "./shared-types";
+import { HolePinButton } from "./shared-pin-buttons";
 
 type ListItemLabelProps = {
   label?: string;
