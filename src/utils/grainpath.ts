@@ -83,10 +83,11 @@ export class GrainPathFetcher {
   /**
    * Fetch places satisfying user-defined conditions.
    */
-  public static async fetchPlaces(request: PlacesRequest): Promise<PlacesResult | undefined> {
+  public static async fetchPlaces(request: PlacesRequest): Promise<PlacesResult> {
+    const { center, radius, ...rest } = request;
     const jsn = await GrainPathFetcher
-      .fetch(GRAINPATH_PLACES_URL, { ...request, center: request.center.location });
-    return (jsn) ? { ...request, places: jsn } : undefined;
+      .fetch(GRAINPATH_PLACES_URL, { center: center.location, radius: radius * 1000, ...rest });
+    return { ...request, places: jsn };
   }
 
   /**

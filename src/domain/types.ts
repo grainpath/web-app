@@ -291,8 +291,14 @@ export type StoredDirection = DirectionAttributes & {
  * Places request.
  */
 export type PlacesRequest = {
+
+  /** Pivot point. */
   center: UiPlace;
+
+  /** Radius in kilometers. */
   radius: number;
+
+  /** Conditions to be fulfilled. */
   conditions: PlaceCondition[];
 };
 

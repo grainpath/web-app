@@ -4,7 +4,6 @@ import { Box, Button, Link, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../App";
-import { UiPlace } from "../domain/types";
 import { RESULT_PLACES_ADDR } from "../domain/routing";
 import { GrainPathFetcher } from "../utils/grainpath";
 import { point2place } from "../utils/helpers";
@@ -37,10 +36,9 @@ export default function SearchPlacesPanel(): JSX.Element {
   const dispatch = useAppDispatch();
   const { center, radius, conditions } = useAppSelector(state => state.searchPlaces);
 
-  const meters = radius * 1000;
-
   useEffect(() => {
     map?.clear();
+    const meters = radius * 1000;
 
     if (center) {
       (center.placeId || center.grainId)
@@ -49,7 +47,7 @@ export default function SearchPlacesPanel(): JSX.Element {
 
       map?.drawCircle(center.location, meters);
     }
-  }, [map, nav, dispatch, center, meters]);
+  }, [map, nav, dispatch, center, radius]);
 
   const { block } = useAppSelector(state => state.panel);
 
@@ -57,7 +55,7 @@ export default function SearchPlacesPanel(): JSX.Element {
     new Promise((res, _) => res(setBlock(true)))
       .then(() => GrainPathFetcher.fetchPlaces({
         center: center!,
-        radius: meters,
+        radius: radius,
         conditions: conditions.map((c) => {
           return { keyword: c.keyword, filters: c.filters };
         })
