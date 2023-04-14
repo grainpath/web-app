@@ -1,32 +1,151 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
   Button,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   Skeleton,
   Stack,
   TextField,
   Typography
 } from "@mui/material";
-import { ExpandMore, Grain } from "@mui/icons-material";
+import {
+  Delete,
+  Edit,
+  ExpandMore,
+  Grain,
+  Link,
+  MoreVert
+} from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { StoredPlace, UiPlace, WgsPoint } from "../../domain/types";
+import { ENTITY_ADDR, SEARCH_PLACES_ADDR } from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { hidePanel, setBlock, showPanel } from "../../features/panelSlice";
-import { IdGenerator, point2place } from "../../utils/helpers";
-import { FreeCenterListItem, RemovableCustomListItem } from "../shared-list-items";
 import {
   createPlace,
-  setLoaded,
+  deletePlace,
   setLocation,
   setName,
-  setNote,
-  setPlaces
+  setPlaces,
+  setPlacesLoaded,
+  updatePlace
 } from "../../features/favouritesSlice";
+import { IdGenerator, point2place } from "../../utils/helpers";
+import {
+  FreeCenterListItem,
+  PinItemWithMenu,
+  RemovableCustomListItem
+} from "../shared-list-items";
+import { DeleteModal, EditModal } from "../shared-modals";
 import { FavouriteStub } from "./FavouriteStub";
-import { SEARCH_PLACES_ADDR } from "../../domain/routing";
+
+type PlaceMenuProps = {
+
+  /** Shows edit modal. */
+  showEdit: () => void;
+
+  /** Redirect to the entity view. */
+  onVisit?: () => void;
+
+  /** Shows delete modal. */
+  showDelete: () => void;
+};
+
+/**
+ * Place-specific menu in the storage list of places.
+ */
+function PlaceMenu({ showEdit, onVisit, showDelete }: PlaceMenuProps): JSX.Element {
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const onClick = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const onClose = () => { setAnchorEl(null); };
+
+  return (
+    <Box>
+      <IconButton size="small" onClick={onClick}><MoreVert /></IconButton>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+        <MenuItem onClick={() => { showEdit(); onClose(); }}>
+          <ListItemIcon><Edit fontSize="small" /></ListItemIcon>
+          <Typography>Edit</Typography>
+        </MenuItem>
+        {Boolean(onVisit) &&
+          <MenuItem onClick={onVisit}>
+            <ListItemIcon><Link fontSize="small" /></ListItemIcon>
+            <Typography>Visit</Typography>
+          </MenuItem>
+        }
+        <MenuItem onClick={() => { showDelete(); onClose(); }}>
+          <ListItemIcon><Delete fontSize="small" /></ListItemIcon>
+          <Typography>Delete</Typography>
+        </MenuItem>
+      </Menu>
+    </Box>
+  );
+}
+
+type PlaceListItemProps = {
+
+  /**  */
+  index: number;
+
+  /**  */
+  place: StoredPlace;
+};
+
+function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
+
+  const nav = useNavigate();
+  const dispatch = useAppDispatch();
+  const { map, storage } = useContext(AppContext);
+
+  const [showE, showEdit] = useState(false);
+  const [showD, showDelete] = useState(false);
+
+  const onMarker = () => {
+    map?.clear();
+    map?.addStored(place);
+    map?.flyTo(place);
+  };
+
+  const onSave = async (newName: string) => {
+    const pl = { ...place, name: newName };
+    await storage.updatePlace(pl);
+    dispatch(updatePlace({ place: pl, index: index }));
+  };
+
+  const onVisit = () => {
+    nav([ENTITY_ADDR, place.grainId].join("/"));
+  };
+
+  const onDelete = async () => {
+    await storage.deletePlace(place.placeId);
+    dispatch(deletePlace(index));
+  };
+
+  return (
+    <Box>
+      <PinItemWithMenu
+        kind="stored"
+        onMarker={onMarker}
+        label={place.name}
+        menu={<PlaceMenu showEdit={() => { showEdit(true); }} onVisit={place.grainId ? onVisit : undefined} showDelete={() => { showDelete(true); }} />}
+      />
+      {showE && <EditModal name={place.name} what="place" onHide={() => { showEdit(false) }} onSave={(newName) => { onSave(newName); }} />}
+      {showD && <DeleteModal name={place.name} what="place" onHide={() => { showDelete(false); }} onDelete={() => { onDelete(); }} />}
+    </Box>
+  );
+}
 
 function CustomPlaceDialog(): JSX.Element {
 
@@ -35,7 +154,7 @@ function CustomPlaceDialog(): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { block } = useAppSelector(state => state.panel);
-  const { name, note, place } = useAppSelector(state => state.favourites);
+  const { name, place } = useAppSelector(state => state.favourites);
 
   const clickMarker = (pl: UiPlace) => {
     map?.clear();
@@ -64,7 +183,6 @@ function CustomPlaceDialog(): JSX.Element {
   const clearDialog = () => {
     removeMarker();
     dispatch(setName(empty));
-    dispatch(setNote(empty));
   };
 
   const create = async () => {
@@ -73,20 +191,20 @@ function CustomPlaceDialog(): JSX.Element {
       const pl = { name: name.trim(), location: place!.location, keywords: [], selected: [] };
       const st = {
         ...pl,
-        placeId: IdGenerator.generateId(pl),
-        stored: { note: note, updated: Date.now() }
+        placeId: IdGenerator.generateId(pl)
       };
       await storage.createPlace(st);
       dispatch(createPlace(st));
+      map?.clear();
     }
     catch (ex) { alert(ex); }
     finally { dispatch(setBlock(false)); }
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <details style={{ cursor: "pointer" }}>
-        <summary>
+    <Box sx={{ mt: 4, mb: 1 }}>
+      <details>
+        <summary style={{ cursor: "pointer" }}>
           <Typography sx={{ display: "inline-block" }}>Create custom place</Typography>
         </summary>
         <Stack direction="column" gap={2} sx={{ mt: 2 }}>
@@ -102,17 +220,9 @@ function CustomPlaceDialog(): JSX.Element {
             placeholder="Enter name..."
             onChange={(e) => dispatch(setName(e.target.value))}
           />
-          <TextField
-            fullWidth
-            multiline
-            size="small"
-            value={note}
-            placeholder="Enter optional note..."
-            onChange={(e) => dispatch(setNote(e.target.value))}
-          />
           <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
             <Button color="error" disabled={block} onClick={clearDialog}>Clear</Button>
-            <Button disabled={block || !place || (name.trim().length <= 0)} onClick={create}>Create</Button>
+            <Button disabled={block || !place || !(name.trim().length > 0)} onClick={create}>Create</Button>
           </Box>
         </Stack>
       </details>
@@ -120,7 +230,9 @@ function CustomPlaceDialog(): JSX.Element {
   );
 }
 
-type PlacesContentProps = { places: StoredPlace[]; };
+type PlacesContentProps = {
+  places: StoredPlace[];
+};
 
 function PlacesContent({ places }: PlacesContentProps): JSX.Element {
 
@@ -128,17 +240,33 @@ function PlacesContent({ places }: PlacesContentProps): JSX.Element {
     <Box>
       {places.length > 0
         ? <Stack direction="column" gap={2}>
-            {places.map((p, i) => <Typography key={i}>{p.name}</Typography>)}
+            {places.map((p, i) => <PlaceListItem key={i} index={i} place={p} />)}
           </Stack>
-        : <FavouriteStub link={SEARCH_PLACES_ADDR} text="places" icon={(sx) => <Grain sx={sx} />} />
+        : <FavouriteStub link={SEARCH_PLACES_ADDR} what="place" icon={(sx) => <Grain sx={sx} />} />
       }
     </Box>
   );
 }
 
-export function MyPlacesSection(): JSX.Element {
+export default function MyPlacesSection(): JSX.Element {
 
-  const { loaded, places } = useAppSelector(state => state.favourites);
+  const { storage } = useContext(AppContext);
+
+  const dispatch = useAppDispatch();
+  const { places, placesLoaded } = useAppSelector(state => state.favourites);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!placesLoaded) {
+        try {
+          dispatch(setPlaces(await storage.getAllPlaces()));
+          dispatch(setPlacesLoaded());
+        }
+        catch (ex) { alert(ex); }
+      }
+    }
+    load();
+  }, [storage, dispatch, placesLoaded]);
 
   return (
     <Accordion defaultExpanded>
@@ -146,7 +274,7 @@ export function MyPlacesSection(): JSX.Element {
         <Typography>My Places</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {loaded
+        {placesLoaded
           ? <PlacesContent places={places} />
           : <Skeleton variant="rounded" height={100} />
         }

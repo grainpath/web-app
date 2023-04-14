@@ -7,14 +7,6 @@ export type WgsPoint = {
 };
 
 /**
- * Attributes for stored something (point, place, route, etc.).
- */
-type StoredPlaceAttributes = {
-  note: string;
-  updated: number;
-};
-
-/**
  * Every point-like object has these attributes.
  */
 type PlaceAttributes = {
@@ -45,7 +37,6 @@ export type UiPlace = PlaceAttributes & {
 export type StoredPlace = PlaceAttributes & {
   placeId: string;
   grainId?: string;
-  stored: StoredPlaceAttributes;
 };
 
 /**
@@ -277,6 +268,7 @@ type Path = {
  * Any result upon direction request, known or new.
  */
 export type DirectionAttributes = {
+  name: string;
   path: Path;
   sequence: UiPlace[];
 };
@@ -288,16 +280,11 @@ export type UiDirection = DirectionAttributes & {
   directionId?: string;
 };
 
-type StoredDirectionAttributes = StoredPlaceAttributes & {
-  name: string;
-};
-
 /**
  * Direction result as per stored in the IStorage.
  */
 export type StoredDirection = DirectionAttributes & {
   directionId: string;
-  stored: StoredDirectionAttributes;
 };
 
 /**
@@ -327,6 +314,7 @@ export type RoutesRequest = {
 };
 
 type RouteAttributes = RoutesRequest & {
+  name: string;
   path: Path;
   waypoints: Place[];
 };
@@ -335,9 +323,6 @@ export type UiRoute = RouteAttributes & {
   routeId?:string
 };
 
-type StoredRouteAttributes = StoredDirectionAttributes;
-
 export type StoredRoute = RouteAttributes & {
   routeId: string;
-  stored: StoredRouteAttributes;
 };

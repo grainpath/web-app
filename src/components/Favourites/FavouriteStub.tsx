@@ -7,14 +7,21 @@ import {
   SxProps,
   Typography
 } from "@mui/material";
+import { EntityKind } from "../shared-types";
 
 type FavouriteStubProps = {
+
+  /** Location relative to the base URL */
   link: string;
-  text: string;
+
+  /** What is not found? */
+  what: EntityKind;
+
+  /** Generate a styled icon shown to the user. */
   icon: (sx: SxProps) => ReactElement;
 };
 
-export function FavouriteStub({ link, text, icon }: FavouriteStubProps): JSX.Element {
+export function FavouriteStub({ link, what, icon }: FavouriteStubProps): JSX.Element {
   const nav = useNavigate();
 
   return (
@@ -26,7 +33,7 @@ export function FavouriteStub({ link, text, icon }: FavouriteStubProps): JSX.Ele
       </Box>
       <Box display="flex" justifyContent="center">
         <Typography fontSize="large" sx={{ fontWeight: "medium" }}>
-          {`No ${text} found`}
+          {`No ${what}s found`}
         </Typography>
       </Box>
     </Stack>

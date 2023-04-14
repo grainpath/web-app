@@ -37,7 +37,7 @@ export function MyRoutesSection(): JSX.Element {
       <AccordionDetails>
         {routes.length > 0
           ? <></>
-          : <FavouriteStub link={SEARCH_ROUTES_ADDR} text="routes" icon={(sx) => <Route sx={sx} />} />
+          : <FavouriteStub link={SEARCH_ROUTES_ADDR} what="route" icon={(sx) => <Route sx={sx} />} />
         }
       </AccordionDetails>
     </Accordion>
