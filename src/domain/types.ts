@@ -9,9 +9,9 @@ export type WgsPoint = {
 /**
  * Attributes for stored something (point, place, route, etc.).
  */
-type PlaceStoredAttributes = {
+type StoredPlaceAttributes = {
   note: string;
-  updated: Date;
+  updated: number;
 };
 
 /**
@@ -45,7 +45,7 @@ export type UiPlace = PlaceAttributes & {
 export type StoredPlace = PlaceAttributes & {
   placeId: string;
   grainId?: string;
-  stored: PlaceStoredAttributes;
+  stored: StoredPlaceAttributes;
 };
 
 /**
@@ -288,7 +288,7 @@ export type UiDirection = DirectionAttributes & {
   directionId?: string;
 };
 
-type DirectionStoredAttributes = PlaceStoredAttributes & {
+type StoredDirectionAttributes = StoredPlaceAttributes & {
   name: string;
 };
 
@@ -297,7 +297,7 @@ type DirectionStoredAttributes = PlaceStoredAttributes & {
  */
 export type StoredDirection = DirectionAttributes & {
   directionId: string;
-  stored: DirectionStoredAttributes;
+  stored: StoredDirectionAttributes;
 };
 
 /**
@@ -335,9 +335,9 @@ export type UiRoute = RouteAttributes & {
   routeId?:string
 };
 
-type RouteStoredAttributes = DirectionAttributes;
+type StoredRouteAttributes = StoredDirectionAttributes;
 
 export type StoredRoute = RouteAttributes & {
   routeId: string;
-  stored: RouteStoredAttributes;
+  stored: StoredRouteAttributes;
 };

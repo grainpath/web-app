@@ -1,9 +1,9 @@
 import {
-  WgsPoint,
   StoredDirection,
   StoredPlace,
   StoredRoute,
   UiPlace,
+  WgsPoint,
 } from "./types";
 
 export interface IPin {
@@ -108,22 +108,22 @@ export interface IStorage {
   // [R]ead
 
   /**
-   * Get place by locally defined Id.
+   * Get place by local Id.
    */
   tryGetPlace(placeId: string): Promise<StoredPlace | undefined>;
 
   /**
-   * Get place by remote Id.
+   * Get place by grain Id.
    */
   tryGetGrain(grainId: string): Promise<StoredPlace | undefined>;
 
   /**
-   * Get route by locally defined Id.
+   * Get route by local Id.
    */
   tryGetRoute(routeId: string): Promise<StoredRoute | undefined>;
 
   /**
-   * Get direction by locally defined Id.
+   * Get direction by local Id.
    */
   tryGetDirection(directionId: string): Promise<StoredDirection | undefined>;
 
@@ -142,4 +142,12 @@ export interface IStorage {
   deleteRoute(routeId: string): Promise<void>;
 
   deleteDirection(directionId: string): Promise<void>;
+
+  // [A]ll
+
+  getAllPlaces(): Promise<StoredPlace[]>;
+
+  getAllRoutes(): Promise<StoredRoute[]>;
+
+  getAllDirections(): Promise<StoredDirection[]>;
 }

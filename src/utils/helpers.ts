@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { UiPlace, WgsPoint } from '../domain/types';
 
 /**
@@ -13,6 +14,13 @@ export function point2text(point: WgsPoint): string {
  */
 export function point2place(point: WgsPoint): UiPlace {
   return { name: point2text(point), location: point, keywords: [], selected: [] };
+}
+
+/**
+ * Generate Id based on a content of a JavaScript entity.
+ */
+export class IdGenerator {
+  public static generateId(_: any) { return uuidv4(); }
 }
 
 /**

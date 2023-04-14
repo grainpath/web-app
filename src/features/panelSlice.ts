@@ -1,14 +1,14 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Bounds } from "../domain/types";
 
 type PanelState = {
   show: boolean;
+  block: boolean;
   bounds?: Bounds;
-  loading: boolean;
 };
 
 const initialState = (): PanelState => {
-  return { show: false, loading: false };
+  return { show: false, block: false };
 }
 
 export const panelSlice = createSlice({
@@ -17,16 +17,16 @@ export const panelSlice = createSlice({
   reducers: {
     showPanel: (state) => { state.show = true;  },
     hidePanel: (state) => { state.show = false; },
-    setBounds: (state, action: PayloadAction<Bounds>) => { state.bounds = action.payload; },
-    setLoading: (state, action: PayloadAction<boolean>) => { state.loading = action.payload; }
+    setBlock: (state, action: PayloadAction<boolean>) => { state.block = action.payload; },
+    setBounds: (state, action: PayloadAction<Bounds>) => { state.bounds = action.payload; }
   }
 });
 
 export const {
   showPanel,
   hidePanel,
-  setBounds,
-  setLoading
+  setBlock,
+  setBounds
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
