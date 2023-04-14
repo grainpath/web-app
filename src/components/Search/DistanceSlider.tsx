@@ -1,6 +1,6 @@
 import { Box, Slider } from "@mui/material";
 
-type DiscoverDistanceSliderProps = {
+type DistanceSliderProps = {
   max: number;
   seq: number[];
   step: number;
@@ -8,17 +8,15 @@ type DiscoverDistanceSliderProps = {
   dispatch: (value: number) => void;
 };
 
-export default function DiscoverDistanceSlider({ max, seq, step, distance, dispatch }: DiscoverDistanceSliderProps): JSX.Element {
-
+export default function DistanceSlider({ seq, distance, dispatch, ...rest }: DistanceSliderProps): JSX.Element {
   const marks = seq.map(m => { return { value: m, label: m }; });
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Box sx={{ width: "94%" }}>
         <Slider
+          {...rest}
           min={0}
-          max={max}
-          step={step}
           marks={marks}
           value={distance}
           valueLabelDisplay="auto"
