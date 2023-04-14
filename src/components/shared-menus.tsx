@@ -4,7 +4,8 @@ import {
   Close,
   Directions,
   Favorite,
-  Search
+  Grain,
+  Route
 } from "@mui/icons-material";
 import {
   BottomNavigation,
@@ -14,10 +15,11 @@ import {
   IconButton
 } from "@mui/material";
 import {
-  DISCOVER_ADDR,
-  NAVIGATE_ADDR,
-  FAVORITE_ADDR
-} from "../utils/routing";
+  FAVOURITES_ADDR,
+  SEARCH_DIRECT_ADDR,
+  SEARCH_PLACES_ADDR,
+  SEARCH_ROUTES_ADDR
+} from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel } from "../features/panelSlice";
 
@@ -30,7 +32,7 @@ export function LogoCloseMenu({ logo }: LogoCloseMenuProps): JSX.Element {
   const dispatch = useAppDispatch();
 
   return (
-    <Box sx={{ mx: 2, my: 1, display: "flex", justifyContent: "right" }}>
+    <Box sx={{ mx: 2, my: 2, display: "flex", justifyContent: "right" }}>
       <IconButton size="small" onClick={() => { dispatch(hidePanel()); }}>
         <Close fontSize="medium" />
       </IconButton>
@@ -63,28 +65,34 @@ type MainMenuProps = {
 export function MainMenu({ value }: MainMenuProps): JSX.Element {
 
   const navigate = useNavigate();
-  const { loading } = useAppSelector(state => state.panel);
+  const { block } = useAppSelector(state => state.panel);
 
   return (
     <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: "divider" }}>
       <BottomNavigation showLabels value={value}>
         <BottomNavigationAction
-          label="Discover"
-          icon={<Search />}
-          disabled={loading}
-          onClick={() => { navigate(DISCOVER_ADDR); }}
+          label="Routes"
+          icon={<Route />}
+          disabled={block}
+          onClick={() => { navigate(SEARCH_ROUTES_ADDR); }}
         />
         <BottomNavigationAction
-          label="Navigate"
+          label="Places"
+          icon={<Grain />}
+          disabled={block}
+          onClick={() => { navigate(SEARCH_PLACES_ADDR); }}
+        />
+        <BottomNavigationAction
+          label="Directions"
           icon={<Directions />}
-          disabled={loading}
-          onClick={() => { navigate(NAVIGATE_ADDR); }}
+          disabled={block}
+          onClick={() => { navigate(SEARCH_DIRECT_ADDR); }}
         />
         <BottomNavigationAction
-          label="Favorite"
+          label="Favourites"
           icon={<Favorite />}
-          disabled={loading}
-          onClick={() => { navigate(FAVORITE_ADDR); }}
+          disabled={block}
+          onClick={() => { navigate(FAVOURITES_ADDR); }}
         />
       </BottomNavigation>
     </Box>

@@ -51,7 +51,7 @@ export function FreeTargetListItem(props: ConcreteFreeListItemProps): JSX.Elemen
 }
 
 export function FreeCenterListItem(props: ConcreteFreeListItemProps): JSX.Element {
-  return (<FreeListItem {...props} left={<FreePinListItem kind="center" />} label="Select position..." />);
+  return (<FreeListItem {...props} left={<FreePinListItem kind="center" />} label="Select location..." />);
 }
 
 export function FreeAddingListItem(props: ConcreteFreeListItemProps): JSX.Element {
@@ -80,9 +80,11 @@ type RemovableListItemProps = {
 };
 
 function RemovableListItem({ onDelete, ...rest }: RemovableListItemProps): JSX.Element {
-
   return (
-    <BusyListItem {...rest} right={<IconButton onClick={onDelete} size="small"><DeleteOutline className="grain-action-btn" /></IconButton>} />
+    <BusyListItem
+      {...rest}
+      right={<IconButton onClick={onDelete} size="small"><DeleteOutline className="grain-action-btn" /></IconButton>}
+    />
   );
 }
 
@@ -96,13 +98,21 @@ function BusyPinListItem(props: BusyPinListItemProps) {
 }
 
 type ConcreteRemovableListItemProps = {
-  label: string;
-  onDelete: React.MouseEventHandler<Element>;
+
+  /** Action upon clicking on the marker. */
   onMarker: React.MouseEventHandler<Element>;
+
+  /** Label of the pin presented to the user. */
+  label: string;
+
+  /** Action upon clicking on the remove button. */
+  onDelete: React.MouseEventHandler<Element>;
 };
 
 export function RemovableSourceListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
-  return (<RemovableListItem {...rest} left={<BusyPinListItem kind="source" onMarker={onMarker} />} />);
+  return (
+    <RemovableListItem {...rest} left={<BusyPinListItem kind="source" onMarker={onMarker} />} />
+  );
 }
 
 export function RemovableTargetListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
@@ -111,4 +121,23 @@ export function RemovableTargetListItem({ onMarker, ...rest }: ConcreteRemovable
 
 export function RemovableCustomListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
   return (<RemovableListItem {...rest} left={<BusyPinListItem kind="custom" onMarker={onMarker} />} />);
+}
+
+type MenuListItemProps = {
+
+  /** Kind of a pin presented to the user. */
+  kind: PinKind;
+
+  /** Action upon clicking on the marker. */
+  onMarker: React.MouseEventHandler<Element>;
+
+  /** Label on the item presented to the user. */
+  label: string;
+
+  /** Menu element, typically a button with an icon and a popup. */
+  menu: ReactElement;
+};
+
+export function PinItemWithMenu({ label, menu, ...rest }: MenuListItemProps): JSX.Element {
+  return (<BusyListItem left={<BusyPinListItem {...rest} />} label={label} right={menu} />);
 }

@@ -1,8 +1,8 @@
 import { IconButton } from "@mui/material";
 import { AddLocation, LocationOn } from "@mui/icons-material";
+import { PinKind } from "./shared-types";
 
 type PinSize = "large" | "medium";
-export type PinKind = "stored" | "tagged" | "source" | "target" | "adding" | "center" | "custom";
 
 type PinProps = {
   kind: PinKind;

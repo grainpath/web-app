@@ -9,49 +9,52 @@ import {
   IconButton,
   MenuItem,
   Select,
-  Typography
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { AppContext } from "../App";
 import { useAppDispatch } from "../features/hooks";
 import { hidePanel, showPanel } from "../features/panelSlice";
-import { point2place } from "../utils/general";
-import { MaybePlace, Point } from "../utils/grainpath";
-import { PinKind, PlusPinButton } from "./shared-pin-buttons";
+import { point2place } from "../utils/helpers";
+import { WgsPoint, UiPlace } from "../domain/types";
+import { EntityKind, PinKind } from "./shared-types";
+import { PlusPinButton } from "./shared-pin-buttons";
 
-type SelectMaybePlaceModalProps = {
+type SelectPlaceModalProps = {
   kind: PinKind;
-  hide: () => void;
-  func: (place: MaybePlace) => void;
-}
+  onHide: () => void;
+  func: (place: UiPlace) => void;
+};
 
-export function SelectMaybePlaceModal({ kind, hide, func }: SelectMaybePlaceModalProps): JSX.Element {
+export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps): JSX.Element {
 
   const [place, setPlace] = useState<string | undefined>(undefined);
 
   const dispatch = useAppDispatch();
   const map = useContext(AppContext).map;
 
-  const callback = (point: Point) => {
+  const callback = (point: WgsPoint) => {
     func(point2place(point));
     dispatch(showPanel());
   };
 
   const handleCustom = () => {
-    hide();
+    onHide();
     dispatch(hidePanel());
     map?.captureLocation(callback);
   };
 
-  const handleFavorite = () => {
+  const handleFavourites = () => {
     // TODO: handle favorite point by Id!
-  }
+  };
 
   return (
-    <Dialog open onClose={hide}>
+    <Dialog open onClose={onHide}>
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
         <span>Select point</span>
-        <IconButton size="small" onClick={hide}>
+        <IconButton size="small" onClick={onHide}>
           <Close fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -62,7 +65,7 @@ export function SelectMaybePlaceModal({ kind, hide, func }: SelectMaybePlaceModa
         <Divider>OR</Divider>
         <Box sx={{ mt: 2 }}>
           <Typography>
-            Select your <i>Favorite</i> point and confirm.
+            Select your <i>Favourite</i> place and confirm.
           </Typography>
           <Select value={place} sx={{ mt: 2, width: "100%" }} onChange={(e) => setPlace(e.target.value as string)}>
             <MenuItem value={undefined}></MenuItem>
@@ -71,9 +74,91 @@ export function SelectMaybePlaceModal({ kind, hide, func }: SelectMaybePlaceModa
             <MenuItem value={3}>3</MenuItem>
           </Select>
           <Box sx={{ mt: 1, display: "flex", justifyContent: "right" }}>
-            <Button color="primary" onClick={() => { handleFavorite(); }}>Confirm</Button>
+            <Button color="primary" onClick={() => { handleFavourites(); }}>Confirm</Button>
           </Box>
         </Box>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+type EditModalProps = {
+  name: string;
+  what: EntityKind;
+  onHide: () => void;
+  onSave: (name: string) => void;
+};
+
+export function EditModal({ name, what, onHide, onSave }: EditModalProps): JSX.Element {
+
+  const [newName, setNewName] = useState(name);
+  const [disabled, setDisabled] = useState(false);
+
+  const action = async () => {
+    setDisabled(true);
+    try {
+      onSave(newName);
+      onHide();
+    }
+    catch (ex) { alert(ex); }
+    finally { setDisabled(false); }
+  };
+
+  return (
+    <Dialog open>
+      <DialogTitle>Edit {what}</DialogTitle>
+      <DialogContent>
+        <Stack direction="column" gap={2}>
+          <Typography>Enter new name:</Typography>
+          <TextField
+            value={newName}
+            
+            onChange={(e) => { setNewName(e.target.value); }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
+            <Button disabled={disabled || !(newName.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
+          </Box>
+        </Stack>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+type DeleteModalProps = {
+  name: string;
+  what: EntityKind;
+  onHide: () => void;
+  onDelete: () => void;
+};
+
+export function DeleteModal({ name, what, onHide, onDelete }: DeleteModalProps): JSX.Element {
+
+  const [disabled, setDisabled] = useState(false);
+
+  const action = async () => {
+    setDisabled(true);
+    try {
+      onDelete();
+      onHide();
+    }
+    catch (ex) { alert(ex); }
+    finally { setDisabled(false); }
+  };
+
+  return (
+    <Dialog open>
+      <DialogTitle>Delete {what}</DialogTitle>
+      <DialogContent>
+        <Stack direction="column" gap={2}>
+          <Typography>
+            You are about to delete <b>{name}</b>. Please, confirm the action.
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Button disabled={disabled} onClick={onHide}>Cancel</Button>
+            <Button disabled={disabled} onClick={() => { action(); }} color="error">Delete</Button>
+          </Box>
+        </Stack>
       </DialogContent>
     </Dialog>
   );
