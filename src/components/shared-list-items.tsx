@@ -52,7 +52,7 @@ export function FreeTargetListItem(props: ConcreteFreeListItemProps): JSX.Elemen
 }
 
 export function FreeCenterListItem(props: ConcreteFreeListItemProps): JSX.Element {
-  return (<FreeListItem {...props} left={<FreePinListItem kind="center" />} label="Select location..." />);
+  return (<FreeListItem {...props} left={<FreePinListItem kind="center" />} label="Select point..." />);
 }
 
 export function FreeAddingListItem(props: ConcreteFreeListItemProps): JSX.Element {
@@ -111,20 +111,29 @@ type ConcreteRemovableListItemProps = {
 };
 
 export function RemovableSourceListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
-  return (
-    <RemovableListItem {...rest} left={<BusyPinListItem kind="source" onMarker={onMarker} />} />
-  );
+  return (<RemovableListItem {...rest} left={<BusyPinListItem kind="source" onMarker={onMarker} />} />);
 }
 
 export function RemovableTargetListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
   return (<RemovableListItem {...rest} left={<BusyPinListItem kind="target" onMarker={onMarker} />} />);
 }
 
-export function RemovableCustomListItem({ onMarker, ...rest }: ConcreteRemovableListItemProps): JSX.Element {
-  return (<RemovableListItem {...rest} left={<BusyPinListItem kind="custom" onMarker={onMarker} />} />);
+type RemovablePinListItem = {
+
+  kind: PinKind;
+
+  onMarker: React.MouseEventHandler<Element>;
+
+  label: string;
+
+  onDelete: React.MouseEventHandler<Element>;
+};
+
+export function RemovablePinListItem({ kind, onMarker, ...rest }: RemovablePinListItem): JSX.Element {
+  return (<RemovableListItem {...rest} left={<BusyPinListItem kind={kind} onMarker={onMarker} />} />);
 }
 
-type MenuListItemProps = {
+type MenuPinListItemProps = {
 
   /** Kind of a pin presented to the user. */
   kind: PinKind;
@@ -139,6 +148,6 @@ type MenuListItemProps = {
   menu: ReactElement;
 };
 
-export function PinItemWithMenu({ label, menu, ...rest }: MenuListItemProps): JSX.Element {
+export function MenuPinListItem({ label, menu, ...rest }: MenuPinListItemProps): JSX.Element {
   return (<BusyListItem left={<BusyPinListItem {...rest} />} label={label} right={menu} />);
 }

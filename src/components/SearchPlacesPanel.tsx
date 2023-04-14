@@ -21,7 +21,7 @@ import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import {
   FreeCenterListItem,
-  RemovableCustomListItem
+  RemovablePinListItem
 } from "./shared-list-items";
 import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
@@ -51,13 +51,6 @@ export default function SearchPlacesPanel(): JSX.Element {
     }
   }, [map, nav, dispatch, center, meters]);
 
-  const props = (place: UiPlace) => {
-    return {
-      onMarker: () => { map?.flyTo(place); },
-      onDelete: () => { dispatch(setCenter(undefined)); }
-    };
-  };
-
   const { block } = useAppSelector(state => state.panel);
 
   const load = () => {
@@ -86,7 +79,12 @@ export default function SearchPlacesPanel(): JSX.Element {
       <Box sx={{ mx: 2 }}>
         <Box sx={{ mt: 4 }}>
           { (center)
-            ? <RemovableCustomListItem {...props(center)} label={center.name} />
+            ? <RemovablePinListItem
+                kind={center.placeId ? "stored" : "custom"}
+                onMarker={() => { map?.flyTo(center); }}
+                label={center.name}
+                onDelete={() => { dispatch(setCenter(undefined)); }}
+            />
             : <FreeCenterListItem onClick={() => { setModC(true); }} />
           }
         </Box>

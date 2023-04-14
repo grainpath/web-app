@@ -1,26 +1,32 @@
-import { useContext, useState } from "react";
 import {
+  Fragment,
+  useContext,
+  useEffect,
+  useState
+} from "react";
+import {
+  Autocomplete,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
   Divider,
   IconButton,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Close, Favorite } from "@mui/icons-material";
 import { AppContext } from "../App";
-import { useAppDispatch } from "../features/hooks";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel, showPanel } from "../features/panelSlice";
 import { point2place } from "../utils/helpers";
-import { WgsPoint, UiPlace } from "../domain/types";
+import { WgsPoint, UiPlace, StoredPlace } from "../domain/types";
 import { EntityKind, PinKind } from "./shared-types";
 import { PlusPinButton } from "./shared-pin-buttons";
+import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
 
 type SelectPlaceModalProps = {
   kind: PinKind;
@@ -30,10 +36,10 @@ type SelectPlaceModalProps = {
 
 export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps): JSX.Element {
 
-  const [place, setPlace] = useState<string | undefined>(undefined);
-
   const dispatch = useAppDispatch();
-  const map = useContext(AppContext).map;
+  const { map, storage } = useContext(AppContext);
+
+  // custom place
 
   const callback = (point: WgsPoint) => {
     func(point2place(point));
@@ -46,8 +52,27 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
     map?.captureLocation(callback);
   };
 
+  // stored place
+
+  const { places, placesLoaded } = useAppSelector(state => state.favourites);
+  const [place, setPlace] = useState<StoredPlace | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!placesLoaded) {
+        try {
+          dispatch(setPlaces(await storage.getAllPlaces()));
+          dispatch(setPlacesLoaded());
+        }
+        catch (ex) { alert(ex); }
+      }
+    };
+    load();
+  }, [storage, dispatch, placesLoaded]);
+
   const handleFavourites = () => {
-    // TODO: handle favorite point by Id!
+    onHide();
+    func(place!);
   };
 
   return (
@@ -62,21 +87,38 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
         <Typography>
           Click <PlusPinButton kind={kind} size="large" onMarker={handleCustom} /> to select a location.
         </Typography>
-        <Divider>OR</Divider>
-        <Box sx={{ mt: 2 }}>
+        <Divider>
+          <Typography>OR</Typography>
+        </Divider>
+        <Stack direction="column" gap={2} sx={{ mt: 2 }}>
           <Typography>
-            Select your <i>Favourite</i> place and confirm.
+            Select a place from <b>Favourites</b>.
           </Typography>
-          <Select value={place} sx={{ mt: 2, width: "100%" }} onChange={(e) => setPlace(e.target.value as string)}>
-            <MenuItem value={undefined}></MenuItem>
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
+          <Autocomplete
+            options={places}
+            loading={!placesLoaded}
+            onChange={(_, v) => { setPlace(v); }}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) => option.placeId === value.placeId}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <Fragment>
+                      {!placesLoaded ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </Fragment>
+                  )
+                }}
+              />
+            )}
+          />
           <Box sx={{ mt: 1, display: "flex", justifyContent: "right" }}>
-            <Button color="primary" onClick={() => { handleFavourites(); }}>Confirm</Button>
+            <Button color="primary" disabled={!place} onClick={() => { handleFavourites(); }}>Confirm</Button>
           </Box>
-        </Box>
+        </Stack>
       </DialogContent>
     </Dialog>
   );
