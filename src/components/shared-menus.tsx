@@ -24,10 +24,10 @@ import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel } from "../features/panelSlice";
 
 type LogoCloseMenuProps = {
-  logo: () => void;
+  onLogo: () => void;
 };
 
-export function LogoCloseMenu({ logo }: LogoCloseMenuProps): JSX.Element {
+export function LogoCloseMenu({ onLogo: logo }: LogoCloseMenuProps): JSX.Element {
 
   const dispatch = useAppDispatch();
 
