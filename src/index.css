@@ -90,11 +90,6 @@ html, body, #root, #map {
   color: gray;
 }
 
-.grain-list-item {
-  display: flex;
-  align-items: stretch;
-}
-
 .grain-list-item-label {
   width: 100%;
   display: flex;
