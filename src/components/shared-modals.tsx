@@ -18,7 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Close, Favorite } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { AppContext } from "../App";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel, showPanel } from "../features/panelSlice";

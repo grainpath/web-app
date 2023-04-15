@@ -11,8 +11,8 @@ type ListItemLabelProps = {
 function ListItemLabel({ label }: ListItemLabelProps): JSX.Element {
 
   return (
-    <div className="grain-list-item-label">
-      <Typography>{label}</Typography>
+    <div className="grain-list-item-label" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+      <Typography noWrap>{label}</Typography>
     </div>
   );
 }
@@ -26,7 +26,7 @@ type FreeListItemProps = {
 function FreeListItem({ left, label, onClick }: FreeListItemProps): JSX.Element {
 
   return (
-    <div className="grain-list-item" onClick={onClick} style={{ cursor: "pointer", color: "gray" }}>
+    <div onClick={onClick} style={{ display: "flex", alignItems: "stretch", cursor: "pointer", color: "gray" }}>
       <>
         {left}
         <ListItemLabel label={label} />
@@ -68,7 +68,7 @@ type BusyListItemProps = {
 function BusyListItem({ left, right, label }: BusyListItemProps): JSX.Element {
 
   return (
-    <div className="grain-list-item">
+    <div style={{ display: "flex", alignItems: "stretch" }}>
       {left} <ListItemLabel label={label} /> {right}
     </div>
   );
@@ -118,22 +118,7 @@ export function RemovableTargetListItem({ onMarker, ...rest }: ConcreteRemovable
   return (<RemovableListItem {...rest} left={<BusyPinListItem kind="target" onMarker={onMarker} />} />);
 }
 
-type RemovablePinListItem = {
-
-  kind: PinKind;
-
-  onMarker: React.MouseEventHandler<Element>;
-
-  label: string;
-
-  onDelete: React.MouseEventHandler<Element>;
-};
-
-export function RemovablePinListItem({ kind, onMarker, ...rest }: RemovablePinListItem): JSX.Element {
-  return (<RemovableListItem {...rest} left={<BusyPinListItem kind={kind} onMarker={onMarker} />} />);
-}
-
-type MenuPinListItemProps = {
+type SimplePinListItemProps = {
 
   /** Kind of a pin presented to the user. */
   kind: PinKind;
@@ -143,6 +128,23 @@ type MenuPinListItemProps = {
 
   /** Label on the item presented to the user. */
   label: string;
+};
+
+export function SimplePinListItem({ label, ...rest }: SimplePinListItemProps): JSX.Element {
+  return (<BusyListItem left={<BusyPinListItem {...rest} />} label={label} right={<></>} />)
+}
+
+type RemovablePinListItemProps = SimplePinListItemProps & {
+
+  /** Action upon clicking on the delete button. */
+  onDelete: React.MouseEventHandler<Element>;
+};
+
+export function RemovablePinListItem({ kind, onMarker, ...rest }: RemovablePinListItemProps): JSX.Element {
+  return (<RemovableListItem {...rest} left={<BusyPinListItem kind={kind} onMarker={onMarker} />} />);
+}
+
+type MenuPinListItemProps = SimplePinListItemProps & {
 
   /** Menu element, typically a button with an icon and a popup. */
   menu: ReactElement;
