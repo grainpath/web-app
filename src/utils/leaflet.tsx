@@ -63,14 +63,21 @@ type PlacePopupProps = {
 };
 
 function PlacePopup({ place }: PlacePopupProps): JSX.Element {
+
+  const set = new Set(place.selected);
+
   return (
     <div>
-      <b>{place.name}</b>
+      <strong>{place.name}</strong>
       {place.selected.length > 0 &&
         <div>
           <hr style={{opacity: 0.7, margin: "0.25rem 0"}} />
-          <div className="mt-2 mb-2" style={{ width: "150px" }}>
-            {place.selected.join(", ")}
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "12px", width: "200px" }}>
+            {place.keywords.map((keyword, i) =>
+              <div key={i}>
+                {set.has(keyword) ? <strong>{keyword}</strong> : <span style={{ color: "grey" }}>{keyword}</span>}
+              </div>
+            )}
           </div>
         </div>
       }
