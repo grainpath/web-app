@@ -24,10 +24,15 @@ import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel } from "../features/panelSlice";
 
 type LogoCloseMenuProps = {
+
+  /** Action upon clicking on a logo. */
   onLogo: () => void;
 };
 
-export function LogoCloseMenu({ onLogo: logo }: LogoCloseMenuProps): JSX.Element {
+/**
+ * Upper menu with logo and close buttons.
+ */
+export function LogoCloseMenu({ onLogo: _ }: LogoCloseMenuProps): JSX.Element {
 
   const dispatch = useAppDispatch();
 
@@ -41,16 +46,21 @@ export function LogoCloseMenu({ onLogo: logo }: LogoCloseMenuProps): JSX.Element
 }
 
 type BackCloseMenuProps = {
-  back: () => void;
+
+  /** Action navigating back. */
+  onBack: () => void;
 };
 
-export function BackCloseMenu({ back }: BackCloseMenuProps): JSX.Element {
+/**
+ * Upper menu with back and close buttons.
+ */
+export function BackCloseMenu({ onBack }: BackCloseMenuProps): JSX.Element {
 
   const dispatch = useAppDispatch();
 
   return (
-    <Box sx={{ mx: 2, my: 1, display: "flex", justifyContent: "space-between" }}>
-      <Button startIcon={<ArrowBack />} onClick={back}>Back</Button>
+    <Box sx={{ mx: 2, my: 2, display: "flex", justifyContent: "space-between" }}>
+      <Button startIcon={<ArrowBack />} onClick={onBack}>Back</Button>
       <IconButton size="small" onClick={() => { dispatch(hidePanel()); }}>
         <Close fontSize="medium" />
       </IconButton>
@@ -59,17 +69,22 @@ export function BackCloseMenu({ back }: BackCloseMenuProps): JSX.Element {
 }
 
 type MainMenuProps = {
-  value: number;
+
+  /** Identifier of a panel that is currently shown. */
+  panel: number;
 };
 
-export function MainMenu({ value }: MainMenuProps): JSX.Element {
+/**
+ * Standard four-section menu (routes, places, directions, and favourites).
+ */
+export function MainMenu({ panel }: MainMenuProps): JSX.Element {
 
   const navigate = useNavigate();
   const { block } = useAppSelector(state => state.panel);
 
   return (
     <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: "divider" }}>
-      <BottomNavigation showLabels value={value}>
+      <BottomNavigation showLabels value={panel}>
         <BottomNavigationAction
           label="Routes"
           icon={<Route />}
