@@ -8,7 +8,6 @@ import L, {
   PointExpression
 } from "leaflet";
 import * as ReactDOMServer from "react-dom/server";
-import { Chip } from "@mui/material";
 import { point2place } from "./helpers";
 import { IMap, IPin } from "../domain/interfaces";
 import { WgsPoint, UiPlace } from "../domain/types";
@@ -64,28 +63,18 @@ type PlacePopupProps = {
 };
 
 function PlacePopup({ place }: PlacePopupProps): JSX.Element {
-  const set = new Set(place.selected);
-
   return (
-    <>
+    <div>
       <b>{place.name}</b>
-      {place.keywords.length > 0 &&
-        <>
+      {place.selected.length > 0 &&
+        <div>
           <hr style={{opacity: 0.7, margin: "0.25rem 0"}} />
-          <div className="mt-2 mb-2" style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
-            <div className="mt-1 mb-1" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", width: "150px" }}>
-              {place.keywords.map((k, i) =>
-                <Chip
-                  key={i} label={k} size="small" color="primary"
-                  variant={set.has(k) ? "filled" : "outlined"}
-                  style={{ margin: "0.1rem", display: "block" }}
-                />)
-              }
-            </div>
+          <div className="mt-2 mb-2" style={{ width: "150px" }}>
+            {place.selected.join(", ")}
           </div>
-        </>
+        </div>
       }
-    </>
+    </div>
   );
 }
 
