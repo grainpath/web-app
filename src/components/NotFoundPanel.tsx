@@ -1,22 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import { Alert, Offcanvas } from "react-bootstrap";
-
-import { DISCOVER_ADDR, FAVORITE_ADDR } from "../utils/routing";
-import { SearchButton, LockerButton } from "./PanelPrimitives";
+import { Alert, Box } from "@mui/material";
+import { LogoCloseMenu } from "./shared-menus";
+import { SEARCH_ROUTES_ADDR } from "../domain/routing";
 
 export default function NotFoundPanel(): JSX.Element {
+  const nav = useNavigate();
 
-  const navigate = useNavigate();
-
-  return(
-    <>
-      <Offcanvas.Header closeButton>
-        <SearchButton onClick={() => navigate(DISCOVER_ADDR)} />
-        <LockerButton onClick={() => navigate(FAVORITE_ADDR)} />
-      </Offcanvas.Header>
-      <Offcanvas.Body>
-        <Alert variant="warning">Oops! Unknown address...</Alert>
-      </Offcanvas.Body>
-    </>
+  return (
+    <Box>
+      <LogoCloseMenu onLogo={() => { nav(SEARCH_ROUTES_ADDR); }} />
+      <Box sx={{ mx: 2, my: 4 }}>
+        <Alert color="warning">Oops! Unknown address...</Alert>
+      </Box>
+    </Box>
   );
 }
