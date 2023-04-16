@@ -3,20 +3,23 @@ import { PlacesResult } from "../domain/types";
 
 type ResultPlacesState = {
   result?: PlacesResult;
+  selectedFilters: string[];
 };
 
-function initialState(): ResultPlacesState { return { }; };
+function initialState(): ResultPlacesState { return { selectedFilters: [] }; };
 
 export const resultPlacesSlice = createSlice({
   name: "result/places",
   initialState: initialState(),
   reducers: {
-    setResult: (state, action: PayloadAction<PlacesResult>) => { state.result = action.payload; }
+    setResult: (state, action: PayloadAction<PlacesResult>) => { state.result = action.payload; },
+    setSelectedFilters: (state, action: PayloadAction<string[]>) => { state.selectedFilters = action.payload; }
   }
 });
 
 export const {
-  setResult
+  setResult,
+  setSelectedFilters
 } = resultPlacesSlice.actions;
 
 export default resultPlacesSlice.reducer;
