@@ -48,7 +48,7 @@ export function LogoCloseMenu({ onLogo: _ }: LogoCloseMenuProps): JSX.Element {
 type BackCloseMenuProps = {
 
   /** Action navigating back. */
-  onBack: () => void;
+  onBack?: () => void;
 };
 
 /**
@@ -60,7 +60,9 @@ export function BackCloseMenu({ onBack }: BackCloseMenuProps): JSX.Element {
 
   return (
     <Box sx={{ mx: 2, my: 2, display: "flex", justifyContent: "space-between" }}>
-      <Button startIcon={<ArrowBack />} onClick={onBack}>Back</Button>
+      <Box>
+        {(!!onBack) && <Button startIcon={<ArrowBack />} onClick={onBack}>Back</Button>}
+      </Box>
       <IconButton size="small" onClick={() => { dispatch(hidePanel()); }}>
         <Close fontSize="medium" />
       </IconButton>

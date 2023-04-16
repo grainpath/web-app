@@ -19,7 +19,10 @@ import {
   PlacesResult,
   StoredPlace
 } from "../domain/types";
-import { SEARCH_PLACES_ADDR } from "../domain/routing";
+import {
+  RESULT_PLACES_ADDR,
+  SEARCH_PLACES_ADDR
+} from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setSelectedFilters } from "../features/resultPlacesSlice";
 import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
@@ -122,14 +125,14 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
                   kind="stored"
                   label={grain.name}
                   onMarker={() => { map?.flyTo(grain); }}
-                  menu={<ListItemLink icon={<Favorite />} grainId={place.grainId} />}
+                  menu={<ListItemLink icon={<Favorite />} back={RESULT_PLACES_ADDR} grainId={place.grainId} />}
                 />)
               : (<MenuPinListItem
                   key={i}
                   kind="tagged"
                   label={place.name}
                   onMarker={() => { map?.flyTo(place); }}
-                  menu={<ListItemLink icon={<Link />} grainId={place.grainId} />}
+                  menu={<ListItemLink icon={<Link />} back={RESULT_PLACES_ADDR} grainId={place.grainId} />}
                 />);
         })}
       </Stack>
@@ -167,11 +170,12 @@ export default function ResultPlacesPanel(): JSX.Element {
         {(placesLoaded)
           ? (<Box>
               {result
-                ? <ResultPlacesSection result = { result } />
+                ? <ResultPlacesSection result={result} />
                 : <Alert severity="warning">Oops... Result appears to be empty!</Alert>
               }
             </Box>)
           : (<Stack direction="column" gap={2}>
+              <Skeleton variant="rounded" height={100} />
               <Skeleton variant="rounded" height={100} />
               <Skeleton variant="rounded" height={200} />
             </Stack>)

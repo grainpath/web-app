@@ -1,24 +1,28 @@
 import { useCallback, useContext, useEffect } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Menu } from "@mui/icons-material";
 import { Box, Drawer, Fab, useMediaQuery } from "@mui/material";
+import { AppContext } from "../App";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { showPanel } from "../features/panelSlice";
 import {
-  DISCOVER_ADDR,
-  NAVIGATE_ADDR,
-  FAVORITE_ADDR,
-  PLACES_ADDR,
+  ENTITY_ADDR,
+  FAVOURITES_ADDR,
+  RESULT_DIRECT_ADDR,
   RESULT_PLACES_ADDR,
-  RESULT_ROUTES_ADDR
-} from "../utils/routing";
-import { AppContext } from "../App";
-import DiscoverPanel from "./DiscoverPanel";
-import NavigatePanel from "./NavigatePanel";
-import FavoritePanel from "./FavoritePanel";
-import PlacesPanel from "./PlacesPanel";
-import ResultPanel from "./ResultPanel";
+  RESULT_ROUTES_ADDR,
+  SEARCH_DIRECT_ADDR,
+  SEARCH_PLACES_ADDR,
+  SEARCH_ROUTES_ADDR,
+} from "../domain/routing";
+import SearchPlacesPanel from "./SearchPlacesPanel";
+import SearchRoutesPanel from "./SearchRoutesPanel";
+import SearchDirectPanel from "./SearchDirectPanel";
+import ResultPlacesPanel from "./ResultPlacesPanel";
+import ResultRoutesPanel from "./ResultRoutesPanel";
+import EntityPanel from "./EntityPanel";
+import FavouritesPanel from "./FavouritesPanel";
 import NotFoundPanel from "./NotFoundPanel";
-import { Menu } from "@mui/icons-material";
 
 export default function MainPanel(): JSX.Element {
 
@@ -42,13 +46,15 @@ export default function MainPanel(): JSX.Element {
       </Box>
       <Drawer open={show} variant="persistent" PaperProps={{ sx: { width: width } }}>
         <Routes>
-          <Route path={DISCOVER_ADDR} element={<DiscoverPanel />} />
-          <Route path={NAVIGATE_ADDR} element={<NavigatePanel />} />
-          <Route path={FAVORITE_ADDR} element={<FavoritePanel />} />
-          <Route path={RESULT_PLACES_ADDR} element={<ResultPanel />} />
-          <Route path={RESULT_ROUTES_ADDR} element={<ResultPanel />} />
-          <Route path={PLACES_ADDR + "/:id"} element={<PlacesPanel />} />
-          <Route path="/" element={<Navigate to={DISCOVER_ADDR} />} />
+          <Route path={SEARCH_ROUTES_ADDR} element={<SearchRoutesPanel />} />
+          <Route path={SEARCH_PLACES_ADDR} element={<SearchPlacesPanel />} />
+          <Route path={SEARCH_DIRECT_ADDR} element={<SearchDirectPanel />} />
+          <Route path={RESULT_ROUTES_ADDR} element={<ResultRoutesPanel />} />
+          <Route path={RESULT_PLACES_ADDR} element={<ResultPlacesPanel />} />
+          <Route path={RESULT_DIRECT_ADDR} element={<></>} />
+          <Route path={ENTITY_ADDR + "/:id"} element={<EntityPanel />} />
+          <Route path={FAVOURITES_ADDR} element={<FavouritesPanel />} />
+          <Route path="/" element={<Navigate to={SEARCH_ROUTES_ADDR} />} />
           <Route path="*" element={<NotFoundPanel />} />
         </Routes>
       </Drawer>

@@ -38,7 +38,7 @@ function ConditionDialog({ condition: cond, keywords, onHide, insert }: KeywordM
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { autoc } = useContext(AppContext).grain;
+  const { autocs } = useContext(AppContext).grain;
   const { bounds } = useAppSelector(state => state.panel);
 
   const dispatch = useAppDispatch();
@@ -72,16 +72,16 @@ function ConditionDialog({ condition: cond, keywords, onHide, insert }: KeywordM
     const prefix = input.toLocaleLowerCase();
     if (!prefix.length) { setOptions(value ? [value] : []); return; }
 
-    const cached = autoc.get(prefix);
+    const cached = autocs.get(prefix);
     if (cached) { setOptions(cached); return; }
 
     new Promise((res, _) => { res(setLoading(true)); })
       .then(() => GrainPathFetcher.fetchAutocs(prefix))
       .then((items) => {
-        if (items) { autoc.set(prefix, items); setOptions(items); }
+        if (items) { autocs.set(prefix, items); setOptions(items); }
       })
       .finally(() => { setLoading(false); });
-  }, [input, value, autoc]);
+  }, [input, value, autocs]);
 
   // store selected keyword with filters
   const confirm = () => {

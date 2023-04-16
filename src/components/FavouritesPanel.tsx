@@ -9,7 +9,7 @@ export default function FavouritesPanel(): JSX.Element {
   return (
     <Box>
       <LogoCloseMenu onLogo={() => {}} />
-      <MainMenu value={3} />
+      <MainMenu panel={3} />
       <Box sx={{ m: 2 }}>
         <MyPlacesSection />
         <MyRoutesSection />

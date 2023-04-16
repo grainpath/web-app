@@ -8,7 +8,7 @@ import {
 /**
  * Wrapper over standard IndexedDB.
  */
-export class IndexStorage implements IStorage {
+export default class IndexStorage implements IStorage {
 
   private static db = "grainpath";
 
