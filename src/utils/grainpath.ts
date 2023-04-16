@@ -41,7 +41,7 @@ export class GrainPathFetcher {
       case 404: return undefined;
     //case 400:
     //case 500:
-      default: throw new Error(`[Fetch error] ${rs.status}: ${rs.statusText}`);
+      default: throw new Error(`${rs.statusText} (status code ${rs.status}).`);
     }
   }
 
@@ -75,9 +75,9 @@ export class GrainPathFetcher {
   /**
    * Fetch entity (place with extended information) by id.
    */
-  public static async fetchEntity(placeId: string): Promise<Entity | undefined> {
+  public static async fetchEntity(grainId: string): Promise<Entity | undefined> {
     return await GrainPathFetcher
-      .fetch(GRAINPATH_ENTITY_URL, { placeId: placeId });
+      .fetch(GRAINPATH_ENTITY_URL, { grainId: grainId });
   }
 
   /**

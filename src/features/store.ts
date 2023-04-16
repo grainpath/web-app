@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import panelReducer from "./panelSlice";
+import entityReducer from "./entitySlice";
 import loggerReducer from "./loggerSlice";
 import favouritesReducer from "./favouritesSlice";
 import searchDirectReducer from "./searchDirectSlice";
@@ -12,6 +13,7 @@ import resultRoutesReducer from "./resultRoutesSlice";
 export const store = configureStore({
   reducer: {
     panel: panelReducer,
+    entity: entityReducer,
     logger: loggerReducer,
     favourites: favouritesReducer,
     searchDirect: searchDirectReducer,
