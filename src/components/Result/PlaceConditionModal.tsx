@@ -12,8 +12,13 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { Close, ExpandMore } from "@mui/icons-material";
-import { KeywordFilterCollect, KeywordFilterNumeric, KeywordFilterTextual, PlaceCondition } from "../../domain/types";
+import { Close } from "@mui/icons-material";
+import {
+  KeywordFilterCollect,
+  KeywordFilterNumeric,
+  KeywordFilterTextual,
+  PlaceCondition
+} from "../../domain/types";
 
 type CollectSelectProps = {
   label: string;
@@ -47,7 +52,6 @@ type PlaceConditionModalProps = {
 
 export default function PlaceConditionModal({ onHide, condition }: PlaceConditionModalProps): JSX.Element {
 
-  const expandIcon = <ExpandMore />;
   const { keyword, filters } = condition;
   const { existens: es, booleans: bs, numerics: ns, textuals: ts, collects: cs } = filters;
 

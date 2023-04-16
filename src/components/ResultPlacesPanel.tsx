@@ -1,67 +1,32 @@
-import { useContext, useEffect, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
-  Checkbox,
-  IconButton,
   Skeleton,
   Stack,
   Typography
 } from "@mui/material";
 import { Favorite, Link } from "@mui/icons-material";
 import { AppContext } from "../App";
-import { PlaceCondition, PlacesResult, StoredPlace } from "../domain/types";
-import { ENTITY_ADDR, SEARCH_PLACES_ADDR } from "../domain/routing";
+import {
+  Place,
+  PlacesResult,
+  StoredPlace
+} from "../domain/types";
+import { SEARCH_PLACES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
+import { setSelectedFilters } from "../features/resultPlacesSlice";
 import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
 import { BackCloseMenu } from "./shared-menus";
 import { MenuPinListItem, SimplePinListItem } from "./shared-list-items";
-import PlaceConditionModal from "./Result/PlaceConditionModal";
-
-type ResultPlacesMenuProps = {
-  icon: JSX.Element;
-  grainId: string;
-};
-
-function ResultPlacesMenu({ icon, grainId }: ResultPlacesMenuProps): JSX.Element {
-
-  const nav = useNavigate();
-  const handle = () => { nav(ENTITY_ADDR + "/" + grainId); };
-
-  return (
-    <IconButton size="small" onClick={handle}>
-      {icon}
-    </IconButton>
-  );
-}
-
-type ResultPlacesFilterProps = {
-  found: boolean;
-  condition: PlaceCondition;
-  onClick: (value: boolean) => void;
-};
-
-function ResultPlacesFilter({ found, condition, onClick }: ResultPlacesFilterProps): JSX.Element {
-
-  const [value, setValue] = useState(false);
-  const [modal, setModal] = useState(false);
-  useEffect(() => { onClick(value); }, [value]);
-
-  return (
-    <Box>
-      <Stack direction="row" justifyContent="center" alignItems="center">
-        <Checkbox disabled={!found} checked={value} onChange={() => { setValue(!value); }} />
-        <div onClick={() => { setModal(true); }} style={{ cursor: "pointer" }}>
-          <Typography sx={{ textDecorationLine: found ? undefined : "line-through", color: found ? undefined : "grey" }}>
-            {condition.keyword}
-          </Typography>
-        </div>
-      </Stack>
-      {modal && <PlaceConditionModal onHide={() => { setModal(false); }} condition={condition} />}
-    </Box>
-  );
-}
+import ListItemLink from "./Result/ListItemLink";
+import PlacesFilter from "./Result/PlacesFilter";
 
 type ResultPlacesSectionProps = {
   result: PlacesResult;
@@ -69,36 +34,51 @@ type ResultPlacesSectionProps = {
 
 function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element {
 
+  const dispatch = useAppDispatch();
   const { map } = useContext(AppContext);
   const { center, radius, conditions, places: foundPlaces } = result;
   const { places: knownPlaces } = useAppSelector(state => state.favourites);
 
   const [knownGrains, setKnownGrains] = useState(new Map<string, StoredPlace>());
-  const [foundConditions, setFoundConditions] = useState(new Set<string>());
+  const [satConditions, setSatConditions] = useState(new Set<string>());
+  const { selectedFilters } = useAppSelector(state => state.resultPlaces);
 
+  // identify known grains in the pile of found places
   useEffect(() => {
     const m = knownPlaces
-      .filter(p => Boolean(p.grainId))
+      .filter(p => !!p.grainId)
       .reduce((m, v) => { return m.set(v.grainId!, v); }, new Map<string, StoredPlace>())
     setKnownGrains(m);
   }, [knownPlaces]);
 
+  // identify conditions that are satisfied
   useEffect(() => {
-    setFoundConditions(foundPlaces.reduce((s, p) => {
+    setSatConditions(foundPlaces.reduce((s, p) => {
       p.selected.forEach(f => s.add(f));
       return s;
     }, new Set<string>()))
   }, [foundPlaces]);
 
+  // select place based on filter configuration
+  const filterPlace = useCallback((place: Place): boolean => {
+    const set = new Set(selectedFilters);
+    return set.size === 0 || place.selected.some((c) => set.has(c));
+  }, [selectedFilters]);
+
+  // draw places based on selected filters
   useEffect(() => {
     map?.clear();
+    foundPlaces
+      .filter((place) => filterPlace(place))
+      .forEach((place) => {
+        const grain = knownGrains.get(place.grainId);
+        (grain) ? map?.addStored(grain) : map?.addTagged(place);
+      });
+    (center.placeId)
+      ? map?.addStored(center)
+      : map?.addCustom(center, false);
     map?.drawCircle(center.location, radius * 1000);
-    foundPlaces.forEach((place) => {
-      const grain = knownGrains.get(place.grainId);
-      (grain) ? map?.addStored(grain) : map?.addTagged(place);
-    });
-    (center.placeId) ? map?.addStored(center) : map?.addCustom(center, false);
-  }, [map, center, radius, foundPlaces, knownGrains]);
+  }, [map, center, radius, foundPlaces, knownGrains, filterPlace]);
 
   return (
     <Stack direction="column" gap={4}>
@@ -114,27 +94,43 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
       </Stack>
       <Stack spacing={2} direction="row" justifyContent="center" sx={{ flexWrap: "wrap" }}>
         {conditions.map((c, i) => {
-          return <ResultPlacesFilter key={i} condition={c} found={foundConditions?.has(c.keyword)} onClick={() => {}} />
+          const active = new Set(selectedFilters).has(c.keyword);
+          return (
+            <PlacesFilter
+              key={i}
+              found={satConditions.has(c.keyword)}
+              active={active}
+              condition={c}
+              onToggle={() => {
+                const fs = (active)
+                  ? (selectedFilters.filter((f) => f !== c.keyword))
+                  : ([...selectedFilters, c.keyword]);
+                dispatch(setSelectedFilters(fs));
+              }}
+            />
+          );
         })}
       </Stack>
       <Stack direction="column" gap={2}>
-        {foundPlaces.map((place, i) => {
-          const grain = knownGrains.get(place.grainId);
-          return (grain)
-            ? <MenuPinListItem
-                key={i}
-                kind="stored"
-                label={grain.name}
-                onMarker={() => { map?.flyTo(grain); }}
-                menu={<ResultPlacesMenu icon={<Favorite />} grainId={place.grainId} />}
-              />
-            : <MenuPinListItem
-                key={i}
-                kind="tagged"
-                label={place.name}
-                onMarker={() => { map?.flyTo(place); }}
-                menu={<ResultPlacesMenu icon={<Link />} grainId={place.grainId} />}
-              />
+        {foundPlaces
+          .filter((place) => filterPlace(place))
+          .map((place, i) => {
+            const grain = knownGrains.get(place.grainId);
+            return (grain)
+              ? (<MenuPinListItem
+                  key={i}
+                  kind="stored"
+                  label={grain.name}
+                  onMarker={() => { map?.flyTo(grain); }}
+                  menu={<ListItemLink icon={<Favorite />} grainId={place.grainId} />}
+                />)
+              : (<MenuPinListItem
+                  key={i}
+                  kind="tagged"
+                  label={place.name}
+                  onMarker={() => { map?.flyTo(place); }}
+                  menu={<ListItemLink icon={<Link />} grainId={place.grainId} />}
+                />);
         })}
       </Stack>
     </Stack>
@@ -143,7 +139,7 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
 
 export default function ResultPlacesPanel(): JSX.Element {
 
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
   const { result } = useAppSelector((state) => state.resultPlaces);
@@ -159,21 +155,26 @@ export default function ResultPlacesPanel(): JSX.Element {
     load();
   }, [storage, dispatch, placesLoaded]);
 
+  const onBack = () => {
+    dispatch(setSelectedFilters([]));
+    navigate(SEARCH_PLACES_ADDR);
+  };
+
   return (
     <Box>
-      <BackCloseMenu onBack={() => nav(SEARCH_PLACES_ADDR)} />
+      <BackCloseMenu onBack={onBack} />
       <Box sx={{ mx: 2, my: 4 }}>
-        {placesLoaded
-          ? <Box>
+        {(placesLoaded)
+          ? (<Box>
               {result
                 ? <ResultPlacesSection result = { result } />
                 : <Alert severity="warning">Oops... Result appears to be empty!</Alert>
               }
-            </Box>
-          : <Stack direction="column" gap={2}>
+            </Box>)
+          : (<Stack direction="column" gap={2}>
               <Skeleton variant="rounded" height={100} />
               <Skeleton variant="rounded" height={200} />
-            </Stack>
+            </Stack>)
         }
       </Box>
     </Box>
