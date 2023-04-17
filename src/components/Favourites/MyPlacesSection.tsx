@@ -25,18 +25,23 @@ import {
 } from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { StoredPlace, UiPlace, WgsPoint } from "../../domain/types";
-import { ENTITY_ADDR, SEARCH_PLACES_ADDR } from "../../domain/routing";
+import {
+  ENTITY_ADDR,
+  FAVOURITES_ADDR,
+  SEARCH_PLACES_ADDR
+} from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { hidePanel, setBlock, showPanel } from "../../features/panelSlice";
 import {
-  createPlace,
+  createCustomPlace,
   deletePlace,
-  setLocation,
-  setName,
+  setCustomLocation,
+  setCustomName,
   setPlaces,
   setPlacesLoaded,
   updatePlace
 } from "../../features/favouritesSlice";
+import { setBack } from "../../features/entitySlice";
 import { IdGenerator, point2place } from "../../utils/helpers";
 import {
   FreeCenterListItem,
@@ -105,7 +110,7 @@ type PlaceListItemProps = {
 
 function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
 
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { map, storage } = useContext(AppContext);
 
@@ -125,7 +130,8 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
   };
 
   const onVisit = () => {
-    nav([ENTITY_ADDR, place.grainId].join("/"));
+    dispatch(setBack(FAVOURITES_ADDR));
+    navigate(ENTITY_ADDR + "/" + place.grainId);
   };
 
   const onDelete = async () => {
@@ -158,14 +164,14 @@ function CustomPlaceDialog(): JSX.Element {
 
   const clickMarker = (pl: UiPlace) => {
     map?.clear();
-    map?.addCustom(pl, true).withDrag((point) => { dispatch(setLocation(point2place(point))); });
+    map?.addCustom(pl, true).withDrag((point) => { dispatch(setCustomLocation(point2place(point))); });
     map?.flyTo(pl);
   };
 
   const callback = (pt: WgsPoint) => {
     const pl = point2place(pt);
-    map?.addCustom(pl, true).withDrag((point) => { dispatch(setLocation(point2place(point))); });
-    dispatch(setLocation(pl));
+    map?.addCustom(pl, true).withDrag((point) => { dispatch(setCustomLocation(point2place(point))); });
+    dispatch(setCustomLocation(pl));
     dispatch(showPanel());
   };
 
@@ -177,12 +183,12 @@ function CustomPlaceDialog(): JSX.Element {
 
   const removeMarker = () => {
     map?.clear();
-    dispatch(setLocation(undefined));
+    dispatch(setCustomLocation(undefined));
   };
 
   const clearDialog = () => {
     removeMarker();
-    dispatch(setName(empty));
+    dispatch(setCustomName(empty));
   };
 
   const create = async () => {
@@ -194,7 +200,7 @@ function CustomPlaceDialog(): JSX.Element {
         placeId: IdGenerator.generateId(pl)
       };
       await storage.createPlace(st);
-      dispatch(createPlace(st));
+      dispatch(createCustomPlace(st));
       map?.clear();
     }
     catch (ex) { alert(ex); }
@@ -218,7 +224,7 @@ function CustomPlaceDialog(): JSX.Element {
             size="small"
             value={name}
             placeholder="Enter name..."
-            onChange={(e) => dispatch(setName(e.target.value))}
+            onChange={(e) => dispatch(setCustomName(e.target.value))}
           />
           <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
             <Button color="error" disabled={block} onClick={clearDialog}>Clear</Button>
