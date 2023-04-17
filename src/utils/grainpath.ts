@@ -93,9 +93,10 @@ export class GrainPathFetcher {
   /**
    * Fetch routes visiting places that satisfy user-defined conditions.
    */
-  public static async fetchRoutes(request: RoutesRequest): Promise<UiRoute[] | undefined> {
+  public static async fetchRoutes(request: RoutesRequest): Promise<UiRoute[]> {
+    const { source, target, distance, ...rest } = request;
     const jsn = await GrainPathFetcher
-      .fetch(GRAINPATH_ROUTES_URL, request);
-    return (jsn) ? jsn.routes.map((route: any) => { return { name: "", ...request, ...route }; }) : undefined;
+      .fetch(GRAINPATH_ROUTES_URL, { source: source.location, target: target.location, distance: distance * 1000, ...rest });
+    return jsn.routes.map((route: any) => { return { name: "", ...request, ...route }; });
   }
 }
