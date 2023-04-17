@@ -53,7 +53,7 @@ export class AutocAttributes {
   ]);
 
   private static supportedNumerics = new Set([
-    "rank",
+    "rating",
     "capacity",
     "minimumAge"
   ]);

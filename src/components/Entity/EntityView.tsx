@@ -66,7 +66,7 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
     takeaway,
     toilets,
     wheelchair,
-    rank,
+    rating,
     capacity,
     minimumAge,
     clothes,
@@ -106,7 +106,7 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
 
   const ico = address || website || phone || email || arr(pay) || arr(openingHours) || arr(charge);
 
-  const add = rank || capacity || minimumAge || arr(cuisine) || arr(clothes) || arr(rental) || arr(extra);
+  const add = rating || capacity || minimumAge || arr(cuisine) || arr(clothes) || arr(rental) || arr(extra);
 
   return (
     <Stack direction="column" gap={2.7}>
@@ -208,10 +208,10 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
       {(add) &&
         <Stack direction="column" gap={1}>
           <Typography fontSize="1.2rem">Additional information</Typography>
-          {rank &&
+          {rating &&
             <Stack direction="row" gap={2}>
               <Typography>Rating:</Typography>
-              <Rating value={rank} readOnly />
+              <Rating value={rating} readOnly />
             </Stack>
           }
           {arr(cuisine) && (

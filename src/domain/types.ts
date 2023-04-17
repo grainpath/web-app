@@ -99,7 +99,7 @@ type EntityAttributes = {
   takeaway?: boolean;
   toilets?: boolean;
   wheelchair?: boolean;
-  rank?: number;
+  rating?: number;
   capacity?: number;
   minimumAge?: number;
   clothes?: string[];
@@ -127,7 +127,7 @@ type BoundNumeric = {
  * Current bounds limiting user input fields.
  */
 export type Bounds = {
-  rank: BoundNumeric;
+  rating: BoundNumeric;
   capacity: BoundNumeric;
   minimumAge: BoundNumeric;
   rental: string[];
@@ -187,7 +187,7 @@ export type KeywordFilterNumeric = {
  * Possible numeric attributes.
  */
 type KeywordFilterNumerics = {
-  rank?: KeywordFilterNumeric;
+  rating?: KeywordFilterNumeric;
   capacity?: KeywordFilterNumeric;
   minimumAge?: KeywordFilterNumeric;
 };
