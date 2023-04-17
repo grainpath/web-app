@@ -31,6 +31,9 @@ import {
 } from "../../domain/types";
 import { point2text } from "../../utils/helpers";
 import { useAppSelector } from "../../features/hooks";
+import ExtraChip from "./ExtraChip";
+import ExtraArray from "./ExtraArray";
+import SaveModal from "./SaveModal";
 
 type EntityViewProps = {
   entity: Entity;
@@ -38,7 +41,8 @@ type EntityViewProps = {
 
 export default function EntityView({ entity }: EntityViewProps): JSX.Element {
 
-  const { map, storage } = useContext(AppContext);
+  const { map } = useContext(AppContext);
+  const [modal, setModal] = useState(false);
   const { places } = useAppSelector((state) => state.favourites);
   const [found, setFound] = useState<StoredPlace | undefined>(undefined);
 
@@ -100,7 +104,7 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
 
   const pay = payment ? composePayment(payment) : [];
 
-  const ico = address || website || phone || email || pay.length > 0 || arr(openingHours) || arr(charge);
+  const ico = address || website || phone || email || arr(pay) || arr(openingHours) || arr(charge);
 
   const add = rank || capacity || minimumAge || arr(cuisine) || arr(clothes) || arr(rental) || arr(extra);
 
@@ -108,13 +112,13 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
     <Stack direction="column" gap={2.7}>
       {(found)
         ? (<Alert severity="success">
-            This place appears in the storage under name <strong>{found.name}</strong>.
+            Saved as <strong>{found.name}</strong>.
           </Alert>)
         : (<Box>
-            <Alert severity="info">
-              This place does not appear in the storage.
+            <Alert severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
+              Would you like to save this place?
             </Alert>
-            <Button color="info" variant="outlined" size="small" sx={{ width: "100%" }}>Save</Button>
+            {modal && <SaveModal entity={entity} onHide={() => { setModal(false); }} />}
           </Box>)
       }
       <Stack direction="column" gap={1}>
@@ -139,8 +143,8 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
       {(ico) &&
         <Stack direction="column" gap={1.5}>
           {address &&
-            <Stack direction="row" columnGap={2} alignItems="center">
-              <Home sx={{ color: "grey" }} />
+            <Stack direction="row" columnGap={2}>
+              <Home sx={{ color: "grey" }} titleAccess="Address" />
               <Typography noWrap>{composeAddress(address)}</Typography>
             </Stack>
           }
@@ -168,7 +172,7 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
           }
           {openingHours && openingHours.length > 0 &&
             <Stack direction="row" columnGap={2}>
-              <AccessTime sx={{ color: "grey" }} />
+              <AccessTime sx={{ color: "grey" }} titleAccess="opening hours" />
               <Stack direction="column" rowGap={1}>
                 {openingHours.map((o, i) => (<Typography key={i}>{o}</Typography>))}
               </Stack>
@@ -176,13 +180,13 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
           }
           {pay.length > 0 &&
             <Stack direction="row" columnGap={2}>
-              <Payment sx={{ color: "grey" }} />
+              <Payment sx={{ color: "grey" }}  />
               <Typography>{pay.join(", ")}</Typography>
             </Stack>
           }
           {charge && charge.length > 0 &&
             <Stack direction="row" columnGap={2}>
-              <Toll sx={{ color: "grey" }} />
+              <Toll sx={{ color: "grey" }} titleAccess="toll" />
               <Stack direction="column" rowGap={1}>
                 {charge.map((o, i) => (<Typography key={i}>{o}</Typography>))}
               </Stack>
@@ -190,42 +194,48 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
           }
         </Stack>
       }
-      {image &&
-        (<Link href={image} rel="noopener noreferrer" target="_blank">
+      {(image) && (
+        <Link href={image} rel="noopener noreferrer" target="_blank">
           <Image showLoading src={image} fit="contain" style={{ maxHeight: "300px" }}/>
-        </Link>)
-      }
-      {description && (<Typography>{description}</Typography>)}
-      {rank &&
-        <Stack direction="row" columnGap={2}>
-          <Typography>Rating</Typography>
-          <Rating value={rank} readOnly />
-        </Stack>
-      }
-      {cuisine && cuisine.length > 0 &&
-        <Stack direction="row" columnGap={2}>
-          <Typography>Cuisine</Typography>
-          <Typography>{cuisine.join(", ")}</Typography>
-        </Stack>
-      }
-      {clothes && clothes.length > 0 &&
-        <Stack direction="row" columnGap={2}>
-          <Typography>Clothes</Typography>
-          <Typography>{clothes.join(", ")}</Typography>
-        </Stack>
-      }
-      {rental && rental.length > 0 &&
-        <Stack direction="row" columnGap={2}>
-          <Typography>Rental</Typography>
-          <Typography>{rental.join(", ")}</Typography>
-        </Stack>
-      }
-      {extra.length > 0 &&
-        <Stack direction="column" gap={1} sx={{ border: "1px solid lightgrey", p: 1, borderRadius: "10px", boxSizing: "border-box" }}>
+        </Link>
+      )}
+      {(description) && (
+        <Typography>{description}</Typography>
+      )}
+      {(add) && (
+        <Divider sx={{ background: "lightgrey" }} />
+      )}
+      {(add) &&
+        <Stack direction="column" gap={1}>
           <Typography fontSize="1.2rem">Additional information</Typography>
-          <Typography>
-            {extra.map(([label, value]) => `${value ? "" : ("no" + String.fromCharCode(160))}${label}`).join(", ")}
-          </Typography>
+          {rank &&
+            <Stack direction="row" gap={2}>
+              <Typography>Rating:</Typography>
+              <Rating value={rank} readOnly />
+            </Stack>
+          }
+          {arr(cuisine) && (
+            <ExtraArray label="Cuisine" array={cuisine!} />
+          )}
+          {arr(clothes) && (
+            <ExtraArray label="Clothes" array={clothes!} />
+          )}
+          {arr(rental) && (
+            <ExtraArray label="Rental" array={rental!} />
+          )}
+          {arr(extra) &&
+            <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ py: 0.5 }}>
+              {capacity && (
+                <ExtraChip label={`capacity ${capacity}`} />
+              )}
+              {minimumAge && (
+                <ExtraChip label={`minimum age ${minimumAge}`} />
+              )}
+              {extra.map(([label, value], i) => (
+                <ExtraChip key={i} label={`${value ? "" : "no "}${label}`} />
+              ))}
+            </Stack>
+          }
         </Stack>
       }
     </Stack>
