@@ -114,16 +114,14 @@ export default function SearchPlacesPanel(): JSX.Element {
             dispatch={(value) => { dispatch(setRadius(value)); }}
           />
         </Box>
-        <Box>
-          <Typography>Satisfying the following conditions:</Typography>
-        </Box>
-        <Box>
-          <KeywordsBox
-            conditions={conditions}
-            deleteCondition={(i) => dispatch(deleteCondition(i))}
-            insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
-          />
-        </Box>
+        <Typography>
+          Satisfying the following conditions:
+        </Typography>
+        <KeywordsBox
+          conditions={conditions}
+          deleteCondition={(i) => dispatch(deleteCondition(i))}
+          insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
+        />
         <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
           <Button
             color="error"

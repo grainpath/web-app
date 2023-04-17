@@ -313,9 +313,17 @@ export type PlacesResult = PlacesRequest & {
  * Routes request.
  */
 export type RoutesRequest = {
+
+  /** Starting point. */
   source: UiPlace;
+
+  /** Destination point. */
   target: UiPlace;
+
+  /** Distance in kilometers. */
   distance: number;
+
+  /** Conditions to be fulfilled. */
   conditions: PlaceCondition[];
 };
 

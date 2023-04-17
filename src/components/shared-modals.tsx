@@ -131,15 +131,15 @@ type EditModalProps = {
   onSave: (name: string) => void;
 };
 
-export function EditModal({ name, what, onHide, onSave }: EditModalProps): JSX.Element {
+export function EditModal({ name: oldName, what, onHide, onSave }: EditModalProps): JSX.Element {
 
-  const [newName, setNewName] = useState(name);
+  const [name, setName] = useState(oldName);
   const [disabled, setDisabled] = useState(false);
 
   const action = async () => {
     setDisabled(true);
     try {
-      onSave(newName);
+      onSave(name);
       onHide();
     }
     catch (ex) { alert(ex); }
@@ -153,13 +153,13 @@ export function EditModal({ name, what, onHide, onSave }: EditModalProps): JSX.E
         <Stack direction="column" gap={2}>
           <Typography>Enter new name:</Typography>
           <TextField
-            value={newName}
-            
-            onChange={(e) => { setNewName(e.target.value); }}
+            fullWidth
+            value={name}
+            onChange={(e) => { setName(e.target.value); }}
           />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", minWidth: "300px" }}>
             <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(newName.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
+            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
           </Box>
         </Stack>
       </DialogContent>
@@ -194,7 +194,7 @@ export function DeleteModal({ name, what, onHide, onDelete }: DeleteModalProps):
       <DialogContent>
         <Stack direction="column" gap={2}>
           <Typography>
-            You are about to delete <b>{name}</b>. Please, confirm the action.
+            You are about to delete <b>{name}</b>. Please confirm the action.
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Button disabled={disabled} onClick={onHide}>Cancel</Button>
