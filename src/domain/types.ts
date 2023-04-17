@@ -54,7 +54,7 @@ type EntityLinked = {
 /**
  * Entity address.
  */
-type EntityAddress = {
+export type EntityAddress = {
   country?: string;
   settlement?: string;
   district?: string;
@@ -66,7 +66,7 @@ type EntityAddress = {
 /**
  * Entity payment options.
  */
-type EntityPayment = {
+export type EntityPayment = {
   cash?: boolean;
   card?: boolean;
   amex?: boolean;
