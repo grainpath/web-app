@@ -48,10 +48,11 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
 
   // identify known grains in the pile of found places
   useEffect(() => {
-    const m = knownPlaces
-      .filter(p => !!p.grainId)
-      .reduce((m, v) => { return m.set(v.grainId!, v); }, new Map<string, StoredPlace>())
-    setKnownGrains(m);
+    const gs = knownPlaces
+      .filter((p) => !!p.grainId)
+      .map((g) => structuredClone(g)) // (!) avoid state mods
+      .reduce((m, p) => { return m.set(p.grainId!, p); }, new Map<string, StoredPlace>())
+    setKnownGrains(gs);
   }, [knownPlaces]);
 
   // identify conditions that are satisfied
@@ -75,11 +76,10 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
       .filter((place) => filterPlace(place))
       .forEach((place) => {
         const grain = knownGrains.get(place.grainId);
+        if (grain) { grain.selected = place.selected; } // (!) changes structuredClone
         (grain) ? map?.addStored(grain) : map?.addTagged(place);
       });
-    (center.placeId)
-      ? map?.addStored(center)
-      : map?.addCustom(center, false);
+    (center.placeId) ? map?.addStored(center) : map?.addCustom(center, false);
     map?.drawCircle(center.location, radius * 1000);
   }, [map, center, radius, foundPlaces, knownGrains, filterPlace]);
 
