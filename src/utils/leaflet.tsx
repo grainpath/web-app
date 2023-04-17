@@ -69,7 +69,7 @@ function PlacePopup({ place }: PlacePopupProps): JSX.Element {
   return (
     <div>
       <strong>{place.name}</strong>
-      {place.selected.length > 0 &&
+      {place.keywords.length > 0 &&
         <div>
           <hr style={{opacity: 0.7, margin: "0.25rem 0"}} />
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "12px", width: "200px" }}>
