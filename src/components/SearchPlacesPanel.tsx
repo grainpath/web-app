@@ -1,4 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -13,7 +17,10 @@ import { AppContext } from "../App";
 import { RESULT_PLACES_ADDR } from "../domain/routing";
 import { GrainPathFetcher } from "../utils/grainpath";
 import { point2place } from "../utils/helpers";
-import { useAppDispatch, useAppSelector } from "../features/hooks";
+import {
+  useAppDispatch,
+  useAppSelector
+} from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
 import { clear } from "../features/searchPlacesSlice";
 import { setResult } from "../features/resultPlacesSlice";
@@ -58,7 +65,7 @@ export default function SearchPlacesPanel(): JSX.Element {
   const { block } = useAppSelector(state => state.panel);
 
   const load = () => {
-    new Promise((res, _) => res(setBlock(true)))
+    new Promise<void>((res, _) => { dispatch(setBlock(true)); res(); })
       .then(() => GrainPathFetcher.fetchPlaces({
         center: center!,
         radius: radius,
@@ -70,8 +77,8 @@ export default function SearchPlacesPanel(): JSX.Element {
         dispatch(setResult(res));
         nav(RESULT_PLACES_ADDR);
       })
-      .catch((ex) => alert(ex))
-      .finally(() => { setBlock(false); });
+      .catch((ex) => { alert(ex); })
+      .finally(() => { dispatch(setBlock(false)); });
   };
 
   return (
