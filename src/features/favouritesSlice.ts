@@ -37,9 +37,9 @@ export const favouritesSlice = createSlice({
 
     // create place
 
-    setName: (state, action: PayloadAction<string>) => { state.name = action.payload; },
-    setLocation: (state, action: PayloadAction<UiPlace | undefined>) => { state.place = action.payload; },
-    createPlace: (state, action: PayloadAction<StoredPlace>) => {
+    setCustomName: (state, action: PayloadAction<string>) => { state.name = action.payload; },
+    setCustomLocation: (state, action: PayloadAction<UiPlace | undefined>) => { state.place = action.payload; },
+    createCustomPlace: (state, action: PayloadAction<StoredPlace>) => {
       state.name = ""; state.place = undefined;
       state.places = updateItemImmutable(state.places, action.payload, state.places.length);
     },
@@ -47,6 +47,9 @@ export const favouritesSlice = createSlice({
     // places
 
     setPlaces: (state, action: PayloadAction<StoredPlace[]>) => { state.places = action.payload; },
+    createPlace: (state, action: PayloadAction<StoredPlace>) => {
+      state.places = updateItemImmutable(state.places, action.payload, state.places.length);
+    },
     updatePlace: (state, action: PayloadAction<{ place: StoredPlace, index: number }>) => {
       const { place, index } = action.payload;
       state.places = updateItemImmutable(state.places, place, index);
@@ -83,10 +86,11 @@ export const favouritesSlice = createSlice({
 });
 
 export const {
-  setName,
-  setLocation,
-  createPlace,
+  setCustomName,
+  setCustomLocation,
+  createCustomPlace,
   setPlaces,
+  createPlace,
   updatePlace,
   deletePlace,
   setPlacesLoaded,
