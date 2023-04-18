@@ -53,11 +53,11 @@ import { FavouriteStub } from "./FavouriteStub";
 
 type PlaceMenuProps = {
 
+  /** Redirect to the entity view. */
+  onShow?: () => void;
+
   /** Shows edit modal. */
   showEdit: () => void;
-
-  /** Redirect to the entity view. */
-  onVisit?: () => void;
 
   /** Shows delete modal. */
   showDelete: () => void;
@@ -66,7 +66,7 @@ type PlaceMenuProps = {
 /**
  * Place-specific menu in the storage list of places.
  */
-function PlaceMenu({ showEdit, onVisit, showDelete }: PlaceMenuProps): JSX.Element {
+export function PlaceMenu({ onShow, showEdit, showDelete }: PlaceMenuProps): JSX.Element {
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -80,16 +80,16 @@ function PlaceMenu({ showEdit, onVisit, showDelete }: PlaceMenuProps): JSX.Eleme
     <Box>
       <IconButton size="small" onClick={onClick}><MoreVert /></IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+        {onShow &&
+          <MenuItem onClick={onShow}>
+            <ListItemIcon><Link fontSize="small" /></ListItemIcon>
+            <Typography>Show</Typography>
+          </MenuItem>
+        }
         <MenuItem onClick={() => { showEdit(); onClose(); }}>
           <ListItemIcon><Edit fontSize="small" /></ListItemIcon>
           <Typography>Edit</Typography>
         </MenuItem>
-        {Boolean(onVisit) &&
-          <MenuItem onClick={onVisit}>
-            <ListItemIcon><Link fontSize="small" /></ListItemIcon>
-            <Typography>Visit</Typography>
-          </MenuItem>
-        }
         <MenuItem onClick={() => { showDelete(); onClose(); }}>
           <ListItemIcon><Delete fontSize="small" /></ListItemIcon>
           <Typography>Delete</Typography>
@@ -129,7 +129,7 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
     dispatch(updatePlace({ place: pl, index: index }));
   };
 
-  const onVisit = () => {
+  const onShow = () => {
     dispatch(setBack(FAVOURITES_ADDR));
     navigate(ENTITY_ADDR + "/" + place.grainId);
   };
@@ -145,7 +145,7 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
         kind="stored"
         onMarker={onMarker}
         label={place.name}
-        menu={<PlaceMenu showEdit={() => { showEdit(true); }} onVisit={place.grainId ? onVisit : undefined} showDelete={() => { showDelete(true); }} />}
+        menu={<PlaceMenu showEdit={() => { showEdit(true); }} onShow={place.grainId ? onShow : undefined} showDelete={() => { showDelete(true); }} />}
       />
       {showE && <EditModal name={place.name} what="place" onHide={() => { showEdit(false) }} onSave={(newName) => { onSave(newName); }} />}
       {showD && <DeleteModal name={place.name} what="place" onHide={() => { showDelete(false); }} onDelete={() => { onDelete(); }} />}

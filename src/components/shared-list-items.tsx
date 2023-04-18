@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { DeleteOutline } from "@mui/icons-material";
+import { DeleteOutline, Route } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
 import { PinKind } from "./shared-types";
 import { HolePinButton } from "./shared-pin-buttons";
@@ -152,4 +152,22 @@ type MenuPinListItemProps = SimplePinListItemProps & {
 
 export function MenuPinListItem({ label, menu, ...rest }: MenuPinListItemProps): JSX.Element {
   return (<BusyListItem left={<BusyPinListItem {...rest} />} label={label} right={menu} />);
+}
+
+type MenuRouteListItemProps = {
+  label: string;
+  onIcon: () => void;
+  menu: ReactElement;
+};
+
+export function MenuRouteListItem({ label, onIcon, menu }: MenuRouteListItemProps): JSX.Element {
+  return (
+    <div style={{ display: "flex", alignItems: "stretch" }}>
+      <IconButton onClick={onIcon} size="small">
+        <Route fontSize="medium" sx={{ color: "grey" }} />
+      </IconButton>
+      <ListItemLabel label={label} />
+      {menu}
+    </div>
+  )
 }

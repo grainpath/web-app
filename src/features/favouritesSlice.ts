@@ -62,6 +62,9 @@ export const favouritesSlice = createSlice({
     // routes
 
     setRoutes: (state, action: PayloadAction<StoredRoute[]>) => { state.routes = action.payload; },
+    createRoute: (state, action: PayloadAction<StoredRoute>) => {
+      state.routes = updateItemImmutable(state.routes, action.payload, state.routes.length);
+    },
     updateRoute: (state, action: PayloadAction<{ route: StoredRoute, index: number }>) => {
       const { route, index } = action.payload;
       state.routes = updateItemImmutable(state.routes, route, index);
@@ -95,6 +98,7 @@ export const {
   deletePlace,
   setPlacesLoaded,
   setRoutes,
+  createRoute,
   updateRoute,
   deleteRoute,
   setRoutesLoaded,

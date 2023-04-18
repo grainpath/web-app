@@ -2,11 +2,11 @@ import { IconButton } from "@mui/material";
 import { AddLocation, LocationOn } from "@mui/icons-material";
 import { PinKind } from "./shared-types";
 
-type PinSize = "large" | "medium";
+type IconSize = "large" | "medium";
 
 type PinProps = {
   kind: PinKind;
-  size?: PinSize;
+  size?: IconSize;
   onMarker?: React.MouseEventHandler<Element>;
 };
 

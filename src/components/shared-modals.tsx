@@ -98,7 +98,7 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
             options={places}
             loading={!placesLoaded}
             onChange={(_, v) => { setPlace(v); }}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.name ?? ""}
             isOptionEqualToValue={(option, value) => option.placeId === value.placeId}
             renderInput={(params) => (
               <TextField
@@ -114,6 +114,7 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
                 }}
               />
             )}
+            renderOption={(props, option) => (<li {...props} key={option.placeId}>{option.name}</li>)}
           />
           <Box sx={{ mt: 1, display: "flex", justifyContent: "right" }}>
             <Button color="primary" disabled={!place} onClick={() => { handleFavourites(); }}>Confirm</Button>

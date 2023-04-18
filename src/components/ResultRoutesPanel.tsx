@@ -16,7 +16,7 @@ import { AppContext } from "../App";
 import { UiRoute } from "../domain/types";
 import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
+import { createRoute, setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
 import {
   clearResultRoutes,
   replaceResultRoute,
@@ -52,6 +52,7 @@ function SaveModal({ index, route, onHide }: SaveModalProps): JSX.Element {
         routeId: IdGenerator.generateId(rt)
       };
       await storage.createRoute(sr);
+      dispatch(createRoute(sr));
       dispatch(replaceResultRoute({ route: sr, index: index }));
       onHide();
     }
