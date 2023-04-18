@@ -1,8 +1,4 @@
-import {
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -17,13 +13,10 @@ import { AppContext } from "../App";
 import { RESULT_PLACES_ADDR } from "../domain/routing";
 import { GrainPathFetcher } from "../utils/grainpath";
 import { point2place } from "../utils/helpers";
-import {
-  useAppDispatch,
-  useAppSelector
-} from "../features/hooks";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
 import { clear } from "../features/searchPlacesSlice";
-import { setResult } from "../features/resultPlacesSlice";
+import { setResultPlaces } from "../features/resultPlacesSlice";
 import {
   deleteCondition,
   insertCondition,
@@ -43,10 +36,11 @@ export default function SearchPlacesPanel(): JSX.Element {
 
   const [modC, setModC] = useState(false);
 
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const map = useContext(AppContext).map;
 
   const dispatch = useAppDispatch();
+  const { block } = useAppSelector(state => state.panel);
   const { center, radius, conditions } = useAppSelector(state => state.searchPlaces);
 
   useEffect(() => {
@@ -60,9 +54,7 @@ export default function SearchPlacesPanel(): JSX.Element {
 
       map?.drawCircle(center.location, meters);
     }
-  }, [map, nav, dispatch, center, radius]);
-
-  const { block } = useAppSelector(state => state.panel);
+  }, [map, navigate, dispatch, center, radius]);
 
   const load = () => {
     new Promise<void>((res, _) => { dispatch(setBlock(true)); res(); })
@@ -74,8 +66,8 @@ export default function SearchPlacesPanel(): JSX.Element {
         })
       }))
       .then((res) => {
-        dispatch(setResult(res));
-        nav(RESULT_PLACES_ADDR);
+        dispatch(setResultPlaces(res));
+        navigate(RESULT_PLACES_ADDR);
       })
       .catch((ex) => { alert(ex); })
       .finally(() => { dispatch(setBlock(false)); });
@@ -90,14 +82,14 @@ export default function SearchPlacesPanel(): JSX.Element {
           <Typography>Find places around the center point:</Typography>
         </Box>
         <Box>
-          { (center)
-            ? <RemovablePinListItem
+          {(center)
+            ? (<RemovablePinListItem
                 kind={center.placeId ? "stored" : "custom"}
                 onMarker={() => { map?.flyTo(center); }}
                 label={center.name}
                 onDelete={() => { dispatch(setCenter(undefined)); }}
-            />
-            : <FreeCenterListItem onClick={() => { setModC(true); }} />
+              />)
+            : (<FreeCenterListItem onClick={() => { setModC(true); }} />)
           }
         </Box>
         <Box>
@@ -128,7 +120,7 @@ export default function SearchPlacesPanel(): JSX.Element {
             title="Clear form"
             onClick={() => { dispatch(clear()); }}
           >
-            Clear
+            <span>Clear</span>
           </Button>
           <LoadingButton
             size="large"

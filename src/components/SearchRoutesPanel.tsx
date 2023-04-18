@@ -33,7 +33,7 @@ import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
-import { setResult } from "../features/resultRoutesSlice";
+import { setResultRoutes } from "../features/resultRoutesSlice";
 
 export default function SearchRoutesPanel(): JSX.Element {
 
@@ -76,8 +76,8 @@ export default function SearchRoutesPanel(): JSX.Element {
         })
       }))
       .then((res) => {
-        dispatch(setResult(res));
-        navigate(RESULT_ROUTES_ADDR); console.log(res);
+        dispatch(setResultRoutes(res));
+        navigate(RESULT_ROUTES_ADDR);
       })
       .catch((ex) => { alert(ex); })
       .finally(() => { dispatch(setBlock(false)); });
@@ -143,12 +143,11 @@ export default function SearchRoutesPanel(): JSX.Element {
             variant="contained"
             startIcon={<Search />}
             loadingPosition="start"
-            title={"Discover a route"}
             onClick={() => { load(); }}
             loading={block}
             disabled={!source || !target || !(conditions.length > 0)}
           >
-            <span>Discover</span>
+            <span>Search</span>
           </LoadingButton>
         </Box>
         {modS &&

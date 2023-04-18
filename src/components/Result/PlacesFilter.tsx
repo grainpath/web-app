@@ -16,6 +16,9 @@ type PlacesFilterProps = {
   /** Indicate if the user has selected this filter */
   active: boolean;
 
+  /** Indicate if the filter is disabled. */
+  disabled: boolean;
+
   /** Condition that forms filter */
   condition: PlaceCondition;
 
@@ -23,14 +26,14 @@ type PlacesFilterProps = {
   onToggle: () => void;
 };
 
-export default function PlacesFilter({ found, active, condition, onToggle }: PlacesFilterProps): JSX.Element {
+export default function PlacesFilter({ found, active, disabled, condition, onToggle }: PlacesFilterProps): JSX.Element {
 
   const [modal, setModal] = useState(false);
 
   return (
     <Box>
       <Stack direction="row" justifyContent="center" alignItems="center">
-        <Checkbox disabled={!found} checked={active} onChange={onToggle} />
+        <Checkbox disabled={disabled || !found} checked={active} onChange={onToggle} />
         <div onClick={() => { setModal(true); }} style={{ cursor: "pointer" }}>
           <Typography sx={{ textDecorationLine: found ? undefined : "line-through", color: found ? undefined : "grey" }}>
             {condition.keyword}

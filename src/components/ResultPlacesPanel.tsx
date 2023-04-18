@@ -1,35 +1,24 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Alert,
-  Box,
-  Skeleton,
-  Stack,
-  Typography
-} from "@mui/material";
-import { Favorite, Link } from "@mui/icons-material";
+import { Alert, Box, Stack, Typography } from "@mui/material";
 import { AppContext } from "../App";
-import {
-  Place,
-  PlacesResult,
-  StoredPlace
-} from "../domain/types";
-import {
-  RESULT_PLACES_ADDR,
-  SEARCH_PLACES_ADDR
-} from "../domain/routing";
+import { PlacesResult } from "../domain/types";
+import { RESULT_PLACES_ADDR, SEARCH_PLACES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { setSelectedFilters } from "../features/resultPlacesSlice";
+import {
+  clearResultPlaces,
+  setResultPlacesFilters
+} from "../features/resultPlacesSlice";
 import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
 import { BackCloseMenu } from "./shared-menus";
-import { MenuPinListItem, SimplePinListItem } from "./shared-list-items";
-import ListItemLink from "./Result/ListItemLink";
+import { SimplePinListItem } from "./shared-list-items";
 import PlacesFilter from "./Result/PlacesFilter";
+import LoadThingsStub from "./Result/LoadThingsStub";
+import {
+  getCopyKnownGrains,
+  getSatConditions
+} from "./Result/functions";
+import PlacesList from "./Result/PlacesList";
 
 type ResultPlacesSectionProps = {
   result: PlacesResult;
@@ -37,54 +26,41 @@ type ResultPlacesSectionProps = {
 
 function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element {
 
+  const { center, radius, conditions, places: foundPlaces } = result;
+
   const dispatch = useAppDispatch();
   const { map } = useContext(AppContext);
-  const { center, radius, conditions, places: foundPlaces } = result;
   const { places: knownPlaces } = useAppSelector(state => state.favourites);
+  const { filters: filterLst } = useAppSelector(state => state.resultPlaces);
 
-  const [knownGrains, setKnownGrains] = useState(new Map<string, StoredPlace>());
-  const [satConditions, setSatConditions] = useState(new Set<string>());
-  const { selectedFilters } = useAppSelector(state => state.resultPlaces);
+  // get a set of activated filters
+  const filterSet = useMemo(() => new Set(filterLst), [filterLst]);
 
-  // identify known grains in the pile of found places
-  useEffect(() => {
-    const gs = knownPlaces
-      .filter((p) => !!p.grainId)
-      .map((g) => structuredClone(g)) // (!) avoid state mods
-      .reduce((m, p) => { return m.set(p.grainId!, p); }, new Map<string, StoredPlace>())
-    setKnownGrains(gs);
-  }, [knownPlaces]);
+  // create a copy of known grains found in the pile of known places
+  const knownGrains = useMemo(() => getCopyKnownGrains(knownPlaces), [knownPlaces]);
 
-  // identify conditions that are satisfied
-  useEffect(() => {
-    setSatConditions(foundPlaces.reduce((s, p) => {
-      p.selected.forEach(f => s.add(f));
-      return s;
-    }, new Set<string>()))
-  }, [foundPlaces]);
+  // extract conditions satisfied by the result
+  const satConditions = useMemo(() => getSatConditions(foundPlaces), [foundPlaces]);
 
-  // select place based on filter configuration
-  const filterPlace = useCallback((place: Place): boolean => {
-    const set = new Set(selectedFilters);
-    return set.size === 0 || place.selected.some((c) => set.has(c));
-  }, [selectedFilters]);
+  // select places based on the activated filters
+  const shownPlaces = useMemo(() => foundPlaces.filter((place) => {
+    return filterSet.size === 0 || place.selected.some((keyword) => filterSet.has(keyword));
+  }), [foundPlaces, filterSet]);
 
   // draw places based on selected filters
   useEffect(() => {
     map?.clear();
-    foundPlaces
-      .filter((place) => filterPlace(place))
-      .forEach((place) => {
-        const grain = knownGrains.get(place.grainId);
-        if (grain) { grain.selected = place.selected; } // (!) changes structuredClone
-        (grain) ? map?.addStored(grain) : map?.addTagged(place);
-      });
+    shownPlaces.forEach((place) => {
+      const grain = knownGrains.get(place.grainId);
+      if (grain) { grain.selected = place.selected; } // (!) change structuredClone
+      (grain) ? map?.addStored(grain) : map?.addTagged(place);
+    });
     (center.placeId) ? map?.addStored(center) : map?.addCustom(center, false);
     map?.drawCircle(center.location, radius * 1000);
-  }, [map, center, radius, foundPlaces, knownGrains, filterPlace]);
+  }, [map, center, radius, foundPlaces, knownGrains, shownPlaces]);
 
   return (
-    <Stack direction="column" gap={4}>
+    <Stack direction="column" gap={2.7}>
       <Stack direction="column" gap={2}>
         <Typography fontSize="1.2rem">
           Found <strong>{foundPlaces.length}</strong> places at a distance at most <strong>{radius}</strong>&nbsp;km around the center point:
@@ -95,47 +71,27 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
           onMarker={() => { map?.flyTo(center); }}
         />
       </Stack>
-      <Stack spacing={2} direction="row" justifyContent="center" sx={{ flexWrap: "wrap" }}>
+      <Stack spacing={2} direction="row" justifyContent="center" flexWrap="wrap">
         {conditions.map((c, i) => {
-          const active = new Set(selectedFilters).has(c.keyword);
+          const active = filterSet.has(c.keyword);
           return (
             <PlacesFilter
               key={i}
               found={satConditions.has(c.keyword)}
               active={active}
+              disabled={false}
               condition={c}
               onToggle={() => {
                 const fs = (active)
-                  ? (selectedFilters.filter((f) => f !== c.keyword))
-                  : ([...selectedFilters, c.keyword]);
-                dispatch(setSelectedFilters(fs));
+                  ? filterLst.filter((f) => f !== c.keyword)
+                  : [...filterLst, c.keyword];
+                dispatch(setResultPlacesFilters(fs));
               }}
             />
           );
         })}
       </Stack>
-      <Stack direction="column" gap={2}>
-        {foundPlaces
-          .filter((place) => filterPlace(place))
-          .map((place, i) => {
-            const grain = knownGrains.get(place.grainId);
-            return (grain)
-              ? (<MenuPinListItem
-                  key={i}
-                  kind="stored"
-                  label={grain.name}
-                  onMarker={() => { map?.flyTo(grain); }}
-                  menu={<ListItemLink icon={<Favorite />} back={RESULT_PLACES_ADDR} grainId={place.grainId} />}
-                />)
-              : (<MenuPinListItem
-                  key={i}
-                  kind="tagged"
-                  label={place.name}
-                  onMarker={() => { map?.flyTo(place); }}
-                  menu={<ListItemLink icon={<Link />} back={RESULT_PLACES_ADDR} grainId={place.grainId} />}
-                />);
-        })}
-      </Stack>
+      <PlacesList back={RESULT_PLACES_ADDR} places={shownPlaces} grains={knownGrains} />
     </Stack>
   );
 }
@@ -159,7 +115,7 @@ export default function ResultPlacesPanel(): JSX.Element {
   }, [storage, dispatch, placesLoaded]);
 
   const onBack = () => {
-    dispatch(setSelectedFilters([]));
+    dispatch(clearResultPlaces());
     navigate(SEARCH_PLACES_ADDR);
   };
 
@@ -170,15 +126,11 @@ export default function ResultPlacesPanel(): JSX.Element {
         {(placesLoaded)
           ? (<Box>
               {result
-                ? <ResultPlacesSection result={result} />
-                : <Alert severity="warning">Oops... Result appears to be empty!</Alert>
+                ? (<ResultPlacesSection result={result} />)
+                : (<Alert severity="warning">Oops... Result appears to be empty!</Alert>)
               }
             </Box>)
-          : (<Stack direction="column" gap={2}>
-              <Skeleton variant="rounded" height={100} />
-              <Skeleton variant="rounded" height={100} />
-              <Skeleton variant="rounded" height={200} />
-            </Stack>)
+          : (<LoadThingsStub />)
         }
       </Box>
     </Box>

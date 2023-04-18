@@ -97,6 +97,9 @@ export class GrainPathFetcher {
     const { source, target, distance, ...rest } = request;
     const jsn = await GrainPathFetcher
       .fetch(GRAINPATH_ROUTES_URL, { source: source.location, target: target.location, distance: distance * 1000, ...rest });
-    return jsn.routes.map((route: any) => { return { name: "", ...request, ...route }; });
+    return jsn.routes.map((route: any) => {
+      route.path.distance = route.path.distance / 1000;
+      return { name: "", ...request, ...route };
+    });
   }
 }

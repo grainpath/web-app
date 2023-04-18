@@ -3,23 +3,25 @@ import { PlacesResult } from "../domain/types";
 
 type ResultPlacesState = {
   result?: PlacesResult;
-  selectedFilters: string[];
+  filters: string[];
 };
 
-function initialState(): ResultPlacesState { return { selectedFilters: [] }; };
+function initialState(): ResultPlacesState { return { filters: [] }; };
 
 export const resultPlacesSlice = createSlice({
   name: "result/places",
   initialState: initialState(),
   reducers: {
-    setResult: (state, action: PayloadAction<PlacesResult>) => { state.result = action.payload; },
-    setSelectedFilters: (state, action: PayloadAction<string[]>) => { state.selectedFilters = action.payload; }
+    setResultPlaces: (state, action: PayloadAction<PlacesResult | undefined>) => { state.result = action.payload; },
+    clearResultPlaces: (state) => { state.result = undefined; state.filters = []; },
+    setResultPlacesFilters: (state, action: PayloadAction<string[]>) => { state.filters = action.payload; }
   }
 });
 
 export const {
-  setResult,
-  setSelectedFilters
+  setResultPlaces,
+  clearResultPlaces,
+  setResultPlacesFilters
 } = resultPlacesSlice.actions;
 
 export default resultPlacesSlice.reducer;
