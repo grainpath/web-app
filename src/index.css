@@ -9,6 +9,10 @@ html, body, #root, #map {
   height: 100%;
 }
 
+.leaflet-popup-content {
+  max-width: 250px;
+}
+
 .stored-place {
   color: #9c2bcb;
 }

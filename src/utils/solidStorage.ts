@@ -1,5 +1,9 @@
 import { IStorage } from "../domain/interfaces";
-import { StoredPlace, StoredRoute, StoredDirection } from "../domain/types";
+import {
+  StoredPlace,
+  StoredRoute,
+  StoredDirection
+} from "../domain/types";
 
 /**
  * Wrapper over decentralized Solid Pod.

@@ -15,7 +15,11 @@ import {
 import { AppContext } from "../App";
 import { UiRoute } from "../domain/types";
 import { RESULT_ROUTES_ADDR } from "../domain/routing";
-import { getCopyKnownGrains, getSatConditions } from "../domain/functions";
+import {
+  getCopyKnownGrains,
+  getSatConditions,
+  replaceName
+} from "../domain/functions";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import {
   createRoute,
@@ -29,6 +33,7 @@ import {
 } from "../features/resultRoutesSlice";
 import { IdGenerator } from "../utils/helpers";
 import { BackCloseMenu } from "./shared-menus";
+import { SteadyPlaceListItem } from "./shared-list-items";
 import LoadStub from "./Result/LoadStub";
 import PlacesFilter from "./Result/PlacesFilter";
 import PlacesList from "./Result/PlacesList";
@@ -111,8 +116,8 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
   const {
     routeId,
     name,
-    source,
-    target,
+    source: s,
+    target: t,
     distance,
     conditions,
     path,
@@ -123,11 +128,15 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
 
   const satConditions = useMemo(() => getSatConditions(waypoints), [waypoints]);
 
+  const source = useMemo(() => replaceName(s, knownGrains), [s, knownGrains]);
+
+  const target = useMemo(() => replaceName(t, knownGrains), [t, knownGrains]);
+
   useEffect(() => {
     map?.clear();
     waypoints.forEach((place) => {
       const grain = knownGrains.get(place.grainId);
-      if (grain) { grain.selected = place.selected; }
+      if (grain) { grain.selected = place.selected; } // (!) change structuredClone
       (grain) ? map?.addStored(grain) : map?.addTagged(place);
     });
     map?.addSource(source, false);
@@ -141,9 +150,6 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
 
   return (
     <Stack direction="column" gap={2.7}>
-      <Typography fontSize="1.2rem">
-        Found <strong>{result.length}</strong> routes.
-      </Typography>
       <Box display="flex" justifyContent="center" width="100%">
         <Pagination count={result.length} page={index + 1} onChange={onPage} />
       </Box>
@@ -159,12 +165,9 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
           </Box>)
       }
       <Box display="flex" alignItems="center">
-        <Typography fontSize="1.5rem">Distance</Typography>
-        <Stack width="100%" direction="row" justifyContent="center" alignItems="center">
-          <Typography fontSize="1.5rem" fontWeight="bold">{Number(path.distance.toFixed(2))}</Typography>
-          <Typography fontSize="1.5rem">&nbsp;/&nbsp;</Typography>
-          <Typography fontSize="1.5rem">{distance} km</Typography>
-        </Stack>
+        <Typography fontSize="1.2rem">
+          Distance:&nbsp;&nbsp;&nbsp;<strong>{Number(path.distance.toFixed(2))}</strong> / {distance} km
+        </Typography>
       </Box>
       <Stack spacing={2} direction="row" justifyContent="center" flexWrap="wrap">
         {conditions.map((c, i) => (
@@ -178,7 +181,19 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
           />
         ))}
       </Stack>
-      <PlacesList back={RESULT_ROUTES_ADDR} places={waypoints} grains={knownGrains} />
+      <Stack direction="column" gap={2}>
+        <SteadyPlaceListItem
+          kind="source"
+          label={source.name}
+          onPlace={() => { map?.flyTo(source); }}
+        />
+        <PlacesList back={RESULT_ROUTES_ADDR} places={waypoints} grains={knownGrains} />
+        <SteadyPlaceListItem
+          kind="target"
+          label={target.name}
+          onPlace={() => { map?.flyTo(target); }}
+        />
+      </Stack>
     </Stack>
   );
 }

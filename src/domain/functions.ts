@@ -1,4 +1,4 @@
-import { Place, StoredPlace } from "./types";
+import { Place, StoredPlace, UiPlace } from "./types";
 
 export function getCopyKnownGrains(places: StoredPlace[]): Map<string, StoredPlace> {
   return places
@@ -12,4 +12,9 @@ export function getSatConditions(places: Place[]): Set<string> {
     place.selected.forEach((keyword) => { set.add(keyword) });
     return set;
   }, new Set<string>());
+}
+
+export function replaceName({grainId, name, ...rest}: UiPlace, grains: Map<string, StoredPlace>): UiPlace {
+  const n = grainId ? (grains.get(grainId)?.name ?? name) : name;
+  return { ...rest, grainId: grainId, name: n };
 }
