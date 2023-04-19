@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { AppContext } from "../App";
 import { UiRoute } from "../domain/types";
-import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
+import { RESULT_ROUTES_ADDR } from "../domain/routing";
 import { getCopyKnownGrains, getSatConditions } from "../domain/functions";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import {
@@ -188,7 +188,7 @@ export default function ResultRoutesPanel(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
-  const { result } = useAppSelector((state) => state.resultRoutes);
+  const { back, result } = useAppSelector((state) => state.resultRoutes);
   const { placesLoaded } = useAppSelector((state) => state.favourites);
 
   useEffect(() => {
@@ -203,12 +203,12 @@ export default function ResultRoutesPanel(): JSX.Element {
 
   const onBack = () => {
     dispatch(clearResultRoutes());
-    navigate(SEARCH_ROUTES_ADDR);
+    navigate(back!);
   };
 
   return (
     <Box>
-      <BackCloseMenu onBack={onBack} />
+      <BackCloseMenu onBack={back ? onBack : undefined} />
       <Box sx={{ mx: 2, my: 4 }}>
         {(placesLoaded)
           ? <Box>

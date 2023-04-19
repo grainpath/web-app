@@ -33,7 +33,7 @@ import {
   setPlacesLoaded,
   updatePlace
 } from "../../features/favouritesSlice";
-import { setBack } from "../../features/entitySlice";
+import { setEntityBack } from "../../features/entitySlice";
 import { IdGenerator, point2place } from "../../utils/helpers";
 import { PlaceButton } from "../shared-buttons";
 import { BusyListItem, FreePlaceListItem, RemovablePlaceListItem } from "../shared-list-items";
@@ -70,7 +70,7 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
   };
 
   const onShow = () => {
-    dispatch(setBack(FAVOURITES_ADDR));
+    dispatch(setEntityBack(FAVOURITES_ADDR));
     navigate(ENTITY_ADDR + "/" + place.grainId);
   };
 

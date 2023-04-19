@@ -13,7 +13,11 @@ import { ExpandMore, Route } from "@mui/icons-material";
 
 import { AppContext } from "../../App";
 import { StoredPlace, StoredRoute } from "../../domain/types";
-import { SEARCH_ROUTES_ADDR } from "../../domain/routing";
+import {
+  FAVOURITES_ADDR,
+  RESULT_ROUTES_ADDR,
+  SEARCH_ROUTES_ADDR
+} from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
   deleteRoute,
@@ -23,6 +27,10 @@ import {
   setRoutesLoaded,
   updateRoute
 } from "../../features/favouritesSlice";
+import {
+  setResultBack,
+  setResultRoutes
+} from "../../features/resultRoutesSlice";
 import { RouteButton } from "../shared-buttons";
 import { BusyListItem } from "../shared-list-items";
 import DeleteModal from "./DeleteModal";
@@ -60,7 +68,9 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
   }
 
   const onShow = () => {
-    
+    dispatch(setResultRoutes([route]));
+    dispatch(setResultBack(FAVOURITES_ADDR));
+    navigate(RESULT_ROUTES_ADDR);
   };
 
   const onDelete = async () => {

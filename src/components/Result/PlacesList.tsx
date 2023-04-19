@@ -6,7 +6,7 @@ import { AppContext } from "../../App";
 import { Place, StoredPlace } from "../../domain/types";
 import { useAppDispatch } from "../../features/hooks";
 import { BusyListItem } from "../shared-list-items";
-import { setBack } from "../../features/entitySlice";
+import { setEntityBack } from "../../features/entitySlice";
 import { ENTITY_ADDR } from "../../domain/routing";
 import { PlaceButton } from "../shared-buttons";
 
@@ -28,7 +28,7 @@ function ListItemLink({ icon, back, grainId }: ListItemLinkProps): JSX.Element {
   const dispatch = useAppDispatch();
 
   const onClick = () => {
-    dispatch(setBack(back));
+    dispatch(setEntityBack(back));
     navigate(ENTITY_ADDR + "/" + grainId);
   };
 
@@ -40,8 +40,14 @@ function ListItemLink({ icon, back, grainId }: ListItemLinkProps): JSX.Element {
 }
 
 type PlacesListProps = {
+
+  /**  */
   back: string;
+
+  /**  */
   places: Place[];
+
+  /**  */
   grains: Map<string, StoredPlace>;
 };
 

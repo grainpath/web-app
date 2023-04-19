@@ -10,7 +10,7 @@ import {
 import { Search, SwapVert } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../App";
-import { RESULT_ROUTES_ADDR } from "../domain/routing";
+import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
 import {
@@ -31,7 +31,7 @@ import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
-import { setResultRoutes } from "../features/resultRoutesSlice";
+import { setResultBack, setResultRoutes } from "../features/resultRoutesSlice";
 
 export default function SearchRoutesPanel(): JSX.Element {
 
@@ -75,6 +75,7 @@ export default function SearchRoutesPanel(): JSX.Element {
       }))
       .then((res) => {
         dispatch(setResultRoutes(res));
+        dispatch(setResultBack(SEARCH_ROUTES_ADDR));
         navigate(RESULT_ROUTES_ADDR);
       })
       .catch((ex) => { alert(ex); })

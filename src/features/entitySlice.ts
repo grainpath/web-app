@@ -14,14 +14,14 @@ export const entitySlice = createSlice({
   name: "entity",
   initialState: initialState(),
   reducers: {
-    setBack: (state, action: PayloadAction<string>) => { state.back = action.payload },
-    setEntity: (state, action: PayloadAction<Entity>) => { state.entity = action.payload; }
+    setEntity: (state, action: PayloadAction<Entity>) => { state.entity = action.payload; },
+    setEntityBack: (state, action: PayloadAction<string>) => { state.back = action.payload }
   }
 });
 
 export const {
-  setBack,
-  setEntity
+  setEntity,
+  setEntityBack
 } = entitySlice.actions;
 
 export default entitySlice.reducer;
