@@ -1,4 +1,4 @@
-import { Place, StoredPlace } from "../../domain/types";
+import { Place, StoredPlace } from "./types";
 
 export function getCopyKnownGrains(places: StoredPlace[]): Map<string, StoredPlace> {
   return places

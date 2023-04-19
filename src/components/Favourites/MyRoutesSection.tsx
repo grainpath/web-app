@@ -1,5 +1,5 @@
-import { useContext, useEffect, useMemo } from "react";
-import { AppContext } from "../../App";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionDetails,
@@ -10,14 +10,25 @@ import {
   Typography
 } from "@mui/material";
 import { ExpandMore, Route } from "@mui/icons-material";
+
+import { AppContext } from "../../App";
 import { StoredPlace, StoredRoute } from "../../domain/types";
 import { SEARCH_ROUTES_ADDR } from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { setPlaces, setPlacesLoaded, setRoutes, setRoutesLoaded } from "../../features/favouritesSlice";
-import { FavouriteStub } from "./FavouriteStub";
-import { MenuRouteListItem } from "../shared-list-items";
-import { PlaceMenu } from "./MyPlacesSection";
-
+import {
+  deleteRoute,
+  setPlaces,
+  setPlacesLoaded,
+  setRoutes,
+  setRoutesLoaded,
+  updateRoute
+} from "../../features/favouritesSlice";
+import { RouteButton } from "../shared-buttons";
+import { BusyListItem } from "../shared-list-items";
+import DeleteModal from "./DeleteModal";
+import UpdateModal from "./UpdateModal";
+import ItemListMenu from "./ItemListMenu";
+import FavouriteStub from "./FavouriteStub";
 
 type RouteListItemProps = {
   index: number;
@@ -27,10 +38,16 @@ type RouteListItemProps = {
 
 function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Element {
 
-  const { map } = useContext(AppContext);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const { map, storage } = useContext(AppContext);
   const { name, source, target, path, waypoints } = route;
 
-  const onIcon = () => {
+  const [showD, setShowD] = useState(false);
+  const [showU, setShowU] = useState(false);
+
+  const onRoute = () => {
     map?.clear();
     waypoints.forEach((place) => {
       const grain = grains.get(place.grainId);
@@ -46,11 +63,27 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
     
   };
 
+  const onDelete = async () => {
+    await storage.deleteRoute(route.routeId);
+    dispatch(deleteRoute(index));
+  };
+
+  const onUpdate = async (name: string) => {
+    const rt = { ...route, name: name };
+    await storage.updateRoute(rt);
+    dispatch(updateRoute({ route: rt, index: index }));
+  };
+
   return (
-    <MenuRouteListItem
-      label={name}
-      onIcon={onIcon}
-      menu={<PlaceMenu onShow={onShow} showEdit={() => { }} showDelete={() => { }} />} />
+    <Box>
+      <BusyListItem
+        label={name}
+        l={<RouteButton onRoute={onRoute} />}
+        r={<ItemListMenu onShow={onShow} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
+      />
+      {showD && <DeleteModal name={route.name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
+      {showU && <UpdateModal name={route.name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+    </Box>
   );
 }
 

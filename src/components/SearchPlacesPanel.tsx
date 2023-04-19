@@ -26,8 +26,8 @@ import {
 import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import {
-  FreeCenterListItem,
-  RemovablePinListItem
+  FreePlaceListItem,
+  RemovablePlaceListItem
 } from "./shared-list-items";
 import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
@@ -83,13 +83,17 @@ export default function SearchPlacesPanel(): JSX.Element {
         </Box>
         <Box>
           {(center)
-            ? (<RemovablePinListItem
+            ? <RemovablePlaceListItem
                 kind={center.placeId ? "stored" : "custom"}
-                onMarker={() => { map?.flyTo(center); }}
                 label={center.name}
+                onPlace={() => { map?.flyTo(center); }}
                 onDelete={() => { dispatch(setCenter(undefined)); }}
-              />)
-            : (<FreeCenterListItem onClick={() => { setModC(true); }} />)
+              />
+            : <FreePlaceListItem
+                kind="center"
+                label="Select point..."
+                onPlace={() => { setModC(true); }}
+              />
           }
         </Box>
         <Box>

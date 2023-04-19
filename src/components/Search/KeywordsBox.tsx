@@ -148,11 +148,10 @@ export default function KeywordsBox({ conditions, deleteCondition, insertConditi
     <Box>
       <Paper variant="outlined">
         <Stack direction="row" sx={{ flexWrap: "wrap" }}>
-          { conditions.map((condition, i) => {
-            return <Chip key={i} color="primary" variant="outlined" sx={{ m: 0.35, color: "black" }}
-                    label={condition.keyword} onClick={() => modal(i)} onDelete={() => deleteCondition(i)} />
-            })
-          }
+          {conditions.map((condition, i) => (
+            <Chip key={i} color="primary" variant="outlined" sx={{ m: 0.35, color: "black" }}
+              label={condition.keyword} onClick={() => modal(i)} onDelete={() => deleteCondition(i)} />
+          ))}
         </Stack>
         <Button size="large" sx={{ width: "100%" }} onClick={() => { modal(conditions.length); }}>
           Add condition

@@ -30,7 +30,7 @@ type LogoCloseMenuProps = {
 };
 
 /**
- * Upper menu with logo and close buttons.
+ * Upper menu with `logo` and `close` buttons.
  */
 export function LogoCloseMenu({ onLogo: _ }: LogoCloseMenuProps): JSX.Element {
 
@@ -47,12 +47,12 @@ export function LogoCloseMenu({ onLogo: _ }: LogoCloseMenuProps): JSX.Element {
 
 type BackCloseMenuProps = {
 
-  /** Action navigating back. */
+  /** Action navigating back to the previous place. */
   onBack?: () => void;
 };
 
 /**
- * Upper menu with back and close buttons.
+ * Upper menu with `back` and `close` buttons.
  */
 export function BackCloseMenu({ onBack }: BackCloseMenuProps): JSX.Element {
 
@@ -61,7 +61,7 @@ export function BackCloseMenu({ onBack }: BackCloseMenuProps): JSX.Element {
   return (
     <Box sx={{ mx: 2, my: 2, display: "flex", justifyContent: "space-between" }}>
       <Box>
-        {(!!onBack) && <Button startIcon={<ArrowBack />} onClick={onBack}>Back</Button>}
+        {onBack && <Button startIcon={<ArrowBack />} onClick={onBack}>Back</Button>}
       </Box>
       <IconButton size="small" onClick={() => { dispatch(hidePanel()); }}>
         <Close fontSize="medium" />
@@ -77,7 +77,7 @@ type MainMenuProps = {
 };
 
 /**
- * Standard four-section menu (routes, places, directions, and favourites).
+ * Standard four-section search menu (routes, places, directions, and favourites).
  */
 export function MainMenu({ panel }: MainMenuProps): JSX.Element {
 

@@ -1,6 +1,6 @@
 import { Skeleton, Stack } from "@mui/material";
 
-export default function LoadThingsStub(): JSX.Element {
+export default function LoadStub(): JSX.Element {
   return (
     <Stack direction="column" gap={2}>
       <Skeleton variant="rounded" height={100} />

@@ -26,6 +26,9 @@ type PlacesFilterProps = {
   onToggle: () => void;
 };
 
+/**
+ * Filter based on actual conditions.
+ */
 export default function PlacesFilter({ found, active, disabled, condition, onToggle }: PlacesFilterProps): JSX.Element {
 
   const [modal, setModal] = useState(false);
@@ -34,11 +37,11 @@ export default function PlacesFilter({ found, active, disabled, condition, onTog
     <Box>
       <Stack direction="row" justifyContent="center" alignItems="center">
         <Checkbox disabled={disabled || !found} checked={active} onChange={onToggle} />
-        <div onClick={() => { setModal(true); }} style={{ cursor: "pointer" }}>
+        <Box onClick={() => { setModal(true); }} sx={{ cursor: "pointer" }}>
           <Typography sx={{ textDecorationLine: found ? undefined : "line-through", color: found ? undefined : "grey" }}>
             {condition.keyword}
           </Typography>
-        </div>
+        </Box>
       </Stack>
       {modal && <PlaceConditionModal onHide={() => { setModal(false); }} condition={condition} />}
     </Box>

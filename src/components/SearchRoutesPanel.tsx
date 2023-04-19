@@ -24,10 +24,8 @@ import {
 import { point2place } from "../utils/helpers";
 import { GrainPathFetcher } from "../utils/grainpath";
 import {
-  FreeSourceListItem,
-  FreeTargetListItem,
-  RemovableSourceListItem,
-  RemovableTargetListItem
+  FreePlaceListItem,
+  RemovablePlaceListItem,
 } from "./shared-list-items";
 import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
@@ -92,20 +90,30 @@ export default function SearchRoutesPanel(): JSX.Element {
         <Stack direction="column" gap={1}>
           <Stack direction="column" gap={2}>
             {(source)
-              ? (<RemovableSourceListItem
-                  onMarker={() => { map?.flyTo(source); }}
+              ? <RemovablePlaceListItem
+                  kind="source"
                   label={source.name}
+                  onPlace={() => { map?.flyTo(source); }}
                   onDelete={() => { dispatch(setSource(undefined)); }}
-                />)
-              : (<FreeSourceListItem onClick={() => { setModS(true); }} />)
+                />
+              : <FreePlaceListItem
+                  kind="source"
+                  label="Select starting point..."
+                  onPlace={() => { setModS(true); }}
+                />
             }
             {(target)
-              ? (<RemovableTargetListItem
-                  onMarker={() => { map?.flyTo(target); }}
+              ? <RemovablePlaceListItem
+                  kind="target"
                   label={target.name}
+                  onPlace={() => { map?.flyTo(target); }}
                   onDelete={() => { dispatch(setTarget(undefined)); }}
-                />)
-              : (<FreeTargetListItem onClick={() => { setModT(true); }} />)
+                />
+              : <FreePlaceListItem
+                  kind="target"
+                  label="Select destination..."
+                  onPlace={() => { setModT(true); }}
+                />
             }
           </Stack>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -136,7 +144,7 @@ export default function SearchRoutesPanel(): JSX.Element {
             title="Clear form"
             onClick={() => { dispatch(clear()); }}
           >
-            Clear
+            <span>Clear</span>
           </Button>
           <LoadingButton
             size="large"

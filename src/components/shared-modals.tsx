@@ -20,17 +20,23 @@ import {
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { AppContext } from "../App";
+import { WgsPoint, UiPlace, StoredPlace } from "../domain/types";
+import { point2place } from "../utils/helpers";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel, showPanel } from "../features/panelSlice";
-import { point2place } from "../utils/helpers";
-import { WgsPoint, UiPlace, StoredPlace } from "../domain/types";
-import { EntityKind, PinKind } from "./shared-types";
-import { PlusPinButton } from "./shared-pin-buttons";
 import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
+import { PlaceKind } from "./shared-types";
+import { AddPlaceButton } from "./shared-buttons";
 
 type SelectPlaceModalProps = {
-  kind: PinKind;
+
+  /** */
+  kind: PlaceKind;
+
+  /** */
   onHide: () => void;
+
+  /** */
   func: (place: UiPlace) => void;
 };
 
@@ -54,8 +60,8 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
 
   // stored place
 
-  const { places, placesLoaded } = useAppSelector(state => state.favourites);
   const [place, setPlace] = useState<StoredPlace | null>(null);
+  const { places, placesLoaded } = useAppSelector(state => state.favourites);
 
   useEffect(() => {
     const load = async () => {
@@ -71,21 +77,21 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
   }, [storage, dispatch, placesLoaded]);
 
   const handleFavourites = () => {
-    onHide();
     func(place!);
+    onHide();
   };
 
   return (
     <Dialog open onClose={onHide}>
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
-        <span>Select point</span>
+        <span>Select a point</span>
         <IconButton size="small" onClick={onHide}>
           <Close fontSize="small" />
         </IconButton>
       </DialogTitle>
       <DialogContent>
         <Typography>
-          Click <PlusPinButton kind={kind} size="large" onMarker={handleCustom} /> to select a location.
+          Click <AddPlaceButton kind={kind} size="large" onPlace={handleCustom} /> to select a point.
         </Typography>
         <Divider>
           <Typography>OR</Typography>
@@ -118,88 +124,6 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
           />
           <Box sx={{ mt: 1, display: "flex", justifyContent: "right" }}>
             <Button color="primary" disabled={!place} onClick={() => { handleFavourites(); }}>Confirm</Button>
-          </Box>
-        </Stack>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-type EditModalProps = {
-  name: string;
-  what: EntityKind;
-  onHide: () => void;
-  onSave: (name: string) => void;
-};
-
-export function EditModal({ name: oldName, what, onHide, onSave }: EditModalProps): JSX.Element {
-
-  const [name, setName] = useState(oldName);
-  const [disabled, setDisabled] = useState(false);
-
-  const action = async () => {
-    setDisabled(true);
-    try {
-      onSave(name);
-      onHide();
-    }
-    catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
-  };
-
-  return (
-    <Dialog open>
-      <DialogTitle>Edit {what}</DialogTitle>
-      <DialogContent>
-        <Stack direction="column" gap={2}>
-          <Typography>Enter new name:</Typography>
-          <TextField
-            fullWidth
-            value={name}
-            onChange={(e) => { setName(e.target.value); }}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between", minWidth: "300px" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
-          </Box>
-        </Stack>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-type DeleteModalProps = {
-  name: string;
-  what: EntityKind;
-  onHide: () => void;
-  onDelete: () => void;
-};
-
-export function DeleteModal({ name, what, onHide, onDelete }: DeleteModalProps): JSX.Element {
-
-  const [disabled, setDisabled] = useState(false);
-
-  const action = async () => {
-    setDisabled(true);
-    try {
-      onDelete();
-      onHide();
-    }
-    catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
-  };
-
-  return (
-    <Dialog open>
-      <DialogTitle>Delete {what}</DialogTitle>
-      <DialogContent>
-        <Stack direction="column" gap={2}>
-          <Typography>
-            You are about to delete <b>{name}</b>. Please confirm the action.
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide}>Cancel</Button>
-            <Button disabled={disabled} onClick={() => { action(); }} color="error">Delete</Button>
           </Box>
         </Stack>
       </DialogContent>

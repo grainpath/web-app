@@ -15,19 +15,23 @@ import {
 import { AppContext } from "../App";
 import { UiRoute } from "../domain/types";
 import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
+import { getCopyKnownGrains, getSatConditions } from "../domain/functions";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { createRoute, setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
+import {
+  createRoute,
+  setPlaces,
+  setPlacesLoaded
+} from "../features/favouritesSlice";
 import {
   clearResultRoutes,
   replaceResultRoute,
   setResultRoutesIndex
 } from "../features/resultRoutesSlice";
+import { IdGenerator } from "../utils/helpers";
 import { BackCloseMenu } from "./shared-menus";
-import LoadThingsStub from "./Result/LoadThingsStub";
-import { getCopyKnownGrains, getSatConditions } from "./Result/functions";
+import LoadStub from "./Result/LoadStub";
 import PlacesFilter from "./Result/PlacesFilter";
 import PlacesList from "./Result/PlacesList";
-import { IdGenerator } from "../utils/helpers";
 
 type SaveModalProps = {
   index: number;
@@ -215,7 +219,7 @@ export default function ResultRoutesPanel(): JSX.Element {
                   </Alert>
               }
             </Box>
-          : <LoadThingsStub />
+          : <LoadStub />
         }
       </Box>
     </Box>

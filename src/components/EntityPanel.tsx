@@ -53,17 +53,17 @@ export default function EntityPanel(): JSX.Element {
       <BackCloseMenu onBack={(!!back) ? () => { navigate(back); } : undefined} />
       <Box sx={{ mx: 2, my: 4 }}>
         {(placesLoaded && (entity || entityLoaded))
-          ? (<Box>
+          ? <Box>
               {(entity)
                 ? <EntityView entity={entity} />
                 : <Alert severity="warning">Either an entity with ID:{id} does not exist, or a communication error occurred.</Alert>
               }
-            </Box>)
-          : (<Stack direction="column" gap={2}>
+            </Box>
+          : <Stack direction="column" gap={2}>
               <Skeleton variant="rounded" height={ 50} />
               <Skeleton variant="rounded" height={100} />
               <Skeleton variant="rounded" height={100} />
-            </Stack>)
+            </Stack>
         }
       </Box>
     </Box>

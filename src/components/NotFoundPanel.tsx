@@ -3,7 +3,11 @@ import { Alert, Box } from "@mui/material";
 import { LogoCloseMenu } from "./shared-menus";
 import { SEARCH_ROUTES_ADDR } from "../domain/routing";
 
+/**
+ * Panel shown for all unknown URLs.
+ */
 export default function NotFoundPanel(): JSX.Element {
+
   const nav = useNavigate();
 
   return (

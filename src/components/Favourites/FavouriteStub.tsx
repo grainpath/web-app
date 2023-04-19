@@ -21,7 +21,7 @@ type FavouriteStubProps = {
   icon: (sx: SxProps) => ReactElement;
 };
 
-export function FavouriteStub({ link, what, icon }: FavouriteStubProps): JSX.Element {
+export default function FavouriteStub({ link, what, icon }: FavouriteStubProps): JSX.Element {
   const nav = useNavigate();
 
   return (

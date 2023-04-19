@@ -1,10 +1,43 @@
 import { useContext } from "react";
-import { Stack } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { IconButton, Stack } from "@mui/material";
 import { Favorite, Link } from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { Place, StoredPlace } from "../../domain/types";
-import { MenuPinListItem } from "../shared-list-items";
-import ListItemLink from "./ListItemLink";
+import { useAppDispatch } from "../../features/hooks";
+import { BusyListItem } from "../shared-list-items";
+import { setBack } from "../../features/entitySlice";
+import { ENTITY_ADDR } from "../../domain/routing";
+import { PlaceButton } from "../shared-buttons";
+
+type ListItemLinkProps = {
+
+  /** Menu icon presented to the user. */
+  icon: JSX.Element;
+
+  /** Link back to the panel */
+  back: string;
+
+  /** Id known by the server. */
+  grainId: string;
+};
+
+function ListItemLink({ icon, back, grainId }: ListItemLinkProps): JSX.Element {
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const onClick = () => {
+    dispatch(setBack(back));
+    navigate(ENTITY_ADDR + "/" + grainId);
+  };
+
+  return (
+    <IconButton size="small" onClick={onClick}>
+      {icon}
+    </IconButton>
+  );
+}
 
 type PlacesListProps = {
   back: string;
@@ -22,20 +55,18 @@ export default function PlacesList({ back, places, grains }: PlacesListProps): J
         .map((place, i) => {
           const grain = grains.get(place.grainId);
           return (grain)
-            ? (<MenuPinListItem
+            ? <BusyListItem
                 key={i}
-                kind="stored"
                 label={grain.name}
-                onMarker={() => { map?.flyTo(grain); }}
-                menu={<ListItemLink icon={<Favorite />} back={back} grainId={place.grainId} />}
-              />)
-            : (<MenuPinListItem
+                l={<PlaceButton kind="stored" onPlace={() => { map?.flyTo(grain); }} />}
+                r={<ListItemLink icon={<Favorite />} back={back} grainId={place.grainId} />}
+              />
+            : <BusyListItem
                 key={i}
-                kind="tagged"
                 label={place.name}
-                onMarker={() => { map?.flyTo(place); }}
-                menu={<ListItemLink icon={<Link />} back={back} grainId={place.grainId} />}
-              />)
+                l={<PlaceButton kind="tagged" onPlace={() => { map?.flyTo(place); }} />}
+                r={<ListItemLink icon={<Link />} back={back} grainId={place.grainId} />}
+              />
         })
       }
     </Stack>

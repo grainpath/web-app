@@ -62,6 +62,10 @@ type PlacePopupProps = {
   place: UiPlace;
 };
 
+/**
+ * Standard popup for any place on a map. Use simple HTML due to some
+ * Leaflet limitations.
+ */
 function PlacePopup({ place }: PlacePopupProps): JSX.Element {
 
   const set = new Set(place.selected);

@@ -21,7 +21,7 @@ export default class IndexStorage implements IStorage {
   private static openErrorMsg = "Cannot open database.";
   private static openError = () => this.generateError(this.openErrorMsg);
 
-  private static createError = () => this.generateError("Cannot create object.");
+  private static createError = () => this.generateError("Cannot create an object.");
 
   private static getAllError = (store: string) => this.generateError(`Cannot get all ${store}.`);
 

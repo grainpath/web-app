@@ -111,15 +111,15 @@ export default function EntityView({ entity }: EntityViewProps): JSX.Element {
   return (
     <Stack direction="column" gap={2.7}>
       {(found)
-        ? (<Alert severity="success">
+        ? <Alert severity="success">
             Saved as <strong>{found.name}</strong>.
-          </Alert>)
-        : (<Box>
+          </Alert>
+        : <Box>
             <Alert severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
               Would you like to save this place?
             </Alert>
             {modal && <SaveModal entity={entity} onHide={() => { setModal(false); }} />}
-          </Box>)
+          </Box>
       }
       <Stack direction="column" gap={1}>
         <Typography fontSize="large">{entity.name}</Typography>

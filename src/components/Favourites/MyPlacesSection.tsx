@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Accordion,
@@ -6,22 +6,14 @@ import {
   AccordionSummary,
   Box,
   Button,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
   Skeleton,
   Stack,
   TextField,
   Typography
 } from "@mui/material";
 import {
-  Delete,
-  Edit,
   ExpandMore,
   Grain,
-  Link,
-  MoreVert
 } from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { StoredPlace, UiPlace, WgsPoint } from "../../domain/types";
@@ -43,90 +35,38 @@ import {
 } from "../../features/favouritesSlice";
 import { setBack } from "../../features/entitySlice";
 import { IdGenerator, point2place } from "../../utils/helpers";
-import {
-  FreeCenterListItem,
-  MenuPinListItem,
-  RemovablePinListItem
-} from "../shared-list-items";
-import { DeleteModal, EditModal } from "../shared-modals";
-import { FavouriteStub } from "./FavouriteStub";
-
-type PlaceMenuProps = {
-
-  /** Redirect to the entity view. */
-  onShow?: () => void;
-
-  /** Shows edit modal. */
-  showEdit: () => void;
-
-  /** Shows delete modal. */
-  showDelete: () => void;
-};
-
-/**
- * Place-specific menu in the storage list of places.
- */
-export function PlaceMenu({ onShow, showEdit, showDelete }: PlaceMenuProps): JSX.Element {
-
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const onClick = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(e.currentTarget);
-  };
-
-  const onClose = () => { setAnchorEl(null); };
-
-  return (
-    <Box>
-      <IconButton size="small" onClick={onClick}><MoreVert /></IconButton>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
-        {onShow &&
-          <MenuItem onClick={onShow}>
-            <ListItemIcon><Link fontSize="small" /></ListItemIcon>
-            <Typography>Show</Typography>
-          </MenuItem>
-        }
-        <MenuItem onClick={() => { showEdit(); onClose(); }}>
-          <ListItemIcon><Edit fontSize="small" /></ListItemIcon>
-          <Typography>Edit</Typography>
-        </MenuItem>
-        <MenuItem onClick={() => { showDelete(); onClose(); }}>
-          <ListItemIcon><Delete fontSize="small" /></ListItemIcon>
-          <Typography>Delete</Typography>
-        </MenuItem>
-      </Menu>
-    </Box>
-  );
-}
+import { PlaceButton } from "../shared-buttons";
+import { BusyListItem, FreePlaceListItem, RemovablePlaceListItem } from "../shared-list-items";
+import UpdateModal from "./UpdateModal";
+import DeleteModal from "./DeleteModal";
+import ItemListMenu from "./ItemListMenu";
+import FavouriteStub from "./FavouriteStub";
 
 type PlaceListItemProps = {
 
-  /**  */
+  /** The position of the place in the list */
   index: number;
 
-  /**  */
+  /** Place object. */
   place: StoredPlace;
 };
 
+/**
+ * Interactable items in the list of places.
+ */
 function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { map, storage } = useContext(AppContext);
 
-  const [showE, showEdit] = useState(false);
-  const [showD, showDelete] = useState(false);
+  const [showD, setShowD] = useState(false);
+  const [showU, setShowU] = useState(false);
 
-  const onMarker = () => {
+  const onPlace = () => {
     map?.clear();
     map?.addStored(place);
     map?.flyTo(place);
-  };
-
-  const onSave = async (newName: string) => {
-    const pl = { ...place, name: newName };
-    await storage.updatePlace(pl);
-    dispatch(updatePlace({ place: pl, index: index }));
   };
 
   const onShow = () => {
@@ -139,20 +79,28 @@ function PlaceListItem({ index, place }: PlaceListItemProps): JSX.Element {
     dispatch(deletePlace(index));
   };
 
+  const onUpdate = async (name: string) => {
+    const pl = { ...place, name: name };
+    await storage.updatePlace(pl);
+    dispatch(updatePlace({ place: pl, index: index }));
+  };
+
   return (
     <Box>
-      <MenuPinListItem
-        kind="stored"
-        onMarker={onMarker}
+      <BusyListItem
         label={place.name}
-        menu={<PlaceMenu showEdit={() => { showEdit(true); }} onShow={place.grainId ? onShow : undefined} showDelete={() => { showDelete(true); }} />}
+        l={<PlaceButton kind="stored" onPlace={onPlace} />}
+        r={<ItemListMenu onShow={place.grainId ? onShow : undefined} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
       />
-      {showE && <EditModal name={place.name} what="place" onHide={() => { showEdit(false) }} onSave={(newName) => { onSave(newName); }} />}
-      {showD && <DeleteModal name={place.name} what="place" onHide={() => { showDelete(false); }} onDelete={() => { onDelete(); }} />}
+      {showD && <DeleteModal name={place.name} what="place" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
+      {showU && <UpdateModal name={place.name} what="place" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
     </Box>
   );
 }
 
+/**
+ * Dialog with the user enabling to create custom place.
+ */
 function CustomPlaceDialog(): JSX.Element {
 
   const empty = "";
@@ -215,8 +163,17 @@ function CustomPlaceDialog(): JSX.Element {
         </summary>
         <Stack direction="column" gap={2} sx={{ mt: 2 }}>
           {place
-            ? <RemovablePinListItem kind="custom" onMarker={() => clickMarker(place)} onDelete={removeMarker} label={place.name} />
-            : <FreeCenterListItem onClick={addMarker} />
+            ? <RemovablePlaceListItem
+                kind="custom"
+                label={place.name}
+                onPlace={() => clickMarker(place)}
+                onDelete={removeMarker}
+              />
+            : <FreePlaceListItem
+                kind="custom"
+                label="Select point..."
+                onPlace={addMarker}
+              />
           }
           <TextField
             required
@@ -238,10 +195,13 @@ function CustomPlaceDialog(): JSX.Element {
 
 type PlacesContentProps = {
 
-  /** */
+  /** List of places available in the storage. */
   places: StoredPlace[];
 };
 
+/**
+ * Places section content.
+ */
 function PlacesContent({ places }: PlacesContentProps): JSX.Element {
 
   return (
@@ -256,6 +216,9 @@ function PlacesContent({ places }: PlacesContentProps): JSX.Element {
   );
 }
 
+/**
+ * Collapsible section with list of places available in the storage.
+ */
 export default function MyPlacesSection(): JSX.Element {
 
   const { storage } = useContext(AppContext);

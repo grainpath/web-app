@@ -4,6 +4,7 @@ import { Alert, Box, Stack, Typography } from "@mui/material";
 import { AppContext } from "../App";
 import { PlacesResult } from "../domain/types";
 import { RESULT_PLACES_ADDR, SEARCH_PLACES_ADDR } from "../domain/routing";
+import { getCopyKnownGrains, getSatConditions } from "../domain/functions";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import {
   clearResultPlaces,
@@ -11,13 +12,9 @@ import {
 } from "../features/resultPlacesSlice";
 import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
 import { BackCloseMenu } from "./shared-menus";
-import { SimplePinListItem } from "./shared-list-items";
+import { SteadyPlaceListItem } from "./shared-list-items";
 import PlacesFilter from "./Result/PlacesFilter";
-import LoadThingsStub from "./Result/LoadThingsStub";
-import {
-  getCopyKnownGrains,
-  getSatConditions
-} from "./Result/functions";
+import LoadStub from "./Result/LoadStub";
 import PlacesList from "./Result/PlacesList";
 
 type ResultPlacesSectionProps = {
@@ -65,10 +62,10 @@ function ResultPlacesSection({ result }: ResultPlacesSectionProps): JSX.Element 
         <Typography fontSize="1.2rem">
           Found <strong>{foundPlaces.length}</strong> places at a distance at most <strong>{radius}</strong>&nbsp;km around the center point:
         </Typography>
-        <SimplePinListItem
+        <SteadyPlaceListItem
           kind={center.placeId ? "stored" : "custom"}
           label={center.name}
-          onMarker={() => { map?.flyTo(center); }}
+          onPlace={() => { map?.flyTo(center); }}
         />
       </Stack>
       <Stack spacing={2} direction="row" justifyContent="center" flexWrap="wrap">
@@ -124,13 +121,13 @@ export default function ResultPlacesPanel(): JSX.Element {
       <BackCloseMenu onBack={onBack} />
       <Box sx={{ mx: 2, my: 4 }}>
         {(placesLoaded)
-          ? (<Box>
+          ? <Box>
               {result
                 ? (<ResultPlacesSection result={result} />)
                 : (<Alert severity="warning">Oops... Result appears to be empty!</Alert>)
               }
-            </Box>)
-          : (<LoadThingsStub />)
+            </Box>
+          : <LoadStub />
         }
       </Box>
     </Box>
