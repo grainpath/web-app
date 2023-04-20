@@ -28,8 +28,8 @@ import {
   updateRoute
 } from "../../features/favouritesSlice";
 import {
-  setResultBack,
-  setResultRoutes
+  setResultRoutes,
+  setResultRoutesBack
 } from "../../features/resultRoutesSlice";
 import { RouteButton } from "../shared-buttons";
 import { BusyListItem } from "../shared-list-items";
@@ -69,7 +69,7 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
 
   const onShow = () => {
     dispatch(setResultRoutes([route]));
-    dispatch(setResultBack(FAVOURITES_ADDR));
+    dispatch(setResultRoutesBack(FAVOURITES_ADDR));
     navigate(RESULT_ROUTES_ADDR);
   };
 

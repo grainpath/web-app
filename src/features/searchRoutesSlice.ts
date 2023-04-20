@@ -16,15 +16,15 @@ export const searchRoutesSlice = createSlice({
   name: "search/routes",
   initialState: initialState(),
   reducers: {
-    clear: () => { return initialState(); },
-    setSource: (state, action: PayloadAction<UiPlace | undefined>) => { state.source = action.payload; },
-    setTarget: (state, action: PayloadAction<UiPlace | undefined>) => { state.target = action.payload; },
-    setDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
-    deleteCondition: (state, action: PayloadAction<number>) => {
+    clearSearchRoutes: () => { return initialState(); },
+    setSearchRoutesSource: (state, action: PayloadAction<UiPlace | undefined>) => { state.source = action.payload; },
+    setSearchRoutesTarget: (state, action: PayloadAction<UiPlace | undefined>) => { state.target = action.payload; },
+    setSearchRoutesDistance: (state, action: PayloadAction<number>) => { state.distance = action.payload; },
+    deleteSearchRoutesCondition: (state, action: PayloadAction<number>) => {
       const i = action.payload;
       state.conditions = [...state.conditions.slice(0, i), ...state.conditions.slice(i + 1)];
     },
-    insertCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
+    insertSearchRoutesCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
       const { i, condition } = action.payload;
       state.conditions = [...state.conditions.slice(0, i), condition, ...state.conditions.slice(i + 1)];
     }
@@ -32,12 +32,12 @@ export const searchRoutesSlice = createSlice({
 });
 
 export const {
-  clear,
-  setSource,
-  setTarget,
-  setDistance,
-  deleteCondition,
-  insertCondition
+  clearSearchRoutes,
+  setSearchRoutesSource,
+  setSearchRoutesTarget,
+  setSearchRoutesDistance,
+  deleteSearchRoutesCondition,
+  insertSearchRoutesCondition
 } = searchRoutesSlice.actions;
 
 export default searchRoutesSlice.reducer;

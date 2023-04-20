@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { UiDirection } from "../domain/types";
 
 type ResultDirectState = {
+  back?: string;
   result?: UiDirection;
 };
 
@@ -11,12 +12,14 @@ export const resultDirectSlice = createSlice({
   name: "result/direct",
   initialState: initialState(),
   reducers: {
-    setResult: (state, action: PayloadAction<UiDirection>) => { state.result = action.payload; }
+    setResultDirect: (state, action: PayloadAction<UiDirection>) => { state.result = action.payload; },
+    setResultDirectBack: (state, action: PayloadAction<string | undefined>) => { state.back = action.payload; }
   }
 });
 
 export const {
-  setResult
+  setResultDirect,
+  setResultDirectBack
 } = resultDirectSlice.actions;
 
 export default resultDirectSlice.reducer;

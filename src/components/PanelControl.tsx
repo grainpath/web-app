@@ -15,9 +15,10 @@ import {
   SEARCH_PLACES_ADDR,
   SEARCH_ROUTES_ADDR,
 } from "../domain/routing";
+import SearchDirectPanel from "./SearchDirectPanel";
 import SearchPlacesPanel from "./SearchPlacesPanel";
 import SearchRoutesPanel from "./SearchRoutesPanel";
-import SearchDirectPanel from "./SearchDirectPanel";
+import ResultDirectPanel from "./ResultDirectPanel";
 import ResultPlacesPanel from "./ResultPlacesPanel";
 import ResultRoutesPanel from "./ResultRoutesPanel";
 import EntityPanel from "./EntityPanel";
@@ -32,10 +33,9 @@ export default function MainPanel(): JSX.Element {
   const map = useContext(AppContext).map;
   const panel = useCallback(() => { dispatch(showPanel()); }, [dispatch]);
 
-  useEffect(() => { panel(); }, [map, panel]);
+  const width = useMediaQuery("(max-width: 500px)") ? "100%" : "400px";
 
-  const small = useMediaQuery("(max-width: 500px)");
-  const width = (small) ? ("100%") : ("400px");
+  useEffect(() => { panel(); }, [map, panel]);
 
   return (
     <HashRouter>
@@ -51,7 +51,7 @@ export default function MainPanel(): JSX.Element {
           <Route path={SEARCH_DIRECT_ADDR} element={<SearchDirectPanel />} />
           <Route path={RESULT_ROUTES_ADDR} element={<ResultRoutesPanel />} />
           <Route path={RESULT_PLACES_ADDR} element={<ResultPlacesPanel />} />
-          <Route path={RESULT_DIRECT_ADDR} element={<></>} />
+          <Route path={RESULT_DIRECT_ADDR} element={<ResultDirectPanel />} />
           <Route path={ENTITY_ADDR + "/:id"} element={<EntityPanel />} />
           <Route path={FAVOURITES_ADDR} element={<FavouritesPanel />} />
           <Route path="/" element={<Navigate to={SEARCH_ROUTES_ADDR} />} />

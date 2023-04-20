@@ -120,11 +120,13 @@ export default function ResultPlacesPanel(): JSX.Element {
     <Box>
       <BackCloseMenu onBack={onBack} />
       <Box sx={{ mx: 2, my: 4 }}>
-        {(placesLoaded)
+        {placesLoaded
           ? <Box>
-              {result
-                ? (<ResultPlacesSection result={result} />)
-                : (<Alert severity="warning">Oops... Result appears to be empty!</Alert>)
+              {result && result.places.length > 0
+                ? <ResultPlacesSection result={result} />
+                : <Alert severity="warning">
+                    Oops... Result appears to be empty! Try different search parameters.
+                  </Alert>
               }
             </Box>
           : <LoadStub />

@@ -2,26 +2,23 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
-  Button,
   Link,
   Stack,
   Typography
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 import { AppContext } from "../App";
 import { RESULT_PLACES_ADDR } from "../domain/routing";
 import { GrainPathFetcher } from "../utils/grainpath";
 import { point2place } from "../utils/helpers";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
-import { clear } from "../features/searchPlacesSlice";
+import { clearSearchPlaces } from "../features/searchPlacesSlice";
 import { setResultPlaces } from "../features/resultPlacesSlice";
 import {
-  deleteCondition,
-  insertCondition,
-  setCenter,
-  setRadius
+  deleteSearchPlacesCondition,
+  insertSearchPlacesCondition,
+  setSearchPlacesCenter,
+  setSearchPlacesRadius
 } from "../features/searchPlacesSlice";
 import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
@@ -50,7 +47,7 @@ export default function SearchPlacesPanel(): JSX.Element {
     if (center) {
       (center.placeId || center.grainId)
         ? (map?.addStored(center))
-        : (map?.addCustom(center, true).withDrag(pt => dispatch(setCenter(point2place(pt)))).withCirc(map, meters));
+        : (map?.addCustom(center, true).withDrag(pt => dispatch(setSearchPlacesCenter(point2place(pt)))).withCirc(map, meters));
 
       map?.drawCircle(center.location, meters);
     }
@@ -87,7 +84,7 @@ export default function SearchPlacesPanel(): JSX.Element {
                 kind={center.placeId ? "stored" : "custom"}
                 label={center.name}
                 onPlace={() => { map?.flyTo(center); }}
-                onDelete={() => { dispatch(setCenter(undefined)); }}
+                onDelete={() => { dispatch(setSearchPlacesCenter(undefined)); }}
               />
             : <FreePlaceListItem
                 kind="center"
@@ -107,7 +104,7 @@ export default function SearchPlacesPanel(): JSX.Element {
             seq={[ 2, 4, 6, 8, 10 ]}
             step={0.1}
             distance={radius}
-            dispatch={(value) => { dispatch(setRadius(value)); }}
+            dispatch={(value) => { dispatch(setSearchPlacesRadius(value)); }}
           />
         </Box>
         <Typography>
@@ -115,19 +112,19 @@ export default function SearchPlacesPanel(): JSX.Element {
         </Typography>
         <KeywordsBox
           conditions={conditions}
-          deleteCondition={(i) => dispatch(deleteCondition(i))}
-          insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
+          deleteCondition={(i) => dispatch(deleteSearchPlacesCondition(i))}
+          insertCondition={(condition, i) => dispatch(insertSearchPlacesCondition({ condition: condition, i: i }))}
         />
         <BottomButtons
           disabled={!center || !(conditions.length > 0)}
-          onClear={() => { dispatch(clear()); }}
+          onClear={() => { dispatch(clearSearchPlaces()); }}
           onSearch={() => { load(); }}
         />
         {modC &&
           <SelectPlaceModal
             kind="center"
             onHide={() => { setModC(false); }}
-            onSelect={(place) => { dispatch(setCenter(place)) }}
+            onSelect={(place) => { dispatch(setSearchPlacesCenter(place)) }}
           />
         }
       </Stack>

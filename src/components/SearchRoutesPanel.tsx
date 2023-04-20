@@ -13,15 +13,15 @@ import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
 import {
-  clear,
-  deleteCondition,
-  insertCondition,
-  setDistance,
-  setSource,
-  setTarget,
+  clearSearchRoutes,
+  deleteSearchRoutesCondition,
+  insertSearchRoutesCondition,
+  setSearchRoutesDistance,
+  setSearchRoutesSource,
+  setSearchRoutesTarget,
 } from "../features/searchRoutesSlice";
 import {
-  setResultBack,
+  setResultRoutesBack,
   setResultRoutes
 } from "../features/resultRoutesSlice";
 import { point2place } from "../utils/helpers";
@@ -53,17 +53,17 @@ export default function SearchRoutesPanel(): JSX.Element {
     if (source) {
       (source.placeId || source.grainId)
         ? (map?.addSource(source, false))
-        : (map?.addSource(source, true).withDrag(pt => dispatch(setSource(point2place(pt)))));
+        : (map?.addSource(source, true).withDrag(pt => dispatch(setSearchRoutesSource(point2place(pt)))));
     }
 
     if (target) {
       (target.placeId || target.grainId)
         ? (map?.addTarget(target, false))
-        : (map?.addTarget(target, true).withDrag(pt => dispatch(setTarget(point2place(pt)))));
+        : (map?.addTarget(target, true).withDrag(pt => dispatch(setSearchRoutesTarget(point2place(pt)))));
     }
   }, [map, navigate, dispatch, source, target]);
 
-  const swap = () => { dispatch(setSource(target)); dispatch(setTarget(source)); }
+  const swap = () => { dispatch(setSearchRoutesSource(target)); dispatch(setSearchRoutesTarget(source)); }
 
   const load = () => {
     new Promise<void>((res, _) => { dispatch(setBlock(true)); res(); })
@@ -77,7 +77,7 @@ export default function SearchRoutesPanel(): JSX.Element {
       }))
       .then((res) => {
         dispatch(setResultRoutes(res));
-        dispatch(setResultBack(SEARCH_ROUTES_ADDR));
+        dispatch(setResultRoutesBack(SEARCH_ROUTES_ADDR));
         navigate(RESULT_ROUTES_ADDR);
       })
       .catch((ex) => { alert(ex); })
@@ -97,7 +97,7 @@ export default function SearchRoutesPanel(): JSX.Element {
                   kind="source"
                   label={source.name}
                   onPlace={() => { map?.flyTo(source); }}
-                  onDelete={() => { dispatch(setSource(undefined)); }}
+                  onDelete={() => { dispatch(setSearchRoutesSource(undefined)); }}
                 />
               : <FreePlaceListItem
                   kind="source"
@@ -110,7 +110,7 @@ export default function SearchRoutesPanel(): JSX.Element {
                   kind="target"
                   label={target.name}
                   onPlace={() => { map?.flyTo(target); }}
-                  onDelete={() => { dispatch(setTarget(undefined)); }}
+                  onDelete={() => { dispatch(setSearchRoutesTarget(undefined)); }}
                 />
               : <FreePlaceListItem
                   kind="target"
@@ -138,33 +138,33 @@ export default function SearchRoutesPanel(): JSX.Element {
           seq={[ 5, 10, 15, 20, 25 ]}
           step={0.2}
           distance={distance}
-          dispatch={(value) => { dispatch(setDistance(value)); }}
+          dispatch={(value) => { dispatch(setSearchRoutesDistance(value)); }}
         />
         <Typography>
           Visit places satisfying the following conditions:
         </Typography>
         <KeywordsBox
           conditions={conditions}
-          deleteCondition={(i) => dispatch(deleteCondition(i))}
-          insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
+          deleteCondition={(i) => dispatch(deleteSearchRoutesCondition(i))}
+          insertCondition={(condition, i) => dispatch(insertSearchRoutesCondition({ condition: condition, i: i }))}
         />
         <BottomButtons
           disabled={!source || !target || !(conditions.length > 0)}
-          onClear={() => { dispatch(clear()); }}
+          onClear={() => { dispatch(clearSearchRoutes()); }}
           onSearch={() => { load(); }}
         />
         {modS &&
           <SelectPlaceModal
             kind="source"
             onHide={() => setModS(false)}
-            onSelect={(place) => dispatch(setSource(place))}
+            onSelect={(place) => dispatch(setSearchRoutesSource(place))}
           />
         }
         {modT &&
           <SelectPlaceModal
             kind="target"
             onHide={() => setModT(false)}
-            onSelect={(place) => dispatch(setTarget(place))}
+            onSelect={(place) => dispatch(setSearchRoutesTarget(place))}
           />
         }
       </Stack>

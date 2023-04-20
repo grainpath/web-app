@@ -15,14 +15,14 @@ export const placesSlice = createSlice({
   name: "search/places",
   initialState: initialState(),
   reducers: {
-    clear: () => { return initialState(); },
-    setCenter: (state, action: PayloadAction<UiPlace | undefined>) => { state.center = action.payload; },
-    setRadius: (state, action: PayloadAction<number>) => { state.radius = action.payload; },
-    deleteCondition: (state, action: PayloadAction<number>) => {
+    clearSearchPlaces: () => { return initialState(); },
+    setSearchPlacesCenter: (state, action: PayloadAction<UiPlace | undefined>) => { state.center = action.payload; },
+    setSearchPlacesRadius: (state, action: PayloadAction<number>) => { state.radius = action.payload; },
+    deleteSearchPlacesCondition: (state, action: PayloadAction<number>) => {
       const i = action.payload;
       state.conditions = [...state.conditions.slice(0, i), ...state.conditions.slice(i + 1)];
     },
-    insertCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
+    insertSearchPlacesCondition: (state, action: PayloadAction<{ condition: KeywordCondition; i: number; }>) => {
       const { i, condition } = action.payload;
       state.conditions = [...state.conditions.slice(0, i), condition, ...state.conditions.slice(i + 1)];
     }
@@ -30,11 +30,11 @@ export const placesSlice = createSlice({
 });
 
 export const {
-  clear,
-  setCenter,
-  setRadius,
-  deleteCondition,
-  insertCondition
+  clearSearchPlaces,
+  setSearchPlacesCenter,
+  setSearchPlacesRadius,
+  deleteSearchPlacesCondition,
+  insertSearchPlacesCondition
 } = placesSlice.actions;
 
 export default placesSlice.reducer;
