@@ -63,13 +63,13 @@ export class GrainPathFetcher {
   }
 
   /**
-   * Fetch walking path visiting a sequence of locations.
+   * Fetch walking path visiting a sequence of locations in a given order.
    */
   public static async fetchDirect(sequence: UiPlace[]): Promise<UiDirection | undefined> {
     const waypoints = sequence.map((l) => l.location);
     const jsn = await GrainPathFetcher
-        .fetch(GRAINPATH_DIRECT_URL, { waypoints: waypoints });
-      return (jsn) ? { name: "", path: jsn, sequence: sequence } : undefined;
+      .fetch(GRAINPATH_DIRECT_URL, { waypoints: waypoints });
+    return (jsn) ? { name: "", path: jsn, sequence: sequence } : undefined;
   }
 
   /**
@@ -96,7 +96,12 @@ export class GrainPathFetcher {
   public static async fetchRoutes(request: RoutesRequest): Promise<UiRoute[]> {
     const { source, target, distance, ...rest } = request;
     const jsn = await GrainPathFetcher
-      .fetch(GRAINPATH_ROUTES_URL, { source: source.location, target: target.location, distance: distance * 1000, ...rest });
+      .fetch(GRAINPATH_ROUTES_URL, {
+        ...rest,
+        source: source.location,
+        target: target.location,
+        distance: distance * 1000
+      });
     return jsn.routes.map((route: any) => {
       route.path.distance = route.path.distance / 1000;
       return { name: "", ...request, ...route };

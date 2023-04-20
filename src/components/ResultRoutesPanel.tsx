@@ -4,12 +4,8 @@ import {
   Alert,
   Box,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Pagination,
   Stack,
-  TextField,
   Typography
 } from "@mui/material";
 import { AppContext } from "../App";
@@ -22,78 +18,19 @@ import {
 } from "../domain/functions";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import {
-  createRoute,
   setPlaces,
   setPlacesLoaded
 } from "../features/favouritesSlice";
 import {
   clearResultRoutes,
-  replaceResultRoute,
   setResultRoutesIndex
 } from "../features/resultRoutesSlice";
-import { IdGenerator } from "../utils/helpers";
 import { BackCloseMenu } from "./shared-menus";
 import { SteadyPlaceListItem } from "./shared-list-items";
 import LoadStub from "./Result/LoadStub";
 import PlacesFilter from "./Result/PlacesFilter";
 import PlacesList from "./Result/PlacesList";
-
-type SaveModalProps = {
-  index: number;
-  route: UiRoute;
-  onHide: () => void;
-};
-
-function SaveModal({ index, route, onHide }: SaveModalProps): JSX.Element {
-
-  const dispatch = useAppDispatch();
-  const { storage } = useContext(AppContext);
-
-  const [name, setName] = useState(route.name);
-  const [disabled, setDisabled] = useState(false);
-
-  const action = async () => {
-    setDisabled(true);
-    try {
-      const rt = { ...route, name: name };
-      const sr = {
-        ...rt,
-        routeId: IdGenerator.generateId(rt)
-      };
-      await storage.createRoute(sr);
-      dispatch(createRoute(sr));
-      dispatch(replaceResultRoute({ route: sr, index: index }));
-      onHide();
-    }
-    catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
-  };
-
-  return (
-    <Dialog open>
-      <DialogTitle>Save route</DialogTitle>
-      <DialogContent>
-        <Stack direction="column" gap={2}>
-          <TextField
-            value={name}
-            sx={{ mt: 0.5 }}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Box maxWidth="350px">
-            <Typography fontSize="small" color="grey">
-              Save operation creates a <strong>local</strong> copy of this
-              route. Local copies are no longer synchronized with the server.
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
-          </Box>
-        </Stack>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import SaveRouteModal from "./Result/SaveRouteModal";
 
 type ResultRoutesSectionProps = {
 
@@ -161,7 +98,7 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
             <Alert icon={false} severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
               Would you like to save this route?
             </Alert>
-            {modal && <SaveModal index={index} route={route} onHide={() => { setModal(false); }} />}
+            {modal && <SaveRouteModal index={index} route={route} onHide={() => { setModal(false); }} />}
           </Box>)
       }
       <Box display="flex" alignItems="center">
