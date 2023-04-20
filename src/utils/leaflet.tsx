@@ -76,7 +76,7 @@ function PlacePopup({ place }: PlacePopupProps): JSX.Element {
       {place.keywords.length > 0 &&
         <div>
           <hr style={{opacity: 0.7, margin: "0.25rem 0"}} />
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "12px", width: "200px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "12px", width: "220px" }}>
             {place.keywords.map((keyword, i) =>
               <div key={i}>
                 {set.has(keyword) ? <strong>{keyword}</strong> : <span style={{ color: "grey" }}>{keyword}</span>}
