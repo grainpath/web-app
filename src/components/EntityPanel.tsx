@@ -56,7 +56,7 @@ export default function EntityPanel(): JSX.Element {
           ? <Box>
               {(entity)
                 ? <EntityView entity={entity} />
-                : <Alert severity="warning">Either an entity with ID:{id} does not exist, or a communication error occurred.</Alert>
+                : <Alert severity="warning">Either an entity does not exist, or a communication error occurred.</Alert>
               }
             </Box>
           : <Stack direction="column" gap={2}>

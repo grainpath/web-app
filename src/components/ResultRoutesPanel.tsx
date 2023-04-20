@@ -91,22 +91,22 @@ function ResultRoutesSection({ result }: ResultRoutesSectionProps): JSX.Element 
         <Pagination count={result.length} page={index + 1} onChange={onPage} />
       </Box>
       {(routeId)
-        ? (<Alert severity="success">
+        ? <Alert severity="success">
             Saved as <strong>{name}</strong>.
-          </Alert>)
-        : (<Box>
+          </Alert>
+        : <Box>
             <Alert icon={false} severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
               Would you like to save this route?
             </Alert>
             {modal && <SaveRouteModal index={index} route={route} onHide={() => { setModal(false); }} />}
-          </Box>)
+          </Box>
       }
       <Box display="flex" alignItems="center">
         <Typography fontSize="1.2rem">
           Distance:&nbsp;&nbsp;&nbsp;<strong>{Number(path.distance.toFixed(2))}</strong> / {distance} km
         </Typography>
       </Box>
-      <Stack spacing={2} direction="row" justifyContent="center" flexWrap="wrap">
+      <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={2}>
         {conditions.map((c, i) => (
           <PlacesFilter
             key={i}
@@ -167,7 +167,7 @@ export default function ResultRoutesPanel(): JSX.Element {
               {result.length > 0
                 ? <ResultRoutesSection result={result} />
                 : <Alert severity="warning">
-                    Oops... List of routes appears to be empty. Try different search parameters.
+                    List of routes appears to be empty. Try different search parameters.
                   </Alert>
               }
             </Box>

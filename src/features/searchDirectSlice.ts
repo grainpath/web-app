@@ -13,31 +13,31 @@ export const searchDirectSlice = createSlice({
   name: "search/direct",
   initialState: initialState(),
   reducers: {
-    clear: () => { return initialState(); },
-    setSequence: (state, action: PayloadAction<UiPlace[]>) => { state.sequence = action.payload },
+    clearSequence: () => { return initialState(); },
     appendPlace: (state, action: PayloadAction<UiPlace>) => { state.sequence.push(action.payload); },
     deletePlace: (state, action: PayloadAction<number>) => {
       const i = action.payload;
       state.sequence = [...state.sequence.slice(0, i), ...state.sequence.slice(i + 1)];
     },
-    swapPlaces: (state, action: PayloadAction<{ l: number, r: number }>) => {
-      const { l, r } = action.payload;
+    movePlace: (state, action: PayloadAction<{ fr: number, to: number }>) => {
+      const sq = state.sequence;
+      const { fr, to } = action.payload;
       state.sequence = [
-        ...state.sequence.slice(0, l),
-        state.sequence[r],
-        ...state.sequence.slice(l + 1, r),
-        state.sequence[l],
-        ...state.sequence.slice(r + 1)];
+        ...sq.slice(0, Math.min(fr, to)),
+        ...((fr < to)
+          ? [...sq.slice(fr + 1, to + 1), sq[fr]]
+          : [sq[to], ...sq.slice(fr + 0, to + 0)]),
+        ...sq.slice(Math.max(fr, to) + 1)
+      ]
     }
   }
 });
 
 export const {
-  clear,
-  setSequence,
   appendPlace,
+  clearSequence,
   deletePlace,
-  swapPlaces,
+  movePlace
 } = searchDirectSlice.actions;
 
 export default searchDirectSlice.reducer;
