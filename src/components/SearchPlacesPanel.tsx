@@ -29,8 +29,9 @@ import {
   FreePlaceListItem,
   RemovablePlaceListItem
 } from "./shared-list-items";
-import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
+import KeywordsBox from "./Search/KeywordsBox";
+import BottomButtons from "./Search/BottomButtons";
 
 export default function SearchPlacesPanel(): JSX.Element {
 
@@ -40,7 +41,6 @@ export default function SearchPlacesPanel(): JSX.Element {
   const map = useContext(AppContext).map;
 
   const dispatch = useAppDispatch();
-  const { block } = useAppSelector(state => state.panel);
   const { center, radius, conditions } = useAppSelector(state => state.searchPlaces);
 
   useEffect(() => {
@@ -118,32 +118,16 @@ export default function SearchPlacesPanel(): JSX.Element {
           deleteCondition={(i) => dispatch(deleteCondition(i))}
           insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
         />
-        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Button
-            color="error"
-            title="Clear form"
-            onClick={() => { dispatch(clear()); }}
-          >
-            <span>Clear</span>
-          </Button>
-          <LoadingButton
-            size="large"
-            variant="contained"
-            startIcon={<Search />}
-            loadingPosition="start"
-            title={"Search places"}
-            onClick={() => { load(); }}
-            loading={block}
-            disabled={!center || !(conditions.length > 0)}
-          >
-            <span>Search</span>
-          </LoadingButton>
-        </Box>
+        <BottomButtons
+          disabled={!center || !(conditions.length > 0)}
+          onClear={() => { dispatch(clear()); }}
+          onSearch={() => { load(); }}
+        />
         {modC &&
           <SelectPlaceModal
             kind="center"
             onHide={() => { setModC(false); }}
-            func={(place) => { dispatch(setCenter(place)) }}
+            onSelect={(place) => { dispatch(setCenter(place)) }}
           />
         }
       </Stack>

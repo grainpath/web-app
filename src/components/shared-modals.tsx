@@ -30,17 +30,17 @@ import { AddPlaceButton } from "./shared-buttons";
 
 type SelectPlaceModalProps = {
 
-  /** */
+  /** Place kind (source, target, custom, etc.) */
   kind: PlaceKind;
 
-  /** */
+  /** Hides modal */
   onHide: () => void;
 
-  /** */
-  func: (place: UiPlace) => void;
+  /** Dispatch selected place to the state */
+  onSelect: (place: UiPlace) => void;
 };
 
-export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps): JSX.Element {
+export function SelectPlaceModal({ kind, onHide, onSelect }: SelectPlaceModalProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { map, storage } = useContext(AppContext);
@@ -48,7 +48,7 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
   // custom place
 
   const callback = (point: WgsPoint) => {
-    func(point2place(point));
+    onSelect(point2place(point));
     dispatch(showPanel());
   };
 
@@ -77,7 +77,7 @@ export function SelectPlaceModal({ kind, onHide, func }: SelectPlaceModalProps):
   }, [storage, dispatch, placesLoaded]);
 
   const handleFavourites = () => {
-    func(place!);
+    onSelect(place!);
     onHide();
   };
 

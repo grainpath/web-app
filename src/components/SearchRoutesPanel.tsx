@@ -7,8 +7,7 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import { Search, SwapVert } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
+import { SwapVert } from "@mui/icons-material";
 import { AppContext } from "../App";
 import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
@@ -21,6 +20,10 @@ import {
   setSource,
   setTarget,
 } from "../features/searchRoutesSlice";
+import {
+  setResultBack,
+  setResultRoutes
+} from "../features/resultRoutesSlice";
 import { point2place } from "../utils/helpers";
 import { GrainPathFetcher } from "../utils/grainpath";
 import {
@@ -29,9 +32,9 @@ import {
 } from "./shared-list-items";
 import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
-import KeywordsBox from "./Search/KeywordsBox";
 import DistanceSlider from "./Search/DistanceSlider";
-import { setResultBack, setResultRoutes } from "../features/resultRoutesSlice";
+import KeywordsBox from "./Search/KeywordsBox";
+import BottomButtons from "./Search/BottomButtons";
 
 export default function SearchRoutesPanel(): JSX.Element {
 
@@ -42,7 +45,6 @@ export default function SearchRoutesPanel(): JSX.Element {
   const { map } = useContext(AppContext);
 
   const dispatch = useAppDispatch();
-  const { block } = useAppSelector(state => state.panel);
   const { source, target, distance, conditions } = useAppSelector(state => state.searchRoutes);
 
   useEffect(() => {
@@ -118,7 +120,14 @@ export default function SearchRoutesPanel(): JSX.Element {
             }
           </Stack>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button sx={{ mt: 1, textTransform: "none" }} startIcon={<SwapVert />} size="small" onClick={() => { swap(); }}>Swap points</Button>
+            <Button
+              size="small"
+              startIcon={<SwapVert />}
+              onClick={() => { swap(); }}
+              sx={{ mt: 1, textTransform: "none" }}
+            >
+              Swap points
+            </Button>
           </Box>
         </Stack>
         <Typography>
@@ -139,38 +148,23 @@ export default function SearchRoutesPanel(): JSX.Element {
           deleteCondition={(i) => dispatch(deleteCondition(i))}
           insertCondition={(condition, i) => dispatch(insertCondition({ condition: condition, i: i }))}
         />
-        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Button
-            color="error"
-            title="Clear form"
-            onClick={() => { dispatch(clear()); }}
-          >
-            <span>Clear</span>
-          </Button>
-          <LoadingButton
-            size="large"
-            variant="contained"
-            startIcon={<Search />}
-            loadingPosition="start"
-            onClick={() => { load(); }}
-            loading={block}
-            disabled={!source || !target || !(conditions.length > 0)}
-          >
-            <span>Search</span>
-          </LoadingButton>
-        </Box>
+        <BottomButtons
+          disabled={!source || !target || !(conditions.length > 0)}
+          onClear={() => { dispatch(clear()); }}
+          onSearch={() => { load(); }}
+        />
         {modS &&
           <SelectPlaceModal
             kind="source"
             onHide={() => setModS(false)}
-            func={(place) => dispatch(setSource(place))}
+            onSelect={(place) => dispatch(setSource(place))}
           />
         }
         {modT &&
           <SelectPlaceModal
             kind="target"
             onHide={() => setModT(false)}
-            func={(place) => dispatch(setTarget(place))}
+            onSelect={(place) => dispatch(setTarget(place))}
           />
         }
       </Stack>
