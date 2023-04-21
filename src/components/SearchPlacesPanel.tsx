@@ -26,9 +26,9 @@ import {
   RemovablePlaceListItem
 } from "./shared-list-items";
 import SelectPlaceModal from "./shared/SelectPlaceModal";
-import DistanceSlider from "./Search/DistanceSlider";
-import KeywordsBox from "./Search/KeywordsBox";
-import BottomButtons from "./Search/BottomButtons";
+import DistanceSlider from "./search/DistanceSlider";
+import KeywordsBox from "./search/KeywordsBox";
+import BottomButtons from "./search/BottomButtons";
 
 export default function SearchPlacesPanel(): JSX.Element {
 

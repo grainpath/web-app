@@ -32,9 +32,9 @@ import {
 } from "./shared-list-items";
 import SelectPlaceModal from "./shared/SelectPlaceModal";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
-import DistanceSlider from "./Search/DistanceSlider";
-import KeywordsBox from "./Search/KeywordsBox";
-import BottomButtons from "./Search/BottomButtons";
+import DistanceSlider from "./search/DistanceSlider";
+import KeywordsBox from "./search/KeywordsBox";
+import BottomButtons from "./search/BottomButtons";
 
 export default function SearchRoutesPanel(): JSX.Element {
 

@@ -10,8 +10,8 @@ import {
   setResultDirecsBack
 } from "../features/resultDirecsSlice";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
-import BottomButtons from "./Search/BottomButtons";
-import SearchDirecsSequence from "./Search/SearchDirecsSequence";
+import BottomButtons from "./search/BottomButtons";
+import SearchDirecsSequence from "./search/SearchDirecsSequence";
 
 export default function SearchDirecsPanel(): JSX.Element {
 

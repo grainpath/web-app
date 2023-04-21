@@ -8,8 +8,8 @@ import {
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
 import { BackCloseMenu } from "./shared-menus";
-import LoadStub from "./Result/LoadStub";
-import ResultRoutesContent from "./Result/ResultRoutesContent";
+import LoadStub from "./result/LoadStub";
+import ResultRoutesContent from "./result/ResultRoutesContent";
 
 
 export default function ResultRoutesPanel(): JSX.Element {

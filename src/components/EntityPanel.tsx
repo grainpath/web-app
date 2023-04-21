@@ -9,7 +9,7 @@ import {
 } from "../features/favouritesSlice";
 import { GrainPathFetcher } from "../utils/grainpath";
 import { BackCloseMenu } from "./shared-menus";
-import EntityContent from "./Entity/EntityContent";
+import EntityContent from "./entity/EntityContent";
 
 export default function EntityPanel(): JSX.Element {
 
