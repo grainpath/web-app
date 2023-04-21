@@ -1,5 +1,5 @@
 import {
-  StoredDirection,
+  StoredDirec,
   StoredPlace,
   StoredRoute,
   UiPlace,
@@ -103,7 +103,7 @@ export interface IStorage {
 
   createRoute(route: StoredRoute): Promise<void>;
 
-  createDirection(direction: StoredDirection): Promise<void>;
+  createDirec(direc: StoredDirec): Promise<void>;
 
   // [R]ead
 
@@ -111,7 +111,7 @@ export interface IStorage {
 
   getAllRoutes(): Promise<StoredRoute[]>;
 
-  getAllDirections(): Promise<StoredDirection[]>;
+  getAllDirecs(): Promise<StoredDirec[]>;
 
   // [U]pdate
 
@@ -119,7 +119,7 @@ export interface IStorage {
 
   updateRoute(route: StoredRoute): Promise<void>;
 
-  updateDirection(direction: StoredDirection): Promise<void>;
+  updateDirec(direc: StoredDirec): Promise<void>;
 
   // [D]elete
 
@@ -127,5 +127,5 @@ export interface IStorage {
 
   deleteRoute(routeId: string): Promise<void>;
 
-  deleteDirection(directionId: string): Promise<void>;
+  deleteDirec(direcId: string): Promise<void>;
 }

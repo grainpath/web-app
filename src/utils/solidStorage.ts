@@ -2,7 +2,7 @@ import { IStorage } from "../domain/interfaces";
 import {
   StoredPlace,
   StoredRoute,
-  StoredDirection
+  StoredDirec
 } from "../domain/types";
 
 /**
@@ -20,7 +20,7 @@ export class SolidStorage implements IStorage {
     throw new Error("Method not implemented.");
   }
 
-  createDirection(direction: StoredDirection): Promise<void> {
+  createDirec(direc: StoredDirec): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
@@ -34,7 +34,7 @@ export class SolidStorage implements IStorage {
     throw new Error("Method not implemented.");
   }
 
-  getAllDirections(): Promise<StoredDirection[]> {
+  getAllDirecs(): Promise<StoredDirec[]> {
     throw new Error("Method not implemented.");
   }
 
@@ -48,7 +48,7 @@ export class SolidStorage implements IStorage {
     throw new Error("Method not implemented.");
   }
 
-  updateDirection(direction: StoredDirection): Promise<void> {
+  updateDirec(direc: StoredDirec): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
@@ -62,7 +62,7 @@ export class SolidStorage implements IStorage {
     throw new Error("Method not implemented.");
   }
 
-  deleteDirection(directionId: string): Promise<void> {
+  deleteDirec(direcId: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

@@ -2,7 +2,11 @@
  * Point in [WGS84] CRS.
  */
 export type WgsPoint = {
+
+  /** Longitude. */
   lon: number;
+
+  /** Latitude. */
   lat: number;
 };
 
@@ -267,7 +271,7 @@ type Path = {
 /**
  * Any result upon direction request, known or new.
  */
-export type DirectionAttributes = {
+export type DirecAttributes = {
   name: string;
   path: Path;
   sequence: UiPlace[];
@@ -276,15 +280,15 @@ export type DirectionAttributes = {
 /**
  * Direction in the user interface, either stored or not.
  */
-export type UiDirection = DirectionAttributes & {
-  directionId?: string;
+export type UiDirec = DirecAttributes & {
+  direcId?: string;
 };
 
 /**
  * Direction result as per stored in the IStorage.
  */
-export type StoredDirection = DirectionAttributes & {
-  directionId: string;
+export type StoredDirec = DirecAttributes & {
+  direcId: string;
 };
 
 /**

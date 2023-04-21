@@ -1,6 +1,6 @@
 import { IStorage } from "../domain/interfaces";
 import {
-  StoredDirection,
+  StoredDirec,
   StoredPlace,
   StoredRoute
 } from "../domain/types";
@@ -14,7 +14,7 @@ export default class IndexStorage implements IStorage {
 
   private static places = "places";
   private static routes = "routes";
-  private static directions = "directions";
+  private static direcs = "direcs";
 
   private static generateError = (msg: string) => new Error(`[DB error] ${msg}`);
 
@@ -37,7 +37,7 @@ export default class IndexStorage implements IStorage {
       const db = (e.target as IDBOpenDBRequest).result;
       db.createObjectStore(IndexStorage.places, { keyPath: "placeId" });
       db.createObjectStore(IndexStorage.routes, { keyPath: "routeId" });
-      db.createObjectStore(IndexStorage.directions, { keyPath: "directionId" });
+      db.createObjectStore(IndexStorage.direcs, { keyPath: "direcId" });
     }
     request.onerror = () => { alert(IndexStorage.openErrorMsg); }
   }
@@ -68,8 +68,8 @@ export default class IndexStorage implements IStorage {
     return IndexStorage.createT(IndexStorage.routes, route);
   }
 
-  public createDirection(direction: StoredDirection): Promise<void> {
-    return IndexStorage.createT(IndexStorage.directions, direction);
+  public createDirec(direc: StoredDirec): Promise<void> {
+    return IndexStorage.createT(IndexStorage.direcs, direc);
   }
 
   // [R]ead
@@ -98,8 +98,8 @@ export default class IndexStorage implements IStorage {
     return this.getAllT(IndexStorage.routes);
   }
 
-  public getAllDirections(): Promise<StoredDirection[]> {
-    return this.getAllT(IndexStorage.directions);
+  public getAllDirecs(): Promise<StoredDirec[]> {
+    return this.getAllT(IndexStorage.direcs);
   }
 
   // [U]pdate
@@ -128,8 +128,8 @@ export default class IndexStorage implements IStorage {
     return this.updateT(IndexStorage.routes, route);
   }
 
-  public updateDirection(direction: StoredDirection): Promise<void> {
-    return this.updateT(IndexStorage.directions, direction);
+  public updateDirec(direc: StoredDirec): Promise<void> {
+    return this.updateT(IndexStorage.direcs, direc);
   }
 
   // [D]elete
@@ -158,7 +158,7 @@ export default class IndexStorage implements IStorage {
     return this.deleteT(IndexStorage.routes, routeId);
   }
 
-  public deleteDirection(directionId: string): Promise<void> {
-    return this.deleteT(IndexStorage.directions, directionId);
+  public deleteDirec(direcId: string): Promise<void> {
+    return this.deleteT(IndexStorage.direcs, direcId);
   }
 }

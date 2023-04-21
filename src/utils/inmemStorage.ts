@@ -1,5 +1,5 @@
 import { IStorage } from "../domain/interfaces";
-import { StoredDirection, StoredPlace, StoredRoute } from "../domain/types";
+import { StoredDirec, StoredPlace, StoredRoute } from "../domain/types";
 
 /**
  * Wrapper over standard (k, v) collection.
@@ -8,7 +8,7 @@ export default class InmemStorage implements IStorage {
 
   private readonly places = new Map<string, StoredPlace>();
   private readonly routes = new Map<string, StoredRoute>();
-  private readonly directions = new Map<string, StoredDirection>();
+  private readonly direcs = new Map<string, StoredDirec>();
 
   // [C]reate
 
@@ -24,8 +24,8 @@ export default class InmemStorage implements IStorage {
     return this.createT(this.routes, route.routeId, route);
   }
 
-  public createDirection(direction: StoredDirection): Promise<void> {
-    return this.createT(this.directions, direction.directionId, direction);
+  public createDirec(direc: StoredDirec): Promise<void> {
+    return this.createT(this.direcs, direc.direcId, direc);
   }
 
   // [R]ead
@@ -42,8 +42,8 @@ export default class InmemStorage implements IStorage {
     return this.getAllT(this.routes);
   }
 
-  public getAllDirections(): Promise<StoredDirection[]> {
-    return this.getAllT(this.directions);
+  public getAllDirecs(): Promise<StoredDirec[]> {
+    return this.getAllT(this.direcs);
   }
 
   // [U]pdate
@@ -60,8 +60,8 @@ export default class InmemStorage implements IStorage {
     return this.updateT(this.routes, route.routeId, route);
   }
 
-  public updateDirection(direction: StoredDirection): Promise<void> {
-    return this.updateT(this.directions, direction.directionId, direction);
+  public updateDirec(direc: StoredDirec): Promise<void> {
+    return this.updateT(this.direcs, direc.direcId, direc);
   }
 
   // [D]elete
@@ -78,7 +78,7 @@ export default class InmemStorage implements IStorage {
     return this.deleteT(this.routes, routeId);
   }
 
-  public deleteDirection(directionId: string): Promise<void> {
-    return this.deleteT(this.directions, directionId);
+  public deleteDirec(direcId: string): Promise<void> {
+    return this.deleteT(this.direcs, direcId);
   }
 }

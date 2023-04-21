@@ -5,7 +5,7 @@ import {
   PlacesRequest,
   PlacesResult,
   RoutesRequest,
-  UiDirection,
+  UiDirec,
   UiPlace,
   UiRoute
 } from "../domain/types";
@@ -14,7 +14,7 @@ const GRAINPATH_BASIS_URL = process.env.REACT_APP_API_ADDRESS! + process.env.REA
 
 const GRAINPATH_AUTOCS_URL = GRAINPATH_BASIS_URL + "/autocs";
 const GRAINPATH_BOUNDS_URL = GRAINPATH_BASIS_URL + "/bounds";
-const GRAINPATH_DIRECT_URL = GRAINPATH_BASIS_URL + "/direct";
+const GRAINPATH_DIRECS_URL = GRAINPATH_BASIS_URL + "/direcs";
 const GRAINPATH_ENTITY_URL = GRAINPATH_BASIS_URL + "/entity";
 const GRAINPATH_ROUTES_URL = GRAINPATH_BASIS_URL + "/routes";
 const GRAINPATH_PLACES_URL = GRAINPATH_BASIS_URL + "/places";
@@ -65,10 +65,10 @@ export class GrainPathFetcher {
   /**
    * Fetch walking path visiting a sequence of locations in a given order.
    */
-  public static async fetchDirect(sequence: UiPlace[]): Promise<UiDirection | undefined> {
+  public static async fetchDirecs(sequence: UiPlace[]): Promise<UiDirec | undefined> {
     const waypoints = sequence.map((l) => l.location);
     const jsn = await GrainPathFetcher
-      .fetch(GRAINPATH_DIRECT_URL, { waypoints: waypoints });
+      .fetch(GRAINPATH_DIRECS_URL, { waypoints: waypoints });
     return (jsn) ? { name: "", path: jsn, sequence: sequence } : undefined;
   }
 

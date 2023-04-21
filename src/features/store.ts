@@ -3,10 +3,10 @@ import panelReducer from "./panelSlice";
 import entityReducer from "./entitySlice";
 import loggerReducer from "./loggerSlice";
 import favouritesReducer from "./favouritesSlice";
-import searchDirectReducer from "./searchDirectSlice";
+import searchDirecsReducer from "./searchDirecsSlice";
 import searchPlacesReducer from "./searchPlacesSlice";
 import searchRoutesReducer from "./searchRoutesSlice";
-import resultDirectReducer from "./resultDirectSlice";
+import resultDirecsReducer from "./resultDirecsSlice";
 import resultPlacesReducer from "./resultPlacesSlice";
 import resultRoutesReducer from "./resultRoutesSlice";
 
@@ -16,10 +16,10 @@ export const store = configureStore({
     entity: entityReducer,
     logger: loggerReducer,
     favourites: favouritesReducer,
-    searchDirect: searchDirectReducer,
+    searchDirecs: searchDirecsReducer,
     searchPlaces: searchPlacesReducer,
     searchRoutes: searchRoutesReducer,
-    resultDirect: resultDirectReducer,
+    resultDirecs: resultDirecsReducer,
     resultPlaces: resultPlacesReducer,
     resultRoutes: resultRoutesReducer
   }
