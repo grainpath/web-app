@@ -152,7 +152,7 @@ export default function MyDirecsSection(): JSX.Element {
       }
     }
     load();
-  }, [storage, dispatch, direcsLoaded]);
+  }, [storage, dispatch, placesLoaded, direcsLoaded]);
 
   return (
     <Accordion defaultExpanded>
