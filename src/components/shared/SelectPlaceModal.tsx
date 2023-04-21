@@ -1,9 +1,4 @@
-import {
-  Fragment,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import {
   Autocomplete,
   Box,
@@ -19,28 +14,31 @@ import {
   Typography,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { AppContext } from "../App";
-import { WgsPoint, UiPlace, StoredPlace } from "../domain/types";
-import { point2place } from "../utils/helpers";
-import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { hidePanel, showPanel } from "../features/panelSlice";
-import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
-import { PlaceKind } from "./shared-types";
-import { AddPlaceButton } from "./shared-buttons";
+import { AppContext } from "../../App";
+import { WgsPoint, UiPlace, StoredPlace } from "../../domain/types";
+import { point2place } from "../../utils/helpers";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { hidePanel, showPanel } from "../../features/panelSlice";
+import {
+  setFavouritePlaces,
+  setFavouritePlacesLoaded
+} from "../../features/favouritesSlice";
+import { PlaceKind } from "../shared-types";
+import { AddPlaceButton } from "../shared-buttons";
 
 type SelectPlaceModalProps = {
 
-  /** Place kind (source, target, custom, etc.) */
+  /** Place kind (source, target, etc.) */
   kind: PlaceKind;
 
-  /** Hides modal */
+  /** Action hiding modal. */
   onHide: () => void;
 
-  /** Dispatch selected place to the state */
+  /** Dispatch selected place to the state. */
   onSelect: (place: UiPlace) => void;
 };
 
-export function SelectPlaceModal({ kind, onHide, onSelect }: SelectPlaceModalProps): JSX.Element {
+export default function SelectPlaceModal({ kind, onHide, onSelect }: SelectPlaceModalProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { map, storage } = useContext(AppContext);
@@ -67,8 +65,8 @@ export function SelectPlaceModal({ kind, onHide, onSelect }: SelectPlaceModalPro
     const load = async () => {
       if (!placesLoaded) {
         try {
-          dispatch(setPlaces(await storage.getAllPlaces()));
-          dispatch(setPlacesLoaded());
+          dispatch(setFavouritePlaces(await storage.getAllPlaces()));
+          dispatch(setFavouritePlacesLoaded());
         }
         catch (ex) { alert(ex); }
       }
