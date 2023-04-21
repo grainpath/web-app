@@ -110,7 +110,7 @@ export default function PlaceConditionModal({ onHide, condition }: PlaceConditio
           }
           {csKeys.length > 0 &&
             <Stack direction="column" gap={1}>
-              <Typography>Include any / Exclude all</Typography>
+              <Typography>Includes any / Excludes all</Typography>
               <Stack direction="column" gap={1}>
                 {csKeys.map((c, i) => {
                   const { includes, excludes } = ((cs as any)[c]) as KeywordFilterCollect;

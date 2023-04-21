@@ -18,8 +18,8 @@ export default function ResultDirecsPanel(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const { storage } = useContext(AppContext);
-  const { back, result } = useAppSelector((state) => state.resultDirect);
   const { placesLoaded } = useAppSelector((state) => state.favourites);
+  const { back, result } = useAppSelector((state) => state.resultDirecs);
 
   useEffect(() => {
     const load = async () => {

@@ -3,10 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Box, Skeleton, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { AppContext } from "../App";
-import { BackCloseMenu } from "./shared-menus";
-import { setPlaces, setPlacesLoaded } from "../features/favouritesSlice";
+import {
+  setFavouritePlaces,
+  setFavouritePlacesLoaded
+} from "../features/favouritesSlice";
 import { GrainPathFetcher } from "../utils/grainpath";
-import EntityView from "./Entity/EntityView";
+import { BackCloseMenu } from "./shared-menus";
+import EntityContent from "./Entity/EntityContent";
 
 export default function EntityPanel(): JSX.Element {
 
@@ -26,8 +29,8 @@ export default function EntityPanel(): JSX.Element {
   useEffect(() => {
     const load = async () => {
       if (!placesLoaded) {
-        dispatch(setPlaces(await storage.getAllPlaces()));
-        dispatch(setPlacesLoaded());
+        dispatch(setFavouritePlaces(await storage.getAllPlaces()));
+        dispatch(setFavouritePlacesLoaded());
       }
     };
     load();
@@ -55,7 +58,7 @@ export default function EntityPanel(): JSX.Element {
         {(placesLoaded && (entity || entityLoaded))
           ? <Box>
               {(entity)
-                ? <EntityView entity={entity} />
+                ? <EntityContent entity={entity} />
                 : <Alert severity="warning">Either an entity does not exist, or a communication error occurred.</Alert>
               }
             </Box>

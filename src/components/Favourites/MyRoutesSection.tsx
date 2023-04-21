@@ -10,7 +10,6 @@ import {
   Typography
 } from "@mui/material";
 import { ExpandMore, Route } from "@mui/icons-material";
-
 import { AppContext } from "../../App";
 import { StoredPlace, StoredRoute } from "../../domain/types";
 import {
@@ -20,12 +19,12 @@ import {
 } from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
-  deleteRoute,
-  setPlaces,
-  setPlacesLoaded,
-  setRoutes,
-  setRoutesLoaded,
-  updateRoute
+  deleteFavouriteRoute,
+  setFavouritePlaces,
+  setFavouritePlacesLoaded,
+  setFavouriteRoutes,
+  setFavouriteRoutesLoaded,
+  updateFavouriteRoute
 } from "../../features/favouritesSlice";
 import {
   setResultRoutes,
@@ -35,16 +34,22 @@ import { RouteButton } from "../shared-buttons";
 import { BusyListItem } from "../shared-list-items";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import ItemListMenu from "./ItemListMenu";
+import ListItemMenu from "./ListItemMenu";
 import FavouriteStub from "./FavouriteStub";
 
-type RouteListItemProps = {
+type RoutesListItemProps = {
+
+  /** Index of a route in the list. */
   index: number;
+
+  /** Route in consideration. */
   route: StoredRoute;
+
+  /** Known places with grainId. */
   grains: Map<string, StoredPlace>;
 };
 
-function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Element {
+function RoutesListItem({ index, route, grains }: RoutesListItemProps): JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -75,13 +80,13 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
 
   const onDelete = async () => {
     await storage.deleteRoute(route.routeId);
-    dispatch(deleteRoute(index));
+    dispatch(deleteFavouriteRoute(index));
   };
 
   const onUpdate = async (name: string) => {
     const rt = { ...route, name: name };
     await storage.updateRoute(rt);
-    dispatch(updateRoute({ route: rt, index: index }));
+    dispatch(updateFavouriteRoute({ route: rt, index: index }));
   };
 
   return (
@@ -89,7 +94,7 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
       <BusyListItem
         label={name}
         l={<RouteButton onRoute={onRoute} />}
-        r={<ItemListMenu onShow={onShow} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
+        r={<ListItemMenu onShow={onShow} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
       />
       {showD && <DeleteModal name={route.name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
       {showU && <UpdateModal name={route.name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
@@ -97,11 +102,13 @@ function RouteListItem({ index, route, grains }: RouteListItemProps): JSX.Elemen
   );
 }
 
-type RoutesContentProps = {
+type RoutesListProps = {
+
+  /** List of stored routes. */
   routes: StoredRoute[];
 };
 
-function RoutesContent({ routes }: RoutesContentProps): JSX.Element {
+function RoutesList({ routes }: RoutesListProps): JSX.Element {
 
   const { places } = useAppSelector(state => state.favourites);
 
@@ -116,7 +123,7 @@ function RoutesContent({ routes }: RoutesContentProps): JSX.Element {
     <Box>
       {routes.length > 0
         ? <Stack direction="column" gap={2} sx={{ mb: 2 }}>
-            {routes.map((r, i) => <RouteListItem key={i} index={i} route={r} grains={grains} />)}
+            {routes.map((r, i) => <RoutesListItem key={i} index={i} route={r} grains={grains} />)}
           </Stack>
         : <FavouriteStub link={SEARCH_ROUTES_ADDR} what="route" icon={(sx) => <Route sx={sx} />} />
       }
@@ -124,7 +131,7 @@ function RoutesContent({ routes }: RoutesContentProps): JSX.Element {
   )
 }
 
-export function MyRoutesSection(): JSX.Element {
+export default function MyRoutesSection(): JSX.Element {
 
   const { storage } = useContext(AppContext);
 
@@ -135,15 +142,15 @@ export function MyRoutesSection(): JSX.Element {
     const load = async () => {
       if (!routesLoaded) {
         try {
-          dispatch(setRoutes(await storage.getAllRoutes()));
-          dispatch(setRoutesLoaded());
+          dispatch(setFavouriteRoutes(await storage.getAllRoutes()));
+          dispatch(setFavouriteRoutesLoaded());
         }
         catch (ex) { alert(ex); }
       }
       if (!placesLoaded) {
         try {
-          dispatch(setPlaces(await storage.getAllPlaces()));
-          dispatch(setPlacesLoaded());
+          dispatch(setFavouritePlaces(await storage.getAllPlaces()));
+          dispatch(setFavouritePlacesLoaded());
         }
         catch (ex) { alert(ex); }
       }
@@ -158,7 +165,7 @@ export function MyRoutesSection(): JSX.Element {
       </AccordionSummary>
       <AccordionDetails>
         {routesLoaded
-          ? <RoutesContent routes={routes} />
+          ? <RoutesList routes={routes} />
           : <Skeleton variant="rounded" height={100} />
         }
       </AccordionDetails>

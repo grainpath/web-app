@@ -9,20 +9,20 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { EntityKind } from "../shared-types";
+import { SomethingKind } from "../shared-types";
 
 type UpdateModalProps = {
 
-  /** Old name of something. */
+  /** Old name of `something`. */
   name: string;
 
-  /** Something that will be updated. */
-  what: EntityKind;
+  /** `Something` that will be updated. */
+  what: SomethingKind;
 
   /** Callback for hiding modal. */
   onHide: () => void;
 
-  /** Callback performing `update` */
+  /** Callback performing `update`. */
   onUpdate: (name: string) => void;
 };
 
@@ -31,7 +31,7 @@ export default function UpdateModal({ name: oldName, what, onHide, onUpdate }: U
   const [name, setName] = useState(oldName);
   const [disabled, setDisabled] = useState(false);
 
-  const action = async () => {
+  const update = async () => {
     setDisabled(true);
     try {
       onUpdate(name);
@@ -54,7 +54,7 @@ export default function UpdateModal({ name: oldName, what, onHide, onUpdate }: U
           />
           <Box sx={{ display: "flex", justifyContent: "space-between", minWidth: "300px" }}>
             <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Update</Button>
+            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { update(); }}>Update</Button>
           </Box>
         </Stack>
       </DialogContent>

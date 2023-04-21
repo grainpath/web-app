@@ -8,24 +8,25 @@ import { showPanel } from "../features/panelSlice";
 import {
   ENTITY_ADDR,
   FAVOURITES_ADDR,
-  RESULT_DIRECT_ADDR,
+  HOME_ADDR,
+  RESULT_DIRECS_ADDR,
   RESULT_PLACES_ADDR,
   RESULT_ROUTES_ADDR,
-  SEARCH_DIRECT_ADDR,
+  SEARCH_DIRECS_ADDR,
   SEARCH_PLACES_ADDR,
   SEARCH_ROUTES_ADDR,
 } from "../domain/routing";
-import SearchDirectPanel from "./SearchDirectPanel";
+import SearchDirecsPanel from "./SearchDirecsPanel";
 import SearchPlacesPanel from "./SearchPlacesPanel";
 import SearchRoutesPanel from "./SearchRoutesPanel";
-import ResultDirectPanel from "./ResultDirectPanel";
+import ResultDirecsPanel from "./ResultDirecsPanel";
 import ResultPlacesPanel from "./ResultPlacesPanel";
 import ResultRoutesPanel from "./ResultRoutesPanel";
 import EntityPanel from "./EntityPanel";
 import FavouritesPanel from "./FavouritesPanel";
 import NotFoundPanel from "./NotFoundPanel";
 
-export default function MainPanel(): JSX.Element {
+export default function PanelControl(): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { show } = useAppSelector(state => state.panel);
@@ -48,13 +49,13 @@ export default function MainPanel(): JSX.Element {
         <Routes>
           <Route path={SEARCH_ROUTES_ADDR} element={<SearchRoutesPanel />} />
           <Route path={SEARCH_PLACES_ADDR} element={<SearchPlacesPanel />} />
-          <Route path={SEARCH_DIRECT_ADDR} element={<SearchDirectPanel />} />
+          <Route path={SEARCH_DIRECS_ADDR} element={<SearchDirecsPanel />} />
           <Route path={RESULT_ROUTES_ADDR} element={<ResultRoutesPanel />} />
           <Route path={RESULT_PLACES_ADDR} element={<ResultPlacesPanel />} />
-          <Route path={RESULT_DIRECT_ADDR} element={<ResultDirectPanel />} />
+          <Route path={RESULT_DIRECS_ADDR} element={<ResultDirecsPanel />} />
           <Route path={ENTITY_ADDR + "/:id"} element={<EntityPanel />} />
           <Route path={FAVOURITES_ADDR} element={<FavouritesPanel />} />
-          <Route path="/" element={<Navigate to={SEARCH_ROUTES_ADDR} />} />
+          <Route path={HOME_ADDR} element={<Navigate to={SEARCH_ROUTES_ADDR} />} />
           <Route path="*" element={<NotFoundPanel />} />
         </Routes>
       </Drawer>

@@ -20,12 +20,12 @@ import {
   setSearchPlacesCenter,
   setSearchPlacesRadius
 } from "../features/searchPlacesSlice";
-import { SelectPlaceModal } from "./shared-modals";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import {
   FreePlaceListItem,
   RemovablePlaceListItem
 } from "./shared-list-items";
+import SelectPlaceModal from "./shared/SelectPlaceModal";
 import DistanceSlider from "./Search/DistanceSlider";
 import KeywordsBox from "./Search/KeywordsBox";
 import BottomButtons from "./Search/BottomButtons";

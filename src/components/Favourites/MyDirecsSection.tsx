@@ -9,41 +9,46 @@ import {
 } from "@mui/material";
 import { Directions, ExpandMore } from "@mui/icons-material";
 import { AppContext } from "../../App";
-import { StoredDirection } from "../../domain/types";
+import { StoredDirec } from "../../domain/types";
+import { SEARCH_DIRECS_ADDR } from "../../domain/routing";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
-import { setDirections, setDirectionsLoaded } from "../../features/favouritesSlice";
-import { FavouriteStub } from "./FavouriteStub";
-import { SEARCH_DIRECT_ADDR } from "../../domain/routing";
+import {
+  setFavouriteDirecs,
+  setFavouriteDirecsLoaded
+} from "../../features/favouritesSlice";
+import FavouriteStub from "./FavouriteStub";
 
-type DirectionsContentProps = {
-  directions: StoredDirection[];
+type DirecsContentProps = {
+
+  /** List of stored directions. */
+  direcs: StoredDirec[];
 };
 
-function DirectionsContent({ directions }: DirectionsContentProps): JSX.Element {
+function DirecsContent({ direcs }: DirecsContentProps): JSX.Element {
 
   return (
     <Box>
-      {directions.length > 0
+      {direcs.length > 0
         ? <></>
-        : <FavouriteStub link={SEARCH_DIRECT_ADDR} what="direction" icon={(sx) => <Directions sx={sx} />} />
+        : <FavouriteStub link={SEARCH_DIRECS_ADDR} what="direction" icon={(sx) => <Directions sx={sx} />} />
       }
     </Box>
   );
 }
 
-export default function MyDirectionsSection(): JSX.Element {
+export default function MyDirecsSection(): JSX.Element {
 
   const { storage } = useContext(AppContext);
 
   const dispatch = useAppDispatch();
-  const { directions, directionsLoaded } = useAppSelector(state => state.favourites);
+  const { direcs: directions, direcsLoaded: directionsLoaded } = useAppSelector(state => state.favourites);
 
   useEffect(() => {
     const load = async () => {
       if (!directionsLoaded) {
         try {
-          dispatch(setDirections(await storage.getAllDirections()));
-          dispatch(setDirectionsLoaded());
+          dispatch(setFavouriteDirecs(await storage.getAllDirecs()));
+          dispatch(setFavouriteDirecsLoaded());
         }
         catch (ex) { alert(ex); }
       }
@@ -58,7 +63,7 @@ export default function MyDirectionsSection(): JSX.Element {
       </AccordionSummary>
       <AccordionDetails>
         {directionsLoaded
-          ? <DirectionsContent directions={directions} />
+          ? <DirecsContent direcs={directions} />
           : <Skeleton variant="rounded" height={100} />
         }
       </AccordionDetails>

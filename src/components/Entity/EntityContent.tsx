@@ -35,11 +35,13 @@ import ExtraChip from "./ExtraChip";
 import ExtraArray from "./ExtraArray";
 import SaveModal from "./SaveModal";
 
-type EntityViewProps = {
+type EntityContentProps = {
+
+  /** An entity contained in the panel. */
   entity: Entity;
 };
 
-export default function EntityView({ entity }: EntityViewProps): JSX.Element {
+export default function EntityContent({ entity }: EntityContentProps): JSX.Element {
 
   const { map } = useContext(AppContext);
   const [modal, setModal] = useState(false);

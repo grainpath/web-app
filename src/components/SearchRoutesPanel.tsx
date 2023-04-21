@@ -30,7 +30,7 @@ import {
   FreePlaceListItem,
   RemovablePlaceListItem,
 } from "./shared-list-items";
-import { SelectPlaceModal } from "./shared-modals";
+import SelectPlaceModal from "./shared/SelectPlaceModal";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
 import DistanceSlider from "./Search/DistanceSlider";
 import KeywordsBox from "./Search/KeywordsBox";

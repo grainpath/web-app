@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import { LogoCloseMenu, MainMenu } from "./shared-menus";
-import { MyRoutesSection } from "./Favourites/MyRoutesSection";
+import MyDirecsSection from "./Favourites/MyDirecsSection";
 import MyPlacesSection from "./Favourites/MyPlacesSection";
-import MyDirectionsSection from "./Favourites/MyDirectionsSection";
+import MyRoutesSection from "./Favourites/MyRoutesSection";
 
 export default function FavouritesPanel(): JSX.Element {
 
@@ -13,7 +13,7 @@ export default function FavouritesPanel(): JSX.Element {
       <Box sx={{ m: 2 }}>
         <MyPlacesSection />
         <MyRoutesSection />
-        <MyDirectionsSection />
+        <MyDirecsSection />
       </Box>
     </Box>
   );

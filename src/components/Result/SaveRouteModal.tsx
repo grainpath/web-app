@@ -13,22 +13,25 @@ import { AppContext } from "../../App";
 import { UiRoute } from "../../domain/types";
 import { IdGenerator } from "../../utils/helpers";
 import { useAppDispatch } from "../../features/hooks";
-import { createRoute } from "../../features/favouritesSlice";
-import { replaceResultRoute } from "../../features/resultRoutesSlice";
+import { createFavouriteRoute } from "../../features/favouritesSlice";
+import { updateResultRoute } from "../../features/resultRoutesSlice";
 
 type SaveRouteModalProps = {
 
-  /** */
-  index: number;
-
-  /** */
+  /** Route to be saved. */
   route: UiRoute;
 
-  /** */
+  /** Position of the route in the list. */
+  index: number;
+
+  /** Action hiding modal. */
   onHide: () => void;
 };
 
-export default function SaveRouteModal({ index, route, onHide }: SaveRouteModalProps): JSX.Element {
+/**
+ * Modal for saving a route appeared in the result.
+ */
+export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
@@ -36,7 +39,7 @@ export default function SaveRouteModal({ index, route, onHide }: SaveRouteModalP
   const [name, setName] = useState(route.name);
   const [disabled, setDisabled] = useState(false);
 
-  const action = async () => {
+  const save = async () => {
     setDisabled(true);
     try {
       const rt = { ...route, name: name };
@@ -45,8 +48,8 @@ export default function SaveRouteModal({ index, route, onHide }: SaveRouteModalP
         routeId: IdGenerator.generateId(rt)
       };
       await storage.createRoute(sr);
-      dispatch(createRoute(sr));
-      dispatch(replaceResultRoute({ route: sr, index: index }));
+      dispatch(createFavouriteRoute(sr));
+      dispatch(updateResultRoute({ route: sr, index: index }));
       onHide();
     }
     catch (ex) { alert(ex); }
@@ -71,7 +74,7 @@ export default function SaveRouteModal({ index, route, onHide }: SaveRouteModalP
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
+            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { save(); }}>Save</Button>
           </Box>
         </Stack>
       </DialogContent>
