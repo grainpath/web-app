@@ -57,8 +57,8 @@ function RoutesListItem({ index, route, grains }: RoutesListItemProps): JSX.Elem
   const { map, storage } = useContext(AppContext);
   const { name, source, target, path, waypoints } = route;
 
-  const [showD, setShowD] = useState(false);
   const [showU, setShowU] = useState(false);
+  const [showD, setShowD] = useState(false);
 
   const onRoute = () => {
     map?.clear();
@@ -78,15 +78,15 @@ function RoutesListItem({ index, route, grains }: RoutesListItemProps): JSX.Elem
     navigate(RESULT_ROUTES_ADDR);
   };
 
-  const onDelete = async () => {
-    await storage.deleteRoute(route.routeId);
-    dispatch(deleteFavouriteRoute(index));
-  };
-
   const onUpdate = async (name: string) => {
     const rt = { ...route, name: name };
     await storage.updateRoute(rt);
     dispatch(updateFavouriteRoute({ route: rt, index: index }));
+  };
+
+  const onDelete = async () => {
+    await storage.deleteRoute(route.routeId);
+    dispatch(deleteFavouriteRoute(index));
   };
 
   return (
@@ -94,10 +94,10 @@ function RoutesListItem({ index, route, grains }: RoutesListItemProps): JSX.Elem
       <BusyListItem
         label={name}
         l={<RouteButton onRoute={onRoute} />}
-        r={<ListItemMenu onShow={onShow} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
+        r={<ListItemMenu onShow={onShow} showUpdate={() => { setShowU(true); }} showDelete={() => { setShowD(true); }} />}
       />
-      {showD && <DeleteModal name={route.name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
-      {showU && <UpdateModal name={route.name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+      {showU && <UpdateModal name={name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+      {showD && <DeleteModal name={name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
     </Box>
   );
 }

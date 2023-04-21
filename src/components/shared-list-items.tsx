@@ -10,9 +10,9 @@ type ListItemLabelProps = {
 };
 
 /**
- * Standard list item label.
+ * Standard list item label with centered content, and hidden overflow.
  */
-function ListItemLabel({ label }: ListItemLabelProps): JSX.Element {
+export function ListItemLabel({ label }: ListItemLabelProps): JSX.Element {
   return (
     <Box sx={{ width: "100%", display: "flex", alignItems: "center", borderBottom: "1px solid lightgray", overflow: "hidden", textOverflow: "ellipsis" }}>
       <Typography noWrap>{label}</Typography>
@@ -22,11 +22,11 @@ function ListItemLabel({ label }: ListItemLabelProps): JSX.Element {
 
 type FreeListItemProps = {
 
-  /** Element appearing on the left. */
-  l: ReactElement;
-
   /** Label presented to the user. */
   label: string;
+
+  /** Element appearing on the left. */
+  l: ReactElement;
   
   /** Event handler upon clicking on an icon, or a label. */
   onClick: React.MouseEventHandler<Element>;
@@ -79,11 +79,11 @@ type PlaceListItemProps = {
 };
 
 export function FreePlaceListItem({ kind, label, onPlace }: PlaceListItemProps): JSX.Element {
-  return (<FreeListItem l={<PlaceButton kind={kind} onPlace={() => { }} />} label={label} onClick={onPlace} />);
+  return (<FreeListItem label={label} l={<PlaceButton kind={kind} onPlace={() => {}} />} onClick={onPlace} />);
 }
 
 export function SteadyPlaceListItem({ label, ...rest }: PlaceListItemProps): JSX.Element {
-  return (<BusyListItem l={<PlaceButton {...rest} />} label={label} r={<></>} />);
+  return (<BusyListItem label={label} l={<PlaceButton {...rest} />} r={<></>} />);
 }
 
 type RemovablePlaceListItemProps = PlaceListItemProps & {
@@ -91,5 +91,5 @@ type RemovablePlaceListItemProps = PlaceListItemProps & {
 };
 
 export function RemovablePlaceListItem({ label, onDelete, ...rest }: RemovablePlaceListItemProps): JSX.Element {
-  return (<BusyListItem l={<PlaceButton {...rest} />} label={label} r={<DeleteButton onDelete={onDelete} />} />);
+  return (<BusyListItem label={label} l={<PlaceButton {...rest} />} r={<DeleteButton onDelete={onDelete} />} />);
 }

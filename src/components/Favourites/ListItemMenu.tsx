@@ -14,7 +14,7 @@ import {
   MoreVert
 } from "@mui/icons-material";
 
-type ItemListMenuProps = {
+type ListItemMenuProps = {
 
   /** Redirect to the something view. */
   onShow?: () => void;
@@ -27,9 +27,9 @@ type ItemListMenuProps = {
 };
 
 /**
- * Place-specific menu in the storage list of places.
+ * `Something`-specific menu in the storage list of `something`.
  */
-export default function ItemListMenu({ onShow, showDelete , showUpdate }: ItemListMenuProps): JSX.Element {
+export default function ListItemMenu({ onShow, showDelete , showUpdate }: ListItemMenuProps): JSX.Element {
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 

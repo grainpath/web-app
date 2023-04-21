@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import {
   FAVOURITES_ADDR,
-  SEARCH_DIRECT_ADDR,
+  SEARCH_DIRECS_ADDR,
   SEARCH_PLACES_ADDR,
   SEARCH_ROUTES_ADDR
 } from "../domain/routing";
@@ -103,7 +103,7 @@ export function MainMenu({ panel }: MainMenuProps): JSX.Element {
           label="Directions"
           icon={<Directions />}
           disabled={block}
-          onClick={() => { navigate(SEARCH_DIRECT_ADDR); }}
+          onClick={() => { navigate(SEARCH_DIRECS_ADDR); }}
         />
         <BottomNavigationAction
           label="Favourites"

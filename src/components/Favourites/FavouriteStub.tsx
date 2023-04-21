@@ -7,7 +7,7 @@ import {
   SxProps,
   Typography
 } from "@mui/material";
-import { EntityKind } from "../shared-types";
+import { SomethingKind } from "../shared-types";
 
 type FavouriteStubProps = {
 
@@ -15,7 +15,7 @@ type FavouriteStubProps = {
   link: string;
 
   /** What is not found? */
-  what: EntityKind;
+  what: SomethingKind;
 
   /** Generate a styled icon shown to the user. */
   icon: (sx: SxProps) => ReactElement;

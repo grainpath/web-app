@@ -1,29 +1,31 @@
-import { ReactElement } from "react";
+import { MouseEventHandler, ReactElement } from "react";
 import { IconButton } from "@mui/material";
 import {
   AddLocation,
   DeleteOutline,
   Directions,
   LocationOn,
-  Route
+  Route,
+  SwapVert
 } from "@mui/icons-material";
 import { PlaceKind } from "./shared-types";
 
 type IconWrapperProps = {
-  icon: ReactElement
-  onClick?: React.MouseEventHandler<Element>;
+  icon: ReactElement;
+  title?: string;
+  onClick?: MouseEventHandler<Element>;
 };
 
-function IconWrapper({ icon, onClick }: IconWrapperProps): JSX.Element {
+function IconWrapper({ icon, title, onClick }: IconWrapperProps): JSX.Element {
   return (
-    <IconButton onClick={onClick} size="small">
+    <IconButton onClick={onClick} size="small" title={title}>
       {icon}
     </IconButton>
   );
 }
 
 type RouteButtonProps = {
-  onRoute: React.MouseEventHandler<Element>;
+  onRoute: MouseEventHandler<Element>;
 };
 
 export function RouteButton({ onRoute }: RouteButtonProps): JSX.Element {
@@ -41,7 +43,7 @@ type PlaceButtonProps = {
   kind: PlaceKind;
 
   /** Button event handler. */
-  onPlace: React.MouseEventHandler<Element>;
+  onPlace: MouseEventHandler<Element>;
 };
 
 export function PlaceButton({ kind, onPlace }: PlaceButtonProps): JSX.Element {
@@ -69,7 +71,7 @@ export function AddPlaceButton({ kind, size, onPlace }: AddPlaceButtonProps): JS
 }
 
 type DirecButtonProps = {
-  onDirec: React.MouseEventHandler<Element>;
+  onDirec: MouseEventHandler<Element>;
 };
 
 export function DirecButton({ onDirec }: DirecButtonProps): JSX.Element {
@@ -82,7 +84,7 @@ export function DirecButton({ onDirec }: DirecButtonProps): JSX.Element {
 }
 
 type DeleteButtonProps = {
-  onDelete: React.MouseEventHandler<Element>;
+  onDelete: MouseEventHandler<Element>;
 };
 
 export function DeleteButton({ onDelete }: DeleteButtonProps): JSX.Element {
@@ -91,5 +93,20 @@ export function DeleteButton({ onDelete }: DeleteButtonProps): JSX.Element {
       onClick={onDelete}
       icon={<DeleteOutline sx={{ color: "gray" }} />}
     />
-  )
+  );
+}
+
+type SwapButtonProps = {
+  title?: string;
+  onSwap: MouseEventHandler<Element>;
+};
+
+export function SwapButton({ title, onSwap }: SwapButtonProps): JSX.Element {
+  return (
+    <IconWrapper
+      title={title}
+      onClick={onSwap}
+      icon={<SwapVert sx={{ color: "gray" }} />}
+    />
+  );
 }
