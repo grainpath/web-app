@@ -53,7 +53,7 @@ export default function EntityPanel(): JSX.Element {
 
   return (
     <Box>
-      <BackCloseMenu onBack={(!!back) ? () => { navigate(back); } : undefined} />
+      <BackCloseMenu onBack={back ? () => { navigate(back); } : undefined} />
       <Box sx={{ mx: 2, my: 4 }}>
         {(placesLoaded && (entity || entityLoaded))
           ? <Box>

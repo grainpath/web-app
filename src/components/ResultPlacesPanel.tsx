@@ -4,7 +4,6 @@ import { Alert, Box } from "@mui/material";
 import { AppContext } from "../App";
 import { SEARCH_PLACES_ADDR } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { clearResultPlaces } from "../features/resultPlacesSlice";
 import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
@@ -31,14 +30,9 @@ export default function ResultPlacesPanel(): JSX.Element {
     load();
   }, [storage, dispatch, placesLoaded]);
 
-  const onBack = () => {
-    dispatch(clearResultPlaces());
-    navigate(SEARCH_PLACES_ADDR);
-  };
-
   return (
     <Box>
-      <BackCloseMenu onBack={onBack} />
+      <BackCloseMenu onBack={() => { navigate(SEARCH_PLACES_ADDR); }} />
       <Box sx={{ mx: 2, my: 4 }}>
         {placesLoaded
           ? <Box>

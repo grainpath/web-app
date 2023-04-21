@@ -18,7 +18,6 @@ export const resultRoutesSlice = createSlice({
   initialState: initialState(),
   reducers: {
     setResultRoutes: (state, action: PayloadAction<UiRoute[]>) => { state.result = action.payload; },
-    clearResultRoutes: (state) => { state.index = 0; state.result = []; state.filters = []; },
     updateResultRoute: (state, action: PayloadAction<{ route: UiRoute, index: number }>) => {
       const { route, index } = action.payload;
       state.result = updateItemImmutable(state.result, route, index);
@@ -31,7 +30,6 @@ export const resultRoutesSlice = createSlice({
 
 export const {
   setResultRoutes,
-  clearResultRoutes,
   updateResultRoute,
   setResultRoutesBack,
   setResultRoutesIndex,

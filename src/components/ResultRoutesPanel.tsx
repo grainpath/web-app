@@ -7,7 +7,6 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { clearResultRoutes } from "../features/resultRoutesSlice";
 import { BackCloseMenu } from "./shared-menus";
 import LoadStub from "./Result/LoadStub";
 import ResultRoutesContent from "./Result/ResultRoutesContent";
@@ -31,14 +30,9 @@ export default function ResultRoutesPanel(): JSX.Element {
     load();
   }, [storage, dispatch, placesLoaded]);
 
-  const onBack = () => {
-    dispatch(clearResultRoutes());
-    navigate(back!);
-  };
-
   return (
     <Box>
-      <BackCloseMenu onBack={back ? onBack : undefined} />
+      <BackCloseMenu onBack={back ? () => { navigate(back); } : undefined} />
       <Box sx={{ mx: 2, my: 4 }}>
         {(placesLoaded)
           ? <Box>

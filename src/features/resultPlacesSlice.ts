@@ -13,14 +13,12 @@ export const resultPlacesSlice = createSlice({
   initialState: initialState(),
   reducers: {
     setResultPlaces: (state, action: PayloadAction<PlacesResult | undefined>) => { state.result = action.payload; },
-    clearResultPlaces: (state) => { state.result = undefined; state.filters = []; },
     setResultPlacesFilters: (state, action: PayloadAction<string[]>) => { state.filters = action.payload; }
   }
 });
 
 export const {
   setResultPlaces,
-  clearResultPlaces,
   setResultPlacesFilters
 } = resultPlacesSlice.actions;
 
