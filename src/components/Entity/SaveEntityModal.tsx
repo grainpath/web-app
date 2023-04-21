@@ -11,16 +11,16 @@ import {
 } from "@mui/material";
 import { Entity } from "../../domain/types";
 import { AppContext } from "../../App";
-import { useAppDispatch } from "../../features/hooks";
 import { IdGenerator } from "../../utils/helpers";
-import { createPlace } from "../../features/favouritesSlice";
+import { useAppDispatch } from "../../features/hooks";
+import { createFavouritePlace } from "../../features/favouritesSlice";
 
-type SaveModalProps = {
+type SaveEntityModalProps = {
   entity: Entity;
   onHide: () => void;
 };
 
-export default function SaveModal({ entity, onHide }: SaveModalProps): JSX.Element {
+export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
@@ -38,7 +38,7 @@ export default function SaveModal({ entity, onHide }: SaveModalProps): JSX.Eleme
         placeId: IdGenerator.generateId(pl)
       };
       await storage.createPlace(st);
-      dispatch(createPlace(st));
+      dispatch(createFavouritePlace(st));
     }
     catch (ex) { alert(ex); }
     finally { setDisabled(false); }

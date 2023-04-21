@@ -17,8 +17,8 @@ import {
 } from "../../features/favouritesSlice";
 import { PlaceButton } from "../shared-buttons";
 import { BusyListItem } from "../shared-list-items";
-import DeleteModal from "./DeleteModal";
-import UpdateModal from "./UpdateModal";
+import DeleteSomethingModal from "./DeleteSomethingModal";
+import UpdateSomethingModal from "./UpdateSomethingModal";
 import ListItemMenu from "./ListItemMenu";
 import FavouriteStub from "./FavouriteStub";
 
@@ -69,8 +69,8 @@ function MyPlacesListItem({ index, place }: MyPlacesListItemProps): JSX.Element 
         l={<PlaceButton kind="stored" onPlace={onPlace} />}
         r={<ListItemMenu onShow={place.grainId ? onShow : undefined} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
       />
-      {showD && <DeleteModal name={place.name} what="place" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
-      {showU && <UpdateModal name={place.name} what="place" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+      {showD && <DeleteSomethingModal name={place.name} what="place" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
+      {showU && <UpdateSomethingModal name={place.name} what="place" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
     </Box>
   );
 }

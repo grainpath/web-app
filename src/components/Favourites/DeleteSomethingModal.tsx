@@ -8,15 +8,15 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import { EntityKind } from "../shared-types";
+import { SomethingKind } from "../shared-types";
 
-type DeleteModalProps = {
+type DeleteSomethingModalProps = {
 
   /** */
   name: string;
 
   /** */
-  what: EntityKind;
+  what: SomethingKind;
 
   /** */
   onHide: () => void;
@@ -25,11 +25,11 @@ type DeleteModalProps = {
   onDelete: () => void;
 };
 
-export default function DeleteModal({ name, what, onHide, onDelete }: DeleteModalProps): JSX.Element {
+export default function DeleteSomethingModal({ name, what, onHide, onDelete }: DeleteSomethingModalProps): JSX.Element {
 
   const [disabled, setDisabled] = useState(false);
 
-  const action = async () => {
+  const deleteAction = async () => {
     setDisabled(true);
     try {
       onDelete();
@@ -49,7 +49,7 @@ export default function DeleteModal({ name, what, onHide, onDelete }: DeleteModa
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Button disabled={disabled} onClick={onHide}>Cancel</Button>
-            <Button disabled={disabled} onClick={() => { action(); }} color="error">Delete</Button>
+            <Button disabled={disabled} onClick={() => { deleteAction(); }} color="error">Delete</Button>
           </Box>
         </Stack>
       </DialogContent>

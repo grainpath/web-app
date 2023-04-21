@@ -33,7 +33,7 @@ import { point2text } from "../../utils/helpers";
 import { useAppSelector } from "../../features/hooks";
 import ExtraChip from "./ExtraChip";
 import ExtraArray from "./ExtraArray";
-import SaveModal from "./SaveModal";
+import SaveEntityModal from "./SaveEntityModal";
 
 type EntityContentProps = {
 
@@ -120,7 +120,7 @@ export default function EntityContent({ entity }: EntityContentProps): JSX.Eleme
             <Alert severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
               Would you like to save this place?
             </Alert>
-            {modal && <SaveModal entity={entity} onHide={() => { setModal(false); }} />}
+            {modal && <SaveEntityModal entity={entity} onHide={() => { setModal(false); }} />}
           </Box>
       }
       <Stack direction="column" gap={1}>

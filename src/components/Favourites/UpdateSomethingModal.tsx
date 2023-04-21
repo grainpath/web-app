@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { SomethingKind } from "../shared-types";
 
-type UpdateModalProps = {
+type UpdateSomethingModalProps = {
 
   /** Old name of `something`. */
   name: string;
@@ -26,7 +26,7 @@ type UpdateModalProps = {
   onUpdate: (name: string) => void;
 };
 
-export default function UpdateModal({ name: oldName, what, onHide, onUpdate }: UpdateModalProps): JSX.Element {
+export default function UpdateSomethingModal({ name: oldName, what, onHide, onUpdate }: UpdateSomethingModalProps): JSX.Element {
 
   const [name, setName] = useState(oldName);
   const [disabled, setDisabled] = useState(false);

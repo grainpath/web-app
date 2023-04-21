@@ -32,10 +32,10 @@ import {
 } from "../../features/resultRoutesSlice";
 import { RouteButton } from "../shared-buttons";
 import { BusyListItem } from "../shared-list-items";
-import DeleteModal from "./DeleteModal";
-import UpdateModal from "./UpdateModal";
 import ListItemMenu from "./ListItemMenu";
 import FavouriteStub from "./FavouriteStub";
+import UpdateSomethingModal from "./UpdateSomethingModal";
+import DeleteSomethingModal from "./DeleteSomethingModal";
 
 type RoutesListItemProps = {
 
@@ -96,8 +96,8 @@ function RoutesListItem({ index, route, grains }: RoutesListItemProps): JSX.Elem
         l={<RouteButton onRoute={onRoute} />}
         r={<ListItemMenu onShow={onShow} showUpdate={() => { setShowU(true); }} showDelete={() => { setShowD(true); }} />}
       />
-      {showU && <UpdateModal name={name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
-      {showD && <DeleteModal name={name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
+      {showU && <UpdateSomethingModal name={name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+      {showD && <DeleteSomethingModal name={name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
     </Box>
   );
 }
