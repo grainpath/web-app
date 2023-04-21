@@ -4,7 +4,7 @@ import {
   updateItemImmutable
 } from "./immutable";
 import {
-  StoredDirection,
+  StoredDirec,
   StoredPlace,
   StoredRoute,
   UiPlace
@@ -17,8 +17,8 @@ type FavouritesState = {
   placesLoaded: boolean;
   routes: StoredRoute[];
   routesLoaded: boolean;
-  directions: StoredDirection[];
-  directionsLoaded: boolean;
+  direcs: StoredDirec[];
+  direcsLoaded: boolean;
 };
 
 const initialState = (): FavouritesState => {
@@ -26,7 +26,7 @@ const initialState = (): FavouritesState => {
     name: "",
     places: [], placesLoaded: false,
     routes: [], routesLoaded: false,
-    directions: [], directionsLoaded: false
+    direcs: [], direcsLoaded: false
   };
 };
 
@@ -35,77 +35,87 @@ export const favouritesSlice = createSlice({
   initialState: initialState(),
   reducers: {
 
-    // create place
+    // custom place
 
-    setCustomName: (state, action: PayloadAction<string>) => { state.name = action.payload; },
-    setCustomLocation: (state, action: PayloadAction<UiPlace | undefined>) => { state.place = action.payload; },
-    createCustomPlace: (state, action: PayloadAction<StoredPlace>) => {
+    setFavouriteCustomName: (state, action: PayloadAction<string>) => { state.name = action.payload; },
+    setFavouriteCustomLocation: (state, action: PayloadAction<UiPlace | undefined>) => { state.place = action.payload; },
+    createFavouriteCustomPlace: (state, action: PayloadAction<StoredPlace>) => {
       state.name = ""; state.place = undefined;
       state.places = updateItemImmutable(state.places, action.payload, state.places.length);
     },
 
     // places
 
-    setPlaces: (state, action: PayloadAction<StoredPlace[]>) => { state.places = action.payload; },
-    createPlace: (state, action: PayloadAction<StoredPlace>) => {
-      state.places = updateItemImmutable(state.places, action.payload, state.places.length);
-    },
-    updatePlace: (state, action: PayloadAction<{ place: StoredPlace, index: number }>) => {
+    setFavouritePlaces: (state, action: PayloadAction<StoredPlace[]>) => { state.places = action.payload; },
+    createFavouritePlace: (state, action: PayloadAction<StoredPlace>) => { state.places.push(action.payload); },
+    updateFavouritePlace: (state, action: PayloadAction<{ place: StoredPlace, index: number }>) => {
       const { place, index } = action.payload;
       state.places = updateItemImmutable(state.places, place, index);
     },
-    deletePlace: (state, action: PayloadAction<number>) => {
+    deleteFavouritePlace: (state, action: PayloadAction<number>) => {
       state.places = deleteItemImmutable(state.places, action.payload);
     },
-    setPlacesLoaded: (state) => { state.placesLoaded = true; },
+    setFavouritePlacesLoaded: (state) => { state.placesLoaded = true; },
 
     // routes
 
-    setRoutes: (state, action: PayloadAction<StoredRoute[]>) => { state.routes = action.payload; },
-    createRoute: (state, action: PayloadAction<StoredRoute>) => {
-      state.routes = updateItemImmutable(state.routes, action.payload, state.routes.length);
-    },
-    updateRoute: (state, action: PayloadAction<{ route: StoredRoute, index: number }>) => {
+    setFavouriteRoutes: (state, action: PayloadAction<StoredRoute[]>) => { state.routes = action.payload; },
+    createFavouriteRoute: (state, action: PayloadAction<StoredRoute>) => { state.routes.push(action.payload); },
+    updateFavouriteRoute: (state, action: PayloadAction<{ route: StoredRoute, index: number }>) => {
       const { route, index } = action.payload;
       state.routes = updateItemImmutable(state.routes, route, index);
     },
-    deleteRoute: (state, action: PayloadAction<number>) => {
+    deleteFavouriteRoute: (state, action: PayloadAction<number>) => {
       state.routes = deleteItemImmutable(state.routes, action.payload);
     },
-    setRoutesLoaded: (state) => { state.routesLoaded = true; },
+    setFavouriteRoutesLoaded: (state) => { state.routesLoaded = true; },
 
-    // directions
+    // direcs
 
-    setDirections: (state, action: PayloadAction<StoredDirection[]>) => { state.directions = action.payload; },
-    updateDirection: (state, action: PayloadAction<{ direction: StoredDirection, index: number }>) => {
-      const { direction, index } = action.payload;
-      state.directions = updateItemImmutable(state.directions, direction, index);
+    setFavouriteDirecs: (state, action: PayloadAction<StoredDirec[]>) => { state.direcs = action.payload; },
+    createFavouriteDirec: (state, action: PayloadAction<StoredDirec>) => { state.direcs.push(action.payload); },
+    updateFavouriteDirec: (state, action: PayloadAction<{ direc: StoredDirec, index: number }>) => {
+      const { direc, index } = action.payload;
+      state.direcs = updateItemImmutable(state.direcs, direc, index);
     },
-    deleteDirection: (state, action: PayloadAction<number>) => {
-      state.directions = deleteItemImmutable(state.directions, action.payload);
+    deleteFavouriteDirec: (state, action: PayloadAction<number>) => {
+      state.direcs = deleteItemImmutable(state.direcs, action.payload);
     },
-    setDirectionsLoaded: (state) => { state.directionsLoaded = true; }
+    setFavouriteDirecsLoaded: (state) => { state.direcsLoaded = true; }
   }
 });
 
 export const {
-  setCustomName,
-  setCustomLocation,
-  createCustomPlace,
-  setPlaces,
-  createPlace,
-  updatePlace,
-  deletePlace,
-  setPlacesLoaded,
-  setRoutes,
-  createRoute,
-  updateRoute,
-  deleteRoute,
-  setRoutesLoaded,
-  setDirections,
-  updateDirection,
-  deleteDirection,
-  setDirectionsLoaded
+
+  // custom place
+
+  setFavouriteCustomName,
+  setFavouriteCustomLocation,
+  createFavouriteCustomPlace,
+
+  // places
+
+  setFavouritePlaces,
+  createFavouritePlace,
+  updateFavouritePlace,
+  deleteFavouritePlace,
+  setFavouritePlacesLoaded,
+
+  // routes
+
+  setFavouriteRoutes,
+  createFavouriteRoute,
+  updateFavouriteRoute,
+  deleteFavouriteRoute,
+  setFavouriteRoutesLoaded,
+
+  // direcs
+
+  setFavouriteDirecs,
+  createFavouriteDirec,
+  updateFavouriteDirec,
+  deleteFavouriteDirec,
+  setFavouriteDirecsLoaded
 } = favouritesSlice.actions;
 
 export default favouritesSlice.reducer;
