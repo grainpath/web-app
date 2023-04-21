@@ -7,12 +7,12 @@ import {
   StoredDirec,
   StoredPlace,
   StoredRoute,
-  UiPlace
+  WgsPoint
 } from "../domain/types";
 
 type FavouritesState = {
   name: string;
-  place?: UiPlace;
+  location?: WgsPoint;
   places: StoredPlace[];
   placesLoaded: boolean;
   routes: StoredRoute[];
@@ -24,9 +24,13 @@ type FavouritesState = {
 const initialState = (): FavouritesState => {
   return {
     name: "",
-    places: [], placesLoaded: false,
-    routes: [], routesLoaded: false,
-    direcs: [], direcsLoaded: false
+//  location: undefined,
+    places: [],
+    placesLoaded: false,
+    routes: [],
+    routesLoaded: false,
+    direcs: [],
+    direcsLoaded: false
   };
 };
 
@@ -37,12 +41,10 @@ export const favouritesSlice = createSlice({
 
     // custom place
 
+    clearFavouriteCustom: (state) => { state.name = ""; state.location = undefined; },
     setFavouriteCustomName: (state, action: PayloadAction<string>) => { state.name = action.payload; },
-    setFavouriteCustomLocation: (state, action: PayloadAction<UiPlace | undefined>) => { state.place = action.payload; },
-    createFavouriteCustomPlace: (state, action: PayloadAction<StoredPlace>) => {
-      state.name = ""; state.place = undefined;
-      state.places = updateItemImmutable(state.places, action.payload, state.places.length);
-    },
+    setFavouriteCustomLocation: (state, action: PayloadAction<WgsPoint>) => { state.location = action.payload; },
+    deleteFavouriteCustomLocation: (state) => { state.location = undefined; },
 
     // places
 
@@ -87,11 +89,12 @@ export const favouritesSlice = createSlice({
 
 export const {
 
-  // custom place
+  // custom
 
+  clearFavouriteCustom,
   setFavouriteCustomName,
   setFavouriteCustomLocation,
-  createFavouriteCustomPlace,
+  deleteFavouriteCustomLocation,
 
   // places
 
@@ -116,6 +119,7 @@ export const {
   updateFavouriteDirec,
   deleteFavouriteDirec,
   setFavouriteDirecsLoaded
+
 } = favouritesSlice.actions;
 
 export default favouritesSlice.reducer;
