@@ -3,6 +3,8 @@ import { Alert, Box, Button, Stack, Typography } from "@mui/material";
 import { AppContext } from "../../App";
 import { StoredPlace, UiDirec } from "../../domain/types";
 import { useAppSelector } from "../../features/hooks";
+import { SteadyPlaceListItem } from "../shared-list-items";
+import SaveDirecModal from "./SaveDirecModal";
 
 type ResultDirecsContentProps = {
 
@@ -52,7 +54,7 @@ export default function ResultDirecsContent({ result }: ResultDirecsContentProps
             >
               Would you like to save this direction?
             </Alert>
-            {/* {modal && <SaveRouteModal route={route} onHide={() => { setModal(false); }} />} */}
+            {modal && <SaveDirecModal direc={result} onHide={() => { setModal(false); }} />}
           </Box>
       }
       <Box display="flex" alignItems="center">
@@ -65,8 +67,18 @@ export default function ResultDirecsContent({ result }: ResultDirecsContentProps
           .map((place, i) => {
             const pt = place.placeId ? knownPlaces.get(place.placeId) : undefined;
             return (pt)
-              ? <></>
-              : <></>
+              ? <SteadyPlaceListItem  
+                  key={i}
+                  kind="stored"
+                  label={pt.name}
+                  onPlace={() => { map?.flyTo(pt); }}
+                />
+              : <SteadyPlaceListItem
+                  key={i}
+                  kind="custom"
+                  label={place.name}
+                  onPlace={() => { map?.flyTo(place); }}
+                />
           })
         }
       </Stack>

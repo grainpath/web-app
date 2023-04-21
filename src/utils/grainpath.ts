@@ -69,7 +69,7 @@ export class GrainPathFetcher {
     const waypoints = sequence.map((l) => l.location);
     const jsn = await GrainPathFetcher
       .fetch(GRAINPATH_DIRECS_URL, { waypoints: waypoints });
-    return (jsn) ? { name: "", path: jsn, sequence: sequence } : undefined;
+    return (jsn) ? { name: "", path: { ...jsn, distance: jsn.distance / 1000 }, sequence: sequence } : undefined;
   }
 
   /**
