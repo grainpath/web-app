@@ -7,18 +7,18 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { clearResultRoutes } from "../features/resultRoutesSlice";
+import { clearResultDirecs } from "../features/resultDirecsSlice";
 import { BackCloseMenu } from "./shared-menus";
 import LoadStub from "./Result/LoadStub";
-import ResultRoutesContent from "./Result/ResultRoutesContent";
+import ResultDirecsContent from "./Result/ResultDirecsContent";
 
-
-export default function ResultRoutesPanel(): JSX.Element {
+export default function ResultDirecsPanel(): JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const { storage } = useContext(AppContext);
-  const { back, result } = useAppSelector((state) => state.resultRoutes);
+  const { back, result } = useAppSelector((state) => state.resultDirect);
   const { placesLoaded } = useAppSelector((state) => state.favourites);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function ResultRoutesPanel(): JSX.Element {
   }, [storage, dispatch, placesLoaded]);
 
   const onBack = () => {
-    dispatch(clearResultRoutes());
+    dispatch(clearResultDirecs());
     navigate(back!);
   };
 
@@ -40,12 +40,12 @@ export default function ResultRoutesPanel(): JSX.Element {
     <Box>
       <BackCloseMenu onBack={back ? onBack : undefined} />
       <Box sx={{ mx: 2, my: 4 }}>
-        {(placesLoaded)
+        {placesLoaded
           ? <Box>
-              {result.length > 0
-                ? <ResultRoutesContent result={result} />
-                : <Alert severity="warning">
-                    List of routes appears to be empty. Try different search parameters.
+              {result
+                ? <ResultDirecsContent result={result} />
+                : <Alert>
+                    Result appears to be empty. Try different search parameters.
                   </Alert>
               }
             </Box>
