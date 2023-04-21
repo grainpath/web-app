@@ -82,9 +82,8 @@ export default function MyPlacesCreateDialog(): JSX.Element {
         placeId: IdGenerator.generateId(pl)
       };
       await storage.createPlace(st);
-      dispatch(clearFavouriteCustom());
       dispatch(createFavouritePlace(st));
-      map?.clear();
+      clearCustom();
     }
     catch (ex) { alert(ex); }
     finally { dispatch(setBlock(false)); }
