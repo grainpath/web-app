@@ -12,9 +12,10 @@ import {
 import { AppContext } from "../../App";
 import { UiDirec } from "../../domain/types";
 import { IdGenerator } from "../../utils/helpers";
-import { useAppDispatch } from "../../features/hooks";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { createFavouriteDirec } from "../../features/favouritesSlice";
 import { setResultDirecs } from "../../features/resultDirecsSlice";
+import { setBlock } from "../../features/panelSlice";
 
 type SaveDirecModalProps = {
 
@@ -32,12 +33,12 @@ export default function SaveDirecModal({ direc, onHide }: SaveDirecModalProps): 
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
+  const { block } = useAppSelector(state => state.panel); // !!!!!!!!!!!!!!!!!
 
   const [name, setName] = useState(direc.name);
-  const [disabled, setDisabled] = useState(false);
 
-  const save = async () => {
-    setDisabled(true);
+  const saveAction = async () => {
+    dispatch(setBlock(true));
     try {
       const dr = { ...direc, name: name };
       const sd = {
@@ -50,7 +51,7 @@ export default function SaveDirecModal({ direc, onHide }: SaveDirecModalProps): 
       onHide();
     }
     catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
+    finally { dispatch(setBlock(false)); }
   };
 
   return (
@@ -70,8 +71,8 @@ export default function SaveDirecModal({ direc, onHide }: SaveDirecModalProps): 
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { save(); }}>Save</Button>
+            <Button disabled={block} onClick={onHide} color="error">Discard</Button>
+            <Button disabled={block || !(name.trim().length > 0)} onClick={() => { saveAction(); }}>Save</Button>
           </Box>
         </Stack>
       </DialogContent>

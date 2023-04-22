@@ -5,10 +5,10 @@ import { Favorite, Link } from "@mui/icons-material";
 import { AppContext } from "../../App";
 import { Place, StoredPlace } from "../../domain/types";
 import { useAppDispatch } from "../../features/hooks";
-import { BusyListItem } from "../shared-list-items";
+import { BusyListItem } from "../shared/list-items";
 import { setEntityBack } from "../../features/entitySlice";
 import { ENTITY_ADDR } from "../../domain/routing";
-import { PlaceButton } from "../shared-buttons";
+import { PlaceButton } from "../shared/buttons";
 
 type ListItemLinkProps = {
 
@@ -41,16 +41,19 @@ function ListItemLink({ icon, back, grainId }: ListItemLinkProps): JSX.Element {
 
 type PlacesListProps = {
 
-  /**  */
+  /** Address of the back navigation. */
   back: string;
 
-  /**  */
+  /** List of places. */
   places: Place[];
 
-  /**  */
+  /** Known places with grainId appearing in the storage. */
   grains: Map<string, StoredPlace>;
 };
 
+/**
+ * List of places as per presented in the result.
+ */
 export default function PlacesList({ back, places, grains }: PlacesListProps): JSX.Element {
 
   const { map } = useContext(AppContext);

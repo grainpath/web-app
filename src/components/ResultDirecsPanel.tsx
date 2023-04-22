@@ -7,7 +7,7 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { BackCloseMenu } from "./shared-menus";
+import { BackCloseMenu } from "./shared/menus";
 import LoadStub from "./result/LoadStub";
 import ResultDirecsContent from "./result/ResultDirecsContent";
 

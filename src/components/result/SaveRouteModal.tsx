@@ -12,9 +12,10 @@ import {
 import { AppContext } from "../../App";
 import { UiRoute } from "../../domain/types";
 import { IdGenerator } from "../../utils/helpers";
-import { useAppDispatch } from "../../features/hooks";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { createFavouriteRoute } from "../../features/favouritesSlice";
 import { updateResultRoute } from "../../features/resultRoutesSlice";
+import { setBlock } from "../../features/panelSlice";
 
 type SaveRouteModalProps = {
 
@@ -35,12 +36,12 @@ export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalP
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
+  const { block } = useAppSelector(state => state.panel);
 
   const [name, setName] = useState(route.name);
-  const [disabled, setDisabled] = useState(false);
 
-  const save = async () => {
-    setDisabled(true);
+  const saveAction = async () => {
+    dispatch(setBlock(true));
     try {
       const rt = { ...route, name: name };
       const sr = {
@@ -53,7 +54,7 @@ export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalP
       onHide();
     }
     catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
+    finally { dispatch(setBlock(false)); }
   };
 
   return (
@@ -73,8 +74,8 @@ export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalP
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { save(); }}>Save</Button>
+            <Button disabled={block} onClick={onHide} color="error">Discard</Button>
+            <Button disabled={block || !(name.trim().length > 0)} onClick={() => { saveAction(); }}>Save</Button>
           </Box>
         </Stack>
       </DialogContent>

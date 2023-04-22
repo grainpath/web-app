@@ -21,7 +21,11 @@ import {
 } from "../../domain/types";
 
 type CollectSelectProps = {
+
+  /** Collection category. */
   label: string;
+
+  /** Items associated with the category. */
   items: string[];
 };
 
@@ -46,10 +50,17 @@ function CollectSelect({ label, items }: CollectSelectProps): JSX.Element {
 }
 
 type PlaceConditionModalProps = {
+
+  /** Action hiding dialog. */
   onHide: () => void;
+
+  /** Condition to be presented. */
   condition: PlaceCondition;
 };
 
+/**
+ * Simplified read-only condition representation.
+ */
 export default function PlaceConditionModal({ onHide, condition }: PlaceConditionModalProps): JSX.Element {
 
   const { keyword, filters } = condition;

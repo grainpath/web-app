@@ -8,7 +8,7 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { BackCloseMenu } from "./shared-menus";
+import { BackCloseMenu } from "./shared/menus";
 import LoadStub from "./result/LoadStub";
 import ResultPlacesContent from "./result/ResultPlacesContent";
 
@@ -39,7 +39,7 @@ export default function ResultPlacesPanel(): JSX.Element {
               {result && result.places.length > 0
                 ? <ResultPlacesContent result={result} />
                 : <Alert severity="warning">
-                    Result appears to be empty! Try different search parameters.
+                    Result appears to be empty. Try different search parameters.
                   </Alert>
               }
             </Box>

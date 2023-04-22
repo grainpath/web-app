@@ -6,15 +6,20 @@ import { RESULT_PLACES_ADDR } from "../../domain/routing";
 import { getCopyKnownGrains, getSatConditions } from "../../domain/functions";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setResultPlacesFilters } from "../../features/resultPlacesSlice";
-import { SteadyPlaceListItem } from "../shared-list-items";
+import { SteadyPlaceListItem } from "../shared/list-items";
 import PlacesList from "./PlacesList";
 import PlacesFilter from "./PlacesFilter";
 
 type ResultPlacesContentProps = {
+
+  /** Result object to be presented. */
   result: PlacesResult;
 };
 
-export default function ResultPlacesSection({ result }: ResultPlacesContentProps): JSX.Element {
+/**
+ * Component presenting a result of searching places within a given circle.
+ */
+export default function ResultPlacesContent({ result }: ResultPlacesContentProps): JSX.Element {
 
   const { center, radius, conditions, places: foundPlaces } = result;
 

@@ -1,9 +1,15 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Alert, Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Stack,
+  Typography
+} from "@mui/material";
 import { AppContext } from "../../App";
 import { StoredPlace, UiDirec } from "../../domain/types";
 import { useAppSelector } from "../../features/hooks";
-import { SteadyPlaceListItem } from "../shared-list-items";
+import { SteadyPlaceListItem } from "../shared/list-items";
 import SaveDirecModal from "./SaveDirecModal";
 
 type ResultDirecsContentProps = {

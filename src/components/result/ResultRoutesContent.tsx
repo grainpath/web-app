@@ -17,7 +17,7 @@ import {
 } from "../../domain/functions";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setResultRoutesIndex } from "../../features/resultRoutesSlice";
-import { SteadyPlaceListItem } from "../shared-list-items";
+import { SteadyPlaceListItem } from "../shared/list-items";
 import PlacesList from "./PlacesList";
 import PlacesFilter from "./PlacesFilter";
 import SaveRouteModal from "./SaveRouteModal";

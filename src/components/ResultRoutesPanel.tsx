@@ -7,7 +7,7 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { BackCloseMenu } from "./shared-menus";
+import { BackCloseMenu } from "./shared/menus";
 import LoadStub from "./result/LoadStub";
 import ResultRoutesContent from "./result/ResultRoutesContent";
 
@@ -17,8 +17,8 @@ export default function ResultRoutesPanel(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
-  const { back, result } = useAppSelector((state) => state.resultRoutes);
   const { placesLoaded } = useAppSelector((state) => state.favourites);
+  const { back, result } = useAppSelector((state) => state.resultRoutes);
 
   useEffect(() => {
     const load = async () => {
