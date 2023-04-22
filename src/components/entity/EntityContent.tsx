@@ -121,7 +121,11 @@ export default function EntityContent({ entity }: EntityContentProps): JSX.Eleme
             Saved as <strong>{found.name}</strong>.
           </Alert>
         : <Box>
-            <Alert severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
+            <Alert
+              icon={false}
+              severity="info"
+              action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}
+            >
               Would you like to save this place?
             </Alert>
             {modal && <SaveEntityModal entity={entity} onHide={() => { setModal(false); }} />}
