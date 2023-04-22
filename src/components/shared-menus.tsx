@@ -5,6 +5,7 @@ import {
   Directions,
   Favorite,
   Grain,
+  Home,
   Route
 } from "@mui/icons-material";
 import {
@@ -16,12 +17,33 @@ import {
 } from "@mui/material";
 import {
   FAVOURITES_ADDR,
+  HOME_ADDR,
   SEARCH_DIRECS_ADDR,
   SEARCH_PLACES_ADDR,
   SEARCH_ROUTES_ADDR
 } from "../domain/routing";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { hidePanel } from "../features/panelSlice";
+
+/**
+ * Upper menu with `home` and `close` buttons.
+ */
+export function HomeCloseMenu(): JSX.Element {
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  return (
+    <Box sx={{ mx: 2, my: 2, display: "flex", justifyContent: "space-between" }}>
+      <Box>
+        <Button startIcon={<Home />} onClick={() => { navigate(HOME_ADDR); }}>Home</Button>
+      </Box>
+      <IconButton size="small" onClick={() => { dispatch(hidePanel()); }}>
+        <Close fontSize="medium" />
+      </IconButton>
+    </Box>
+  );
+}
 
 type LogoCloseMenuProps = {
 
@@ -52,7 +74,7 @@ type BackCloseMenuProps = {
 };
 
 /**
- * Upper menu with `back` and `close` buttons.
+ * Upper menu with possible `back` and mandatory `close` buttons.
  */
 export function BackCloseMenu({ onBack }: BackCloseMenuProps): JSX.Element {
 
@@ -77,7 +99,8 @@ type MainMenuProps = {
 };
 
 /**
- * Standard four-section search menu (routes, places, directions, and favourites).
+ * Standard four-section search menu with `routes`, `places`, `directions`,
+ * and `favourites`.
  */
 export function MainMenu({ panel }: MainMenuProps): JSX.Element {
 
