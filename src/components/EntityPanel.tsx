@@ -1,29 +1,31 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Box, Skeleton, Stack } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { AppContext } from "../App";
+import { GrainPathFetcher } from "../utils/grainpath";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
 import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../features/favouritesSlice";
-import { GrainPathFetcher } from "../utils/grainpath";
-import { BackCloseMenu } from "./shared-menus";
+import { BackCloseMenu } from "./shared/menus";
 import EntityContent from "./entity/EntityContent";
 
 export default function EntityPanel(): JSX.Element {
 
   const id = useParams().id!; // (!) non-empty
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const storage = useContext(AppContext).storage;
   const entities = useContext(AppContext).grain.entity;
+
   const { back } = useAppSelector(state => state.entity);
+  const { placesLoaded } = useAppSelector((state) => state.favourites);
 
   const [entity, setEntity] = useState(entities.get(id));
   const [entityLoaded, setEntityLoaded] = useState(false);
-
-  const { placesLoaded } = useAppSelector((state) => state.favourites);
 
   // ensure known places are loaded from the storage
   useEffect(() => {

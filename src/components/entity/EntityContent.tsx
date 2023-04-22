@@ -217,13 +217,13 @@ export default function EntityContent({ entity }: EntityContentProps): JSX.Eleme
             </Stack>
           }
           {arr(cuisine) && (
-            <ExtraArray label="Cuisine" array={cuisine!} />
+            <ExtraArray label="cuisine" array={cuisine!} />
           )}
           {arr(clothes) && (
-            <ExtraArray label="Clothes" array={clothes!} />
+            <ExtraArray label="clothes" array={clothes!} />
           )}
           {arr(rental) && (
-            <ExtraArray label="Rental" array={rental!} />
+            <ExtraArray label="rental" array={rental!} />
           )}
           {arr(extra) &&
             <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ py: 0.5 }}>

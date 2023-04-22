@@ -9,14 +9,18 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { Entity } from "../../domain/types";
 import { AppContext } from "../../App";
+import { Entity } from "../../domain/types";
 import { IdGenerator } from "../../utils/helpers";
 import { useAppDispatch } from "../../features/hooks";
 import { createFavouritePlace } from "../../features/favouritesSlice";
 
 type SaveEntityModalProps = {
+
+  /** An entity to be saved. */
   entity: Entity;
+
+  /** Action hiding the dialog. */
   onHide: () => void;
 };
 
