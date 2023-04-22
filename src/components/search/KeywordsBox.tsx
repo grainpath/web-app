@@ -16,24 +16,29 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import { AppContext } from "../../App";
+import { KeywordAutoc, KeywordCondition } from "../../domain/types";
+import { GrainPathFetcher } from "../../utils/grainpath";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setBounds } from "../../features/panelSlice";
-import {
-  KeywordAutoc,
-  KeywordCondition,
-} from "../../domain/types";
-import { GrainPathFetcher } from "../../utils/grainpath";
-import { AppContext } from "../../App";
-import KeywordAttributeList from "./KeywordAttributeList";
+import KeywordFiltersList from "./KeywordFiltersList";
 
-type KeywordModalWindowProps = {
+type ConditionDialogProps = {
+
+  /** Action hiding condition dialog. */
   onHide: () => void;
+
+  /** A set of keywords associated with created conditions. */
   keywords: Set<string>;
+
+  /** Either new, or existing condition. */
   condition?: KeywordCondition;
+
+  /** Action inserting condition at `i`-position. */
   insert: (condition: KeywordCondition) => void;
 };
 
-function ConditionDialog({ condition: cond, keywords, onHide, insert }: KeywordModalWindowProps): JSX.Element {
+function ConditionDialog({ condition: cond, keywords, onHide, insert }: ConditionDialogProps): JSX.Element {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -119,7 +124,7 @@ function ConditionDialog({ condition: cond, keywords, onHide, insert }: KeywordM
           Select (optional) attributes to customize this condition further.
         </DialogContentText>
         { (!error && mount && value)
-          ? (<KeywordAttributeList autoc={value} filters={filters} />)
+          ? (<KeywordFiltersList autoc={value} filters={filters} />)
           : (<Alert severity="info">Attributes are keyword-specific.</Alert>)
         }
       </DialogContent>
@@ -132,11 +137,20 @@ function ConditionDialog({ condition: cond, keywords, onHide, insert }: KeywordM
 }
 
 type KeywordsBoxProps = {
+
+  /** List of already added  conditions. */
   conditions: KeywordCondition[];
+
+  /** Action deleting condition at `i`-position. */
   deleteCondition: (i: number) => void;
+
+  /** Action inserting new condition at `i`-position. */
   insertCondition: (condition: KeywordCondition, i: number) => void;
 };
 
+/**
+ * Component rendering box with removable keywords.
+ */
 export default function KeywordsBox({ conditions, deleteCondition, insertCondition }: KeywordsBoxProps): JSX.Element {
 
   const [show, setShow] = useState(false);

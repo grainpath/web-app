@@ -10,6 +10,8 @@ import {
 import { SwapVert } from "@mui/icons-material";
 import { AppContext } from "../App";
 import { RESULT_ROUTES_ADDR, SEARCH_ROUTES_ADDR } from "../domain/routing";
+import { point2place } from "../utils/helpers";
+import { GrainPathFetcher } from "../utils/grainpath";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { setBlock } from "../features/panelSlice";
 import {
@@ -24,14 +26,12 @@ import {
   setResultRoutesBack,
   setResultRoutes
 } from "../features/resultRoutesSlice";
-import { point2place } from "../utils/helpers";
-import { GrainPathFetcher } from "../utils/grainpath";
 import {
   FreePlaceListItem,
   RemovablePlaceListItem,
-} from "./shared-list-items";
+} from "./shared/list-items";
 import SelectPlaceModal from "./shared/SelectPlaceModal";
-import { LogoCloseMenu, MainMenu } from "./shared-menus";
+import { LogoCloseMenu, MainMenu } from "./shared/menus";
 import DistanceSlider from "./search/DistanceSlider";
 import KeywordsBox from "./search/KeywordsBox";
 import BottomButtons from "./search/BottomButtons";
@@ -63,9 +63,12 @@ export default function SearchRoutesPanel(): JSX.Element {
     }
   }, [map, navigate, dispatch, source, target]);
 
-  const swap = () => { dispatch(setSearchRoutesSource(target)); dispatch(setSearchRoutesTarget(source)); }
+  const swapAction = () => {
+    dispatch(setSearchRoutesSource(target));
+    dispatch(setSearchRoutesTarget(source));
+  }
 
-  const load = () => {
+  const searchAction = () => {
     new Promise<void>((res, _) => { dispatch(setBlock(true)); res(); })
       .then(() => GrainPathFetcher.fetchRoutes({
         source: source!,
@@ -123,7 +126,7 @@ export default function SearchRoutesPanel(): JSX.Element {
             <Button
               size="small"
               startIcon={<SwapVert />}
-              onClick={() => { swap(); }}
+              onClick={() => { swapAction(); }}
               sx={{ mt: 1, textTransform: "none" }}
             >
               Swap points
@@ -151,7 +154,7 @@ export default function SearchRoutesPanel(): JSX.Element {
         <BottomButtons
           disabled={!source || !target || !(conditions.length > 0)}
           onClear={() => { dispatch(clearSearchRoutes()); }}
-          onSearch={() => { load(); }}
+          onSearch={() => { searchAction(); }}
         />
         {modS &&
           <SelectPlaceModal

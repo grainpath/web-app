@@ -1,13 +1,26 @@
 import { Box, Slider } from "@mui/material";
 
 type DistanceSliderProps = {
+
+  /** Upper bound. */
   max: number;
+
+  /** Sequence of numbers presented to  */
   seq: number[];
+
+  /** The distance between any two nearest points. */
   step: number;
+
+  /** Actual value. */
   distance: number;
+
+  /** Action setting new value. */
   dispatch: (value: number) => void;
 };
 
+/**
+ * Standard distance slider.
+ */
 export default function DistanceSlider({ seq, distance, dispatch, ...rest }: DistanceSliderProps): JSX.Element {
   const marks = seq.map(m => { return { value: m, label: m }; });
 

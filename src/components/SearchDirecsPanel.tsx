@@ -9,7 +9,7 @@ import {
   setResultDirecs,
   setResultDirecsBack
 } from "../features/resultDirecsSlice";
-import { LogoCloseMenu, MainMenu } from "./shared-menus";
+import { LogoCloseMenu, MainMenu } from "./shared/menus";
 import BottomButtons from "./search/BottomButtons";
 import SearchDirecsSequence from "./search/SearchDirecsSequence";
 

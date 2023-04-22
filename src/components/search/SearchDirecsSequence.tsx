@@ -1,4 +1,9 @@
-import { MouseEventHandler, useContext, useEffect, useState } from "react";
+import {
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -19,8 +24,12 @@ import {
   setSearchDirecsSequence,
   updateSearchDirecsPlace
 } from "../../features/searchDirecsSlice";
-import { PlaceButton, SwapButton, DeleteButton } from "../shared-buttons";
-import { ListItemLabel } from "../shared-list-items";
+import {
+  DeleteButton,
+  PlaceButton,
+  SwapButton
+} from "../shared/buttons";
+import { ListItemLabel } from "../shared/list-items";
 import SelectPlaceModal from "../shared/SelectPlaceModal";
 
 /**
@@ -114,6 +123,9 @@ type SearchDirecsSequenceProps = {
   sequence: UiPlace[];
 }
 
+/**
+ * Component rendering sequence for searching directions.
+ */
 export default function SearchDirecsSequence({ sequence }: SearchDirecsSequenceProps): JSX.Element {
 
   const dispatch = useAppDispatch();

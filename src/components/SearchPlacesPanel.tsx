@@ -20,11 +20,11 @@ import {
   setSearchPlacesCenter,
   setSearchPlacesRadius
 } from "../features/searchPlacesSlice";
-import { LogoCloseMenu, MainMenu } from "./shared-menus";
+import { LogoCloseMenu, MainMenu } from "./shared/menus";
 import {
   FreePlaceListItem,
   RemovablePlaceListItem
-} from "./shared-list-items";
+} from "./shared/list-items";
 import SelectPlaceModal from "./shared/SelectPlaceModal";
 import DistanceSlider from "./search/DistanceSlider";
 import KeywordsBox from "./search/KeywordsBox";
@@ -53,7 +53,7 @@ export default function SearchPlacesPanel(): JSX.Element {
     }
   }, [map, navigate, dispatch, center, radius]);
 
-  const load = () => {
+  const searchAction = () => {
     new Promise<void>((res, _) => { dispatch(setBlock(true)); res(); })
       .then(() => GrainPathFetcher.fetchPlaces({
         center: center!,
@@ -118,7 +118,7 @@ export default function SearchPlacesPanel(): JSX.Element {
         <BottomButtons
           disabled={!center || !(conditions.length > 0)}
           onClear={() => { dispatch(clearSearchPlaces()); }}
-          onSearch={() => { load(); }}
+          onSearch={() => { searchAction(); }}
         />
         {modC &&
           <SelectPlaceModal
