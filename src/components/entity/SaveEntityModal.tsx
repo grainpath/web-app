@@ -25,6 +25,9 @@ type SaveEntityModalProps = {
   onHide: () => void;
 };
 
+/**
+ * Dialog with the user for saving an entity.
+ */
 export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps): JSX.Element {
 
   const dispatch = useAppDispatch();

@@ -11,6 +11,9 @@ import {
 import { BackCloseMenu } from "./shared/menus";
 import EntityContent from "./entity/EntityContent";
 
+/**
+ * Panel presenting an entity, with menu, and content.
+ */
 export default function EntityPanel(): JSX.Element {
 
   const id = useParams().id!; // (!) non-empty

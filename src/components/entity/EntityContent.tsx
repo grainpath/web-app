@@ -41,6 +41,9 @@ type EntityContentProps = {
   entity: Entity;
 };
 
+/**
+ * Component showing all available information about the passed entity.
+ */
 export default function EntityContent({ entity }: EntityContentProps): JSX.Element {
 
   const { map } = useContext(AppContext);

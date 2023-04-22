@@ -8,6 +8,9 @@ type ExtraArrayProps = {
   label: "cuisine" | "clothes" | "rental";
 };
 
+/**
+ * Components shows list of specific services under a specific category.
+ */
 export default function ExtraArray({ label, array }: ExtraArrayProps): JSX.Element {
   return (
     <Stack direction="row" gap={2}>
