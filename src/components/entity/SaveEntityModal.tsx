@@ -12,8 +12,9 @@ import {
 import { AppContext } from "../../App";
 import { Entity } from "../../domain/types";
 import { IdGenerator } from "../../utils/helpers";
-import { useAppDispatch } from "../../features/hooks";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { createFavouritePlace } from "../../features/favouritesSlice";
+import { setBlock } from "../../features/panelSlice";
 
 type SaveEntityModalProps = {
 
@@ -28,12 +29,12 @@ export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
+  const { block } = useAppSelector(state => state.panel);
 
   const [name, setName] = useState(entity.name);
-  const [disabled, setDisabled] = useState(false);
 
-  const action = async () => {
-    setDisabled(true);
+  const saveAction = async (): Promise<void> => {
+    dispatch(setBlock(true));
     try {
       const pl = { name: name, location: entity.location, keywords: entity.keywords, selected: [] };
       const st = {
@@ -45,7 +46,7 @@ export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps
       dispatch(createFavouritePlace(st));
     }
     catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
+    finally { dispatch(setBlock(false)); }
   };
 
   return (
@@ -64,8 +65,8 @@ export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { action(); }}>Save</Button>
+            <Button disabled={block} onClick={onHide} color="error">Discard</Button>
+            <Button disabled={block || !(name.trim().length > 0)} onClick={() => { saveAction(); }}>Save</Button>
           </Box>
         </Stack>
       </DialogContent>
