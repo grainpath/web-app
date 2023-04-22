@@ -9,7 +9,9 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { SomethingKind } from "../shared-types";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { SomethingKind } from "../shared/types";
+import { setBlock } from "../../features/panelSlice";
 
 type UpdateSomethingModalProps = {
 
@@ -26,19 +28,24 @@ type UpdateSomethingModalProps = {
   onUpdate: (name: string) => void;
 };
 
+/**
+ * Dialog for updating named `something`.
+ */
 export default function UpdateSomethingModal({ name: oldName, what, onHide, onUpdate }: UpdateSomethingModalProps): JSX.Element {
 
-  const [name, setName] = useState(oldName);
-  const [disabled, setDisabled] = useState(false);
+  const dispatch = useAppDispatch();
+  const { block } = useAppSelector(state => state.panel);
 
-  const update = async () => {
-    setDisabled(true);
+  const [name, setName] = useState(oldName);
+
+  const updateAction = async () => {
+    dispatch(setBlock(true));
     try {
       onUpdate(name);
       onHide();
     }
     catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
+    finally { dispatch(setBlock(false)); }
   };
 
   return (
@@ -53,8 +60,8 @@ export default function UpdateSomethingModal({ name: oldName, what, onHide, onUp
             onChange={(e) => { setName(e.target.value); }}
           />
           <Box sx={{ display: "flex", justifyContent: "space-between", minWidth: "300px" }}>
-            <Button disabled={disabled} onClick={onHide} color="error">Discard</Button>
-            <Button disabled={disabled || !(name.trim().length > 0)} onClick={() => { update(); }}>Update</Button>
+            <Button disabled={block} onClick={onHide} color="error">Discard</Button>
+            <Button disabled={block || !(name.trim().length > 0)} onClick={() => { updateAction(); }}>Update</Button>
           </Box>
         </Stack>
       </DialogContent>

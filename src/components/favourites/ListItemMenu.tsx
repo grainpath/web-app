@@ -33,27 +33,27 @@ export default function ListItemMenu({ onShow, showDelete , showUpdate }: ListIt
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const onClick = (e: React.MouseEvent<HTMLElement>) => {
+  const clickAction = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
 
-  const onClose = () => { setAnchorEl(null); };
+  const closeAction = () => { setAnchorEl(null); };
 
   return (
     <Box>
-      <IconButton size="small" onClick={onClick}><MoreVert /></IconButton>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+      <IconButton size="small" onClick={clickAction}><MoreVert /></IconButton>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeAction}>
         {onShow &&
           <MenuItem onClick={onShow}>
             <ListItemIcon><Link fontSize="small" /></ListItemIcon>
             <Typography>Show</Typography>
           </MenuItem>
         }
-        <MenuItem onClick={() => { showUpdate(); onClose(); }}>
+        <MenuItem onClick={() => { showUpdate(); closeAction(); }}>
           <ListItemIcon><Edit fontSize="small" /></ListItemIcon>
           <Typography>Edit</Typography>
         </MenuItem>
-        <MenuItem onClick={() => { showDelete(); onClose(); }}>
+        <MenuItem onClick={() => { showDelete(); closeAction(); }}>
           <ListItemIcon><Delete fontSize="small" /></ListItemIcon>
           <Typography>Delete</Typography>
         </MenuItem>

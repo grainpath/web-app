@@ -21,7 +21,7 @@ import {
 import {
   FreePlaceListItem,
   RemovablePlaceListItem
-} from "../shared-list-items";
+} from "../shared/list-items";
 
 /**
  * Dialog with the user enabling to create custom place (named location).

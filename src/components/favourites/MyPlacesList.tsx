@@ -15,8 +15,8 @@ import {
   updateFavouritePlace,
   deleteFavouritePlace
 } from "../../features/favouritesSlice";
-import { PlaceButton } from "../shared-buttons";
-import { BusyListItem } from "../shared-list-items";
+import { PlaceButton } from "../shared/buttons";
+import { BusyListItem } from "../shared/list-items";
 import DeleteSomethingModal from "./DeleteSomethingModal";
 import UpdateSomethingModal from "./UpdateSomethingModal";
 import ListItemMenu from "./ListItemMenu";
@@ -81,6 +81,9 @@ type MyPlacesListProps = {
   places: StoredPlace[];
 };
 
+/**
+ * Component presenting list of passed places.
+ */
 export default function MyPlacesList({ places }: MyPlacesListProps): JSX.Element {
 
   return (

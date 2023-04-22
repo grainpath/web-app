@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,35 +7,41 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import { SomethingKind } from "../shared-types";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { setBlock } from "../../features/panelSlice";
+import { SomethingKind } from "../shared/types";
 
 type DeleteSomethingModalProps = {
 
-  /** */
+  /** Name of the `something`. */
   name: string;
 
-  /** */
+  /** A kind of `something`. */
   what: SomethingKind;
 
-  /** */
+  /** Action hiding the dialog. */
   onHide: () => void;
 
-  /** */
+  /** Action deleting `something` from the current storage. */
   onDelete: () => void;
 };
 
+/**
+ * Dialog for deleting named `something`.
+ */
 export default function DeleteSomethingModal({ name, what, onHide, onDelete }: DeleteSomethingModalProps): JSX.Element {
 
-  const [disabled, setDisabled] = useState(false);
+  const dispatch = useAppDispatch();
+  const { block } = useAppSelector(state => state.panel);
 
   const deleteAction = async () => {
-    setDisabled(true);
+    dispatch(setBlock(true));
     try {
       onDelete();
       onHide();
     }
     catch (ex) { alert(ex); }
-    finally { setDisabled(false); }
+    finally { dispatch(setBlock(false)); }
   };
 
   return (
@@ -48,8 +53,8 @@ export default function DeleteSomethingModal({ name, what, onHide, onDelete }: D
             You are about to delete <b>{name}</b>. Please confirm the action.
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button disabled={disabled} onClick={onHide}>Cancel</Button>
-            <Button disabled={disabled} onClick={() => { deleteAction(); }} color="error">Delete</Button>
+            <Button disabled={block} onClick={onHide}>Cancel</Button>
+            <Button disabled={block} onClick={() => { deleteAction(); }} color="error">Delete</Button>
           </Box>
         </Stack>
       </DialogContent>

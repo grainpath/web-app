@@ -7,7 +7,7 @@ import {
   SxProps,
   Typography
 } from "@mui/material";
-import { SomethingKind } from "../shared-types";
+import { SomethingKind } from "../shared/types";
 
 type FavouriteStubProps = {
 
@@ -21,13 +21,17 @@ type FavouriteStubProps = {
   icon: (sx: SxProps) => ReactElement;
 };
 
+/**
+ * Stub appearing in the storage section while loading data.
+ */
 export default function FavouriteStub({ link, what, icon }: FavouriteStubProps): JSX.Element {
-  const nav = useNavigate();
+
+  const navigate = useNavigate();
 
   return (
     <Stack gap={1} direction="column">
       <Box display="flex" justifyContent="center">
-        <IconButton onClick={() => nav(link)}>
+        <IconButton onClick={() => { navigate(link); }}>
           {icon({ fontSize: 50, color: "grey" })}
         </IconButton>
       </Box>
