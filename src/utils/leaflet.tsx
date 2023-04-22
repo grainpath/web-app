@@ -8,10 +8,9 @@ import L, {
   PointExpression
 } from "leaflet";
 import * as ReactDOMServer from "react-dom/server";
-import { point2place } from "./helpers";
 import { IMap, IPin } from "../domain/interfaces";
 import { WgsPoint, UiPlace } from "../domain/types";
-
+import { point2place } from "./helpers";
 
 const pos = "bottomright";
 const dir = process.env.PUBLIC_URL + "/assets/markers";

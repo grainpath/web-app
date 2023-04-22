@@ -72,7 +72,7 @@ export default class IndexStorage implements IStorage {
     return IndexStorage.createT(IndexStorage.direcs, direc);
   }
 
-  // [R]ead
+  // [R]ead All
 
   private getAllT<T>(store: string): Promise<T[]> {
     return new Promise((res, rej) => {

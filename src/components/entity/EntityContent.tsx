@@ -47,8 +47,9 @@ type EntityContentProps = {
 export default function EntityContent({ entity }: EntityContentProps): JSX.Element {
 
   const { map } = useContext(AppContext);
-  const [modal, setModal] = useState(false);
   const { places } = useAppSelector((state) => state.favourites);
+
+  const [modal, setModal] = useState(false);
   const [found, setFound] = useState<StoredPlace | undefined>(undefined);
 
   const {

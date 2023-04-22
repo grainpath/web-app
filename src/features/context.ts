@@ -5,10 +5,6 @@ import { IMap, IStorage } from "../domain/interfaces";
 import IndexStorage from "../utils/indexStorage";
 import InmemStorage from "../utils/inmemStorage";
 
-/**
- * Use application context for all non-serializable data!
- */
-
 type AppContextValue = {
   map?: IMap;
   storage: IStorage;
@@ -19,6 +15,10 @@ type AppContextValue = {
 };
 
 class StorageFactory {
+
+  /**
+   * Get local storage based on `IndexedDB` availability.
+   */
   static getStorage(): IStorage {
     return indexedDB ? new IndexStorage() : new InmemStorage();
   }
@@ -33,6 +33,9 @@ export class MapFactory {
   static getMap(map: LeafletRawMap): IMap { return new LeafletMap(map); }
 }
 
+/**
+ * Use application context for all non-serializable data!
+ */
 export const context: AppContextValue = {
   storage: StorageFactory.getStorage(),
   grain: {
