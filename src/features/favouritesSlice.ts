@@ -1,8 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import {
-  deleteItemImmutable,
-  updateItemImmutable
-} from "./immutable";
+import { deleteItemImmutable, updateItemImmutable } from "./immutable";
 import {
   StoredDirec,
   StoredPlace,
@@ -38,6 +35,8 @@ export const favouritesSlice = createSlice({
   name: "favourites",
   initialState: initialState(),
   reducers: {
+
+    clearFavourites: () => { return initialState(); },
 
     // custom place
 
@@ -88,6 +87,8 @@ export const favouritesSlice = createSlice({
 });
 
 export const {
+
+  clearFavourites,
 
   // custom
 
