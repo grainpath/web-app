@@ -6,31 +6,9 @@ import {
   handleIncomingRedirect,
   login
 } from "@inrupt/solid-client-authn-browser";
+import StorageErrorGenerator from "./storageErrorGenerator";
 
-export class SolidErrorGenerator {
-
-  private static generateError(msg: string) {
-    return `[Solid error] ${msg}`;
-  }
-
-  public static generateErrorX(url: string, action: "create" | "read" | "update" | "delete") {
-    return this.generateError(`Cannot ${action} an object at ${url}.`);
-  }
-
-  public static generateErrorPods() {
-    return this.generateError(`Cannot get a list of available pods.`);
-  }
-
-  public static generateErrorCont(url: string) {
-    return this.generateError(`Cannot ensure a container at ${url}.`);
-  }
-
-  public static generateErrorList(url: string, what: string) {
-    return this.generateError(`Cannot get list of ${what} at ${url}.`);
-  }
-}
-
-export class SolidProvider {
+export default class SolidProvider {
 
   /**
    * List of well-known Solid identity providers.
@@ -89,7 +67,7 @@ export class SolidProvider {
     }
     catch (ex) {
       console.log(ex);
-      throw SolidErrorGenerator.generateErrorPods();
+      throw StorageErrorGenerator.generateSolidErrorPods();
     }
   }
 }

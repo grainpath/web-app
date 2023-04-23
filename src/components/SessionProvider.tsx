@@ -13,9 +13,11 @@ import {
 } from "@mui/material";
 import { AppContext } from "../App";
 import { SESSION_SOLID_ADDR } from "../domain/routing";
-import { SolidProvider } from "../utils/solidProvider";
+import LocalStorage from "../utils/localStorage";
+import SolidProvider from "../utils/solidProvider";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { showPanel } from "../features/panelSlice";
+import { resetFavourites } from "../features/favouritesSlice";
 import {
   resetSession,
   setSessionLogin,
@@ -28,8 +30,6 @@ import {
 } from "../features/solidSlice";
 import { SESSION_SOLID_ICON } from "./session/icons";
 import SolidLoginDialog from "./session/SolidLoginDialog";
-import { LocalStorageFactory } from "../features/context";
-import { resetFavourites } from "../features/favouritesSlice";
 
 const SessionButton = styled(Button)<ButtonProps>(() => ({
   backgroundColor: "#FFFFFF",
@@ -86,7 +86,7 @@ export default function SessionProvider():JSX.Element {
           dispatch(resetSolid());
           dispatch(resetSession());
           dispatch(resetFavourites());
-          context.storage = LocalStorageFactory.getStorage();
+          context.storage = new LocalStorage();
         }
       );
       dispatch(setSolidRedirect());

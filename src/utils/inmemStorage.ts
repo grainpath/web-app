@@ -10,6 +10,12 @@ export default class InmemStorage implements IStorage {
   private readonly routes = new Map<string, StoredRoute>();
   private readonly direcs = new Map<string, StoredDirec>();
 
+  public inmem(): boolean { return true;  }
+
+  public local(): boolean { return false; }
+
+  public remote(): boolean { return false; }
+
   // [C]reate
 
   private createT<T>(store: Map<string, T>, key: string, value: T): Promise<void> {

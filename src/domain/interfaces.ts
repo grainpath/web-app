@@ -3,7 +3,7 @@ import {
   StoredPlace,
   StoredRoute,
   UiPlace,
-  WgsPoint,
+  WgsPoint
 } from "./types";
 
 export interface IPin {
@@ -96,6 +96,15 @@ export interface IMap {
  * Wraps CRUD operations over an arbitrary object storage.
  */
 export interface IStorage {
+
+  /** In-memory storage. */
+  inmem(): boolean;
+
+  /** Data are persisted locally. */
+  local(): boolean;
+
+  /** Remote storage, such as Solid. */
+  remote(): boolean;
 
   // [C]reate
 

@@ -37,8 +37,8 @@ import {
   setFavouriteRoutesLoaded
 } from "../../features/favouritesSlice";
 import { setBlock } from "../../features/panelSlice";
-import { SolidStorage } from "../../utils/solidStorage";
-import { SolidProvider } from "../../utils/solidProvider";
+import SolidStorage from "../../utils/solidStorage";
+import SolidProvider from "../../utils/solidProvider";
 import { FAVOURITES_ADDR } from "../../domain/routing";
 import SolidLoading from "./SolidLoading";
 

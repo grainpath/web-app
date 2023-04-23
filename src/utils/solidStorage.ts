@@ -18,7 +18,7 @@ import {
   StoredDirec
 } from "../domain/types";
 import { IStorage } from "../domain/interfaces";
-import { SolidErrorGenerator } from "./solidProvider";
+import StorageErrorGenerator from "./storageErrorGenerator";
 
 const ns = {
   ldp: namespace("http://www.w3.org/ns/ldp#")
@@ -27,7 +27,7 @@ const ns = {
 /**
  * Wrapper over decentralized Solid Pod.
  */
-export class SolidStorage implements IStorage {
+export default class SolidStorage implements IStorage {
 
   // HTTP
 
@@ -57,6 +57,12 @@ export class SolidStorage implements IStorage {
 
   constructor(storage: string) { this.storage = storage; }
 
+  public inmem(): boolean { return false; }
+
+  public local(): boolean { return false; }
+
+  public remote(): boolean { return true; }
+
   /**
    * Initialize storage:
    * 
@@ -74,7 +80,7 @@ export class SolidStorage implements IStorage {
         }
         catch (ex) {
           console.log(ex);
-          throw SolidErrorGenerator.generateErrorCont(dir);
+          throw StorageErrorGenerator.generateSolidErrorCont(dir);
         }
       }
     }
@@ -90,7 +96,7 @@ export class SolidStorage implements IStorage {
     }
     catch (ex) {
       console.log(ex);
-      throw SolidErrorGenerator.generateErrorList(url, what);
+      throw StorageErrorGenerator.generateSolidErrorList(url, what);
     }
   }
 
@@ -103,7 +109,7 @@ export class SolidStorage implements IStorage {
   }
 
   public async getDirecsList(): Promise<string[]> {
-    return this.getList(this.getDirecsDir(), "directions");
+    return this.getList(this.getDirecsDir(), "direcs");
   }
 
   // Overwrite
@@ -120,7 +126,7 @@ export class SolidStorage implements IStorage {
       }
       catch (ex) {
         console.log(ex);
-        throw SolidErrorGenerator.generateErrorX(url, action);
+        throw StorageErrorGenerator.generateSolidErrorX(url, action);
       }
     }
   }
@@ -151,7 +157,7 @@ export class SolidStorage implements IStorage {
     }
     catch (ex) {
       console.log(ex);
-      throw SolidErrorGenerator.generateErrorX(url, "read");
+      throw StorageErrorGenerator.generateSolidErrorX(url, "read");
     }
   }
 
@@ -206,7 +212,7 @@ export class SolidStorage implements IStorage {
     }
     catch (ex) {
       console.log(ex);
-      throw SolidErrorGenerator.generateErrorX(url, "delete");
+      throw StorageErrorGenerator.generateSolidErrorX(url, "delete");
     }
   }
 

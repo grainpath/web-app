@@ -8,7 +8,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { SolidProvider } from "../../utils/solidProvider";
+import SolidProvider from "../../utils/solidProvider";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setBlock } from "../../features/panelSlice";
