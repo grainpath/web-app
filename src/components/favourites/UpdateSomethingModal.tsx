@@ -25,7 +25,7 @@ type UpdateSomethingModalProps = {
   onHide: () => void;
 
   /** Callback performing `update`. */
-  onUpdate: (name: string) => void;
+  onUpdate: (name: string) => Promise<void>;
 };
 
 /**
@@ -41,7 +41,7 @@ export default function UpdateSomethingModal({ name: oldName, what, onHide, onUp
   const updateAction = async () => {
     dispatch(setBlock(true));
     try {
-      onUpdate(name);
+      await onUpdate(name);
       onHide();
     }
     catch (ex) { alert(ex); }

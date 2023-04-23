@@ -70,13 +70,13 @@ function MyDirecsListItem({ index, direc, knowns }: MyDirecsListItemProps): JSX.
     navigate(RESULT_DIRECS_ADDR);
   };
 
-  const onUpdate = async (name: string) => {
+  const onUpdate = async (name: string): Promise<void> => {
     const dr = { ...direc, name: name };
     await storage.updateDirec(dr);
     dispatch(updateFavouriteDirec({ direc: dr, index: index }));
   };
 
-  const onDelete = async () => {
+  const onDelete = async (): Promise<void> => {
     await storage.deleteDirec(direc.direcId);
     dispatch(deleteFavouriteDirec(index));
   };
@@ -86,7 +86,7 @@ function MyDirecsListItem({ index, direc, knowns }: MyDirecsListItemProps): JSX.
       <BusyListItem
         label={name}
         l={<DirecButton onDirec={onDirec} />}
-        r={<ListItemMenu onShow={onShow} showUpdate={() => { setShowU(true); }} showDelete={() => { setShowD(true); }} />}
+        r={<ListItemMenu onShow={onShow} showUpdateDialog={() => { setShowU(true); }} showDeleteDialog={() => { setShowD(true); }} />}
       />
       {showU && <UpdateSomethingModal name={name} what="direction" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
       {showD && <DeleteSomethingModal name={name} what="direction" onHide={() => { setShowD(false); }} onDelete={onDelete} />}

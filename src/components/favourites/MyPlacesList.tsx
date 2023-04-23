@@ -51,15 +51,15 @@ function MyPlacesListItem({ index, place }: MyPlacesListItemProps): JSX.Element 
     navigate(ENTITY_ADDR + "/" + place.grainId);
   };
 
-  const onDelete = async () => {
-    await storage.deletePlace(place.placeId);
-    dispatch(deleteFavouritePlace(index));
-  };
-
-  const onUpdate = async (name: string) => {
+  const onUpdate = async (name: string): Promise<void> => {
     const pl = { ...place, name: name };
     await storage.updatePlace(pl);
     dispatch(updateFavouritePlace({ place: pl, index: index }));
+  };
+
+  const onDelete = async (): Promise<void> => {
+    await storage.deletePlace(place.placeId);
+    dispatch(deleteFavouritePlace(index));
   };
 
   return (
@@ -67,7 +67,7 @@ function MyPlacesListItem({ index, place }: MyPlacesListItemProps): JSX.Element 
       <BusyListItem
         label={place.name}
         l={<PlaceButton kind="stored" onPlace={onPlace} />}
-        r={<ListItemMenu onShow={place.grainId ? onShow : undefined} showDelete={() => { setShowD(true); }} showUpdate={() => { setShowU(true); }} />}
+        r={<ListItemMenu onShow={place.grainId ? onShow : undefined} showDeleteDialog={() => { setShowD(true); }} showUpdateDialog={() => { setShowU(true); }} />}
       />
       {showD && <DeleteSomethingModal name={place.name} what="place" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
       {showU && <UpdateSomethingModal name={place.name} what="place" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}

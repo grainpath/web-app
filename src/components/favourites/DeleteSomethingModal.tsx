@@ -23,7 +23,7 @@ type DeleteSomethingModalProps = {
   onHide: () => void;
 
   /** Action deleting `something` from the current storage. */
-  onDelete: () => void;
+  onDelete: () => Promise<void>;
 };
 
 /**
@@ -37,7 +37,7 @@ export default function DeleteSomethingModal({ name, what, onHide, onDelete }: D
   const deleteAction = async () => {
     dispatch(setBlock(true));
     try {
-      onDelete();
+      await onDelete();
       onHide();
     }
     catch (ex) { alert(ex); }

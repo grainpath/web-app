@@ -66,13 +66,13 @@ function MyRoutesListItem({ index, route, grains }: MyRoutesListItemProps): JSX.
     navigate(RESULT_ROUTES_ADDR);
   };
 
-  const onUpdate = async (name: string) => {
+  const onUpdate = async (name: string): Promise<void> => {
     const rt = { ...route, name: name };
     await storage.updateRoute(rt);
     dispatch(updateFavouriteRoute({ route: rt, index: index }));
   };
 
-  const onDelete = async () => {
+  const onDelete = async (): Promise<void> => {
     await storage.deleteRoute(route.routeId);
     dispatch(deleteFavouriteRoute(index));
   };
@@ -82,7 +82,7 @@ function MyRoutesListItem({ index, route, grains }: MyRoutesListItemProps): JSX.
       <BusyListItem
         label={name}
         l={<RouteButton onRoute={onRoute} />}
-        r={<ListItemMenu onShow={onShow} showUpdate={() => { setShowU(true); }} showDelete={() => { setShowD(true); }} />}
+        r={<ListItemMenu onShow={onShow} showUpdateDialog={() => { setShowU(true); }} showDeleteDialog={() => { setShowD(true); }} />}
       />
       {showU && <UpdateSomethingModal name={name} what="route" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
       {showD && <DeleteSomethingModal name={name} what="route" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
