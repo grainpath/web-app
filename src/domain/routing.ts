@@ -17,3 +17,9 @@ export const RESULT_ROUTES_ADDR = RESULT_ADDR + ROUTES_ADDR;
 export const HOME_ADDR = "/";
 export const ENTITY_ADDR = "/entity";
 export const FAVOURITES_ADDR = "/favourites";
+
+const SOLID_ADDR = "/solid";
+
+const SESSION_ADDR = "/session";
+
+export const SESSION_SOLID_ADDR = SESSION_ADDR + SOLID_ADDR;
