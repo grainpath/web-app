@@ -39,8 +39,9 @@ export class SolidProvider {
     return [
       "login.inrupt.com",
       "solidweb.org",
+      "solidcommunity.net",
+//    "solidweb.me",
       "inrupt.net",
-      "solidcommunity.net"
     ].map((idp) => "https://" + idp + "/");
   }
 
