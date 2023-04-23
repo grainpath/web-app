@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { setBlock } from "../../features/panelSlice";
 import { SomethingKind } from "../shared/types";
 
-type DeleteSomethingModalProps = {
+type DeleteSomethingDialogProps = {
 
   /** Name of the `something`. */
   name: string;
@@ -29,7 +29,7 @@ type DeleteSomethingModalProps = {
 /**
  * Dialog for deleting named `something`.
  */
-export default function DeleteSomethingModal({ name, what, onHide, onDelete }: DeleteSomethingModalProps): JSX.Element {
+export default function DeleteSomethingDialog({ name, what, onHide, onDelete }: DeleteSomethingDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { block } = useAppSelector(state => state.panel);

@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { SomethingKind } from "../shared/types";
 import { setBlock } from "../../features/panelSlice";
 
-type UpdateSomethingModalProps = {
+type UpdateSomethingDialogProps = {
 
   /** Old name of `something`. */
   name: string;
@@ -21,7 +21,7 @@ type UpdateSomethingModalProps = {
   /** `Something` that will be updated. */
   what: SomethingKind;
 
-  /** Callback for hiding modal. */
+  /** Callback for hiding the dialog. */
   onHide: () => void;
 
   /** Callback performing `update`. */
@@ -31,7 +31,7 @@ type UpdateSomethingModalProps = {
 /**
  * Dialog for updating named `something`.
  */
-export default function UpdateSomethingModal({ name: oldName, what, onHide, onUpdate }: UpdateSomethingModalProps): JSX.Element {
+export default function UpdateSomethingDialog({ name: oldName, what, onHide, onUpdate }: UpdateSomethingDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { block } = useAppSelector(state => state.panel);

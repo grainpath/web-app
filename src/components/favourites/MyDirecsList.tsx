@@ -25,8 +25,8 @@ import { DirecButton } from "../shared/buttons";
 import { BusyListItem } from "../shared/list-items";
 import ListItemMenu from "./ListItemMenu";
 import FavouriteStub from "./FavouriteStub";
-import UpdateSomethingModal from "./UpdateSomethingModal";
-import DeleteSomethingModal from "./DeleteSomethingModal";
+import UpdateSomethingDialog from "./UpdateSomethingDialog";
+import DeleteSomethingDialog from "./DeleteSomethingDialog";
 
 type MyDirecsListItemProps = {
 
@@ -88,8 +88,8 @@ function MyDirecsListItem({ index, direc, knowns }: MyDirecsListItemProps): JSX.
         l={<DirecButton onDirec={onDirec} />}
         r={<ListItemMenu onShow={onShow} showUpdateDialog={() => { setShowU(true); }} showDeleteDialog={() => { setShowD(true); }} />}
       />
-      {showU && <UpdateSomethingModal name={name} what="direction" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
-      {showD && <DeleteSomethingModal name={name} what="direction" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
+      {showU && <UpdateSomethingDialog name={name} what="direction" onHide={() => { setShowU(false); }} onUpdate={onUpdate} />}
+      {showD && <DeleteSomethingDialog name={name} what="direction" onHide={() => { setShowD(false); }} onDelete={onDelete} />}
     </Box>
   );
 }

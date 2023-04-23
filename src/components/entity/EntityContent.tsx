@@ -33,7 +33,7 @@ import { point2text } from "../../utils/helpers";
 import { useAppSelector } from "../../features/hooks";
 import ExtraChip from "./ExtraChip";
 import ExtraArray from "./ExtraArray";
-import SaveEntityModal from "./SaveEntityModal";
+import SaveEntityDialog from "./SaveEntityDialog";
 
 type EntityContentProps = {
 
@@ -49,7 +49,7 @@ export default function EntityContent({ entity }: EntityContentProps): JSX.Eleme
   const { map } = useContext(AppContext);
   const { places } = useAppSelector((state) => state.favourites);
 
-  const [modal, setModal] = useState(false);
+  const [saveDialog, setSaveDialog] = useState(false);
   const [found, setFound] = useState<StoredPlace | undefined>(undefined);
 
   const {
@@ -124,11 +124,11 @@ export default function EntityContent({ entity }: EntityContentProps): JSX.Eleme
             <Alert
               icon={false}
               severity="info"
-              action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}
+              action={<Button color="inherit" size="small" onClick={() => { setSaveDialog(true); }}>Save</Button>}
             >
               Would you like to save this place?
             </Alert>
-            {modal && <SaveEntityModal entity={entity} onHide={() => { setModal(false); }} />}
+            {saveDialog && <SaveEntityDialog entity={entity} onHide={() => { setSaveDialog(false); }} />}
           </Box>
       }
       <Stack direction="column" gap={1}>

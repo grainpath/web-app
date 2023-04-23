@@ -17,27 +17,27 @@ import { createFavouriteDirec } from "../../features/favouritesSlice";
 import { setResultDirecs } from "../../features/resultDirecsSlice";
 import { setBlock } from "../../features/panelSlice";
 
-type SaveDirecModalProps = {
+type SaveDirecDialogProps = {
 
   /** Direction to be saved. */
   direc: UiDirec;
 
-  /** Action hiding modal. */
+  /** Action hiding dialog. */
   onHide: () => void;
 };
 
 /**
- * Modal for saving a direction appeared in the result.
+ * Dialog for saving a direction appeared in the result.
  */
-export default function SaveDirecModal({ direc, onHide }: SaveDirecModalProps): JSX.Element {
+export default function SaveDirecDialog({ direc, onHide }: SaveDirecDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
-  const { block } = useAppSelector(state => state.panel); // !!!!!!!!!!!!!!!!!
+  const { block } = useAppSelector(state => state.panel);
 
   const [name, setName] = useState(direc.name);
 
-  const saveAction = async () => {
+  const saveAction = async (): Promise<void> => {
     dispatch(setBlock(true));
     try {
       const dr = { ...direc, name: name };

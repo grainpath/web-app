@@ -10,7 +10,7 @@ import { AppContext } from "../../App";
 import { StoredPlace, UiDirec } from "../../domain/types";
 import { useAppSelector } from "../../features/hooks";
 import { SteadyPlaceListItem } from "../shared/list-items";
-import SaveDirecModal from "./SaveDirecModal";
+import SaveDirecDialog from "./SaveDirecDialog";
 
 type ResultDirecsContentProps = {
 
@@ -26,7 +26,7 @@ export default function ResultDirecsContent({ result }: ResultDirecsContentProps
   const { map } = useContext(AppContext);
   const { places } = useAppSelector(state => state.favourites);
 
-  const [modal, setModal] = useState(false);
+  const [saveDialog, setSaveDialog] = useState(false);
 
   const {
     direcId,
@@ -59,11 +59,11 @@ export default function ResultDirecsContent({ result }: ResultDirecsContentProps
             <Alert
               icon={false}
               severity="info"
-              action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}
+              action={<Button color="inherit" size="small" onClick={() => { setSaveDialog(true); }}>Save</Button>}
             >
               Would you like to save this direction?
             </Alert>
-            {modal && <SaveDirecModal direc={result} onHide={() => { setModal(false); }} />}
+            {saveDialog && <SaveDirecDialog direc={result} onHide={() => { setSaveDialog(false); }} />}
           </Box>
       }
       <Box display="flex" alignItems="center">

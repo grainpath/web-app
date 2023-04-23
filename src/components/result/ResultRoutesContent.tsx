@@ -20,7 +20,7 @@ import { setResultRoutesIndex } from "../../features/resultRoutesSlice";
 import { SteadyPlaceListItem } from "../shared/list-items";
 import PlacesList from "./PlacesList";
 import PlacesFilter from "./PlacesFilter";
-import SaveRouteModal from "./SaveRouteModal";
+import SaveRouteDialog from "./SaveRouteDialog";
 
 type ResultRoutesContentProps = {
 
@@ -40,7 +40,7 @@ export default function ResultRoutesContent({ result }: ResultRoutesContentProps
   const { index } = useAppSelector(state => state.resultRoutes);
   const { places: knownPlaces } = useAppSelector(state => state.favourites);
 
-  const [modal, setModal] = useState(false);
+  const [saveDialog, setSaveDialog] = useState(false);
 
   const route = useMemo(() => result[index], [result, index]);
   const {
@@ -88,10 +88,10 @@ export default function ResultRoutesContent({ result }: ResultRoutesContentProps
             Saved as <strong>{name}</strong>.
           </Alert>
         : <Box>
-            <Alert icon={false} severity="info" action={<Button color="inherit" size="small" onClick={() => { setModal(true); }}>Save</Button>}>
+            <Alert icon={false} severity="info" action={<Button color="inherit" size="small" onClick={() => { setSaveDialog(true); }}>Save</Button>}>
               Would you like to save this route?
             </Alert>
-            {modal && <SaveRouteModal index={index} route={route} onHide={() => { setModal(false); }} />}
+            {saveDialog && <SaveRouteDialog index={index} route={route} onHide={() => { setSaveDialog(false); }} />}
           </Box>
       }
       <Box display="flex" alignItems="center">

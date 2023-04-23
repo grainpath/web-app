@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import { createFavouritePlace } from "../../features/favouritesSlice";
 import { setBlock } from "../../features/panelSlice";
 
-type SaveEntityModalProps = {
+type SaveEntityDialogProps = {
 
   /** An entity to be saved. */
   entity: Entity;
@@ -28,7 +28,7 @@ type SaveEntityModalProps = {
 /**
  * Dialog with the user for saving an entity.
  */
-export default function SaveEntityModal({ entity, onHide }: SaveEntityModalProps): JSX.Element {
+export default function SaveEntityDialog({ entity, onHide }: SaveEntityDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);

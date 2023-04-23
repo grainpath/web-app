@@ -17,7 +17,7 @@ import { createFavouriteRoute } from "../../features/favouritesSlice";
 import { updateResultRoute } from "../../features/resultRoutesSlice";
 import { setBlock } from "../../features/panelSlice";
 
-type SaveRouteModalProps = {
+type SaveRouteDialogProps = {
 
   /** Route to be saved. */
   route: UiRoute;
@@ -25,14 +25,14 @@ type SaveRouteModalProps = {
   /** Position of the route in the list. */
   index: number;
 
-  /** Action hiding modal. */
+  /** Action hiding dialog. */
   onHide: () => void;
 };
 
 /**
- * Modal for saving a route appeared in the result.
+ * Dialog for saving a route appeared in the result.
  */
-export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalProps): JSX.Element {
+export default function SaveRouteDialog({ route, index, onHide }: SaveRouteDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { storage } = useContext(AppContext);
@@ -40,7 +40,7 @@ export default function SaveRouteModal({ route, index, onHide }: SaveRouteModalP
 
   const [name, setName] = useState(route.name);
 
-  const saveAction = async () => {
+  const saveAction = async (): Promise<void> => {
     dispatch(setBlock(true));
     try {
       const rt = { ...route, name: name };

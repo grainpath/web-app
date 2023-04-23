@@ -130,7 +130,8 @@ export default function SearchDirecsSequence({ sequence }: SearchDirecsSequenceP
 
   const dispatch = useAppDispatch();
   const { map } = useContext(AppContext);
-  const [modal, setModal] = useState(false);
+
+  const [selectDialog, setSelectDialog] = useState(false);
 
   useEffect(() => {
     map?.clear();
@@ -159,13 +160,13 @@ export default function SearchDirecsSequence({ sequence }: SearchDirecsSequenceP
         </StrictModeDroppable>
       </DragDropContext>
       <DirecsControlListItem
-        onAppend={() => { setModal(true); }}
+        onAppend={() => { setSelectDialog(true); }}
         onRevers={() => { dispatch(setSearchDirecsSequence([...sequence].reverse())); }}
       />
-      {modal &&
+      {selectDialog &&
         <SelectPlaceDialog
           kind="custom"
-          onHide={() => { setModal(false); }}
+          onHide={() => { setSelectDialog(false); }}
           onSelect={(place) => { dispatch(appendSearchDirecsPlace(place)); }}
         />
       }

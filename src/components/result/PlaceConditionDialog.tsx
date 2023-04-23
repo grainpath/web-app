@@ -49,7 +49,7 @@ function CollectSelect({ label, items }: CollectSelectProps): JSX.Element {
   );
 }
 
-type PlaceConditionModalProps = {
+type PlaceConditionDialogProps = {
 
   /** Action hiding dialog. */
   onHide: () => void;
@@ -61,7 +61,7 @@ type PlaceConditionModalProps = {
 /**
  * Simplified read-only condition representation.
  */
-export default function PlaceConditionModal({ onHide, condition }: PlaceConditionModalProps): JSX.Element {
+export default function PlaceConditionDialog({ onHide, condition }: PlaceConditionDialogProps): JSX.Element {
 
   const { keyword, filters } = condition;
   const { existens: es, booleans: bs, numerics: ns, textuals: ts, collects: cs } = filters;

@@ -6,7 +6,7 @@ import {
   Typography
 } from "@mui/material";
 import { PlaceCondition } from "../../domain/types";
-import PlaceConditionModal from "./PlaceConditionModal";
+import PlaceConditionDialog from "./PlaceConditionDialog";
 
 type PlacesFilterProps = {
 
@@ -31,19 +31,19 @@ type PlacesFilterProps = {
  */
 export default function PlacesFilter({ found, active, disabled, condition, onToggle }: PlacesFilterProps): JSX.Element {
 
-  const [modal, setModal] = useState(false);
+  const [condDialog, setCondDialog] = useState(false);
 
   return (
     <Box>
       <Stack direction="row" justifyContent="center" alignItems="center">
         <Checkbox disabled={disabled || !found} checked={active} onChange={onToggle} />
-        <Box onClick={() => { setModal(true); }} sx={{ cursor: "pointer" }}>
+        <Box onClick={() => { setCondDialog(true); }} sx={{ cursor: "pointer" }}>
           <Typography sx={{ textDecorationLine: found ? undefined : "line-through", color: found ? undefined : "grey" }}>
             {condition.keyword}
           </Typography>
         </Box>
       </Stack>
-      {modal && <PlaceConditionModal onHide={() => { setModal(false); }} condition={condition} />}
+      {condDialog && <PlaceConditionDialog onHide={() => { setCondDialog(false); }} condition={condition} />}
     </Box>
   );
 }

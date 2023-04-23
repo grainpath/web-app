@@ -153,10 +153,10 @@ type KeywordsBoxProps = {
  */
 export default function KeywordsBox({ conditions, deleteCondition, insertCondition }: KeywordsBoxProps): JSX.Element {
 
-  const [show, setShow] = useState(false);
-  const [curr, setCurr] = useState<number>(0);
+  const [showDialog, setShowDialog] = useState(false);
+  const [currCondition, setCurrCondition] = useState<number>(0);
 
-  const modal = (i: number) => { setCurr(i); setShow(true); };
+  const dialog = (i: number) => { setCurrCondition(i); setShowDialog(true); };
 
   return (
     <Box>
@@ -164,19 +164,19 @@ export default function KeywordsBox({ conditions, deleteCondition, insertConditi
         <Stack direction="row" sx={{ flexWrap: "wrap" }}>
           {conditions.map((condition, i) => (
             <Chip key={i} color="primary" variant="outlined" sx={{ m: 0.35, color: "black" }}
-              label={condition.keyword} onClick={() => modal(i)} onDelete={() => deleteCondition(i)} />
+              label={condition.keyword} onClick={() => dialog(i)} onDelete={() => deleteCondition(i)} />
           ))}
         </Stack>
-        <Button size="large" sx={{ width: "100%" }} onClick={() => { modal(conditions.length); }}>
+        <Button size="large" sx={{ width: "100%" }} onClick={() => { dialog(conditions.length); }}>
           Add condition
         </Button>
       </Paper>
-      {show &&
+      {showDialog &&
         <ConditionDialog
-          condition={conditions[curr]}
-          onHide={() => setShow(false)}
+          condition={conditions[currCondition]}
+          onHide={() => setShowDialog(false)}
           keywords={new Set(conditions.map((v) => v.keyword))}
-          insert={(condition) => insertCondition(condition, curr)}
+          insert={(condition) => insertCondition(condition, currCondition)}
         />
       }
     </Box>
