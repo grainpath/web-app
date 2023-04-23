@@ -23,8 +23,8 @@ import {
   setFavouritePlaces,
   setFavouritePlacesLoaded
 } from "../../features/favouritesSlice";
-import { PlaceKind } from "../shared-types";
-import { AddPlaceButton } from "../shared-buttons";
+import { PlaceKind } from "./types";
+import { AddPlaceButton } from "./buttons";
 
 type SelectPlaceModalProps = {
 

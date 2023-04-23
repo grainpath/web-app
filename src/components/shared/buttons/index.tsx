@@ -8,7 +8,7 @@ import {
   Route,
   SwapVert
 } from "@mui/icons-material";
-import { PlaceKind } from "./shared-types";
+import { PlaceKind } from "../types";
 
 type IconWrapperProps = {
   icon: ReactElement;
