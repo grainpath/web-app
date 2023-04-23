@@ -184,7 +184,7 @@ export default function SolidContent(): JSX.Element {
         <Typography fontSize="small">
           <sup>*</sup> After download only data from your Solid Pod will appear
           in <strong>Favourites</strong>. Data from your local storage will be
-          available upon refresh. Local and remote storages are not synchronized.
+          available upon logout. Local and remote storages are not synchronized.
         </Typography>
       </Stack>
       <Stack gap={2}>

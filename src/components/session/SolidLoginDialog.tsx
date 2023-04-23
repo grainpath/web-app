@@ -55,15 +55,7 @@ export default function SolidLoginDialog({ onHide }: SolidLoginDialogProps): JSX
             disabled={block}
             options={SolidProvider.getIdProviders()}
             onChange={(_, v) => { setProvider(v ?? ""); }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputProps={{
-                  ...params.InputProps,
-                  type: "search",
-                }}
-              />
-            )}
+            renderInput={(params) => (<TextField {...params} />)}
           />
           <Stack direction="row" justifyContent="space-between">
             <Button disabled={block} onClick={onHide} color="secondary">Cancel</Button>
