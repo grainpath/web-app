@@ -56,6 +56,10 @@ export class SolidProvider {
     });
   }
 
+  public static async logout(): Promise<void> {
+    return getDefaultSession().logout();
+  }
+
   /**
    * Redirect handler.
    */

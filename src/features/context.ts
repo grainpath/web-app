@@ -14,7 +14,7 @@ type AppContextValue = {
   }
 };
 
-class StorageFactory {
+export class LocalStorageFactory {
 
   /**
    * Get local storage based on `IndexedDB` availability.
@@ -37,7 +37,7 @@ export class MapFactory {
  * Use application context for all non-serializable data!
  */
 export const context: AppContextValue = {
-  storage: StorageFactory.getStorage(),
+  storage: LocalStorageFactory.getStorage(),
   grain: {
     autocs: new Map(),
     entity: new Map()

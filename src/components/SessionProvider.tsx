@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -11,14 +11,25 @@ import {
   Typography,
   styled
 } from "@mui/material";
+import { AppContext } from "../App";
 import { SESSION_SOLID_ADDR } from "../domain/routing";
 import { SolidProvider } from "../utils/solidProvider";
 import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { showPanel } from "../features/panelSlice";
-import { setLogin, setSolid } from "../features/sessionSlice";
-import { setSolidRedirect, setSolidWebId } from "../features/solidSlice";
+import {
+  resetSession,
+  setSessionLogin,
+  setSessionSolid
+} from "../features/sessionSlice";
+import {
+  resetSolid,
+  setSolidRedirect,
+  setSolidWebId
+} from "../features/solidSlice";
 import { SESSION_SOLID_ICON } from "./session/icons";
 import SolidLoginDialog from "./session/SolidLoginDialog";
+import { LocalStorageFactory } from "../features/context";
+import { resetFavourites } from "../features/favouritesSlice";
 
 const SessionButton = styled(Button)<ButtonProps>(() => ({
   backgroundColor: "#FFFFFF",
@@ -34,6 +45,7 @@ export default function SessionProvider():JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const context = useContext(AppContext);
 
   // state
 
@@ -64,21 +76,28 @@ export default function SessionProvider():JSX.Element {
     if (!solidRedirect) {
       SolidProvider.redirect(
         (webId: string) => {
-          dispatch(setLogin());
-          dispatch(setSolid());
+          dispatch(setSessionLogin());
+          dispatch(setSessionSolid());
           dispatch(setSolidWebId(webId));
           navigate(SESSION_SOLID_ADDR);
         },
-        (error: string | null) => { console.log(`[Solid error] ${error}`); },
+        (error: string | null) => { alert(`[Solid error] ${error}`); },
         () => {
-          console.log("Solid logged out.");
+          dispatch(resetSolid());
+          dispatch(resetSession());
+          dispatch(resetFavourites());
+          context.storage = LocalStorageFactory.getStorage();
         }
       );
       dispatch(setSolidRedirect());
     }
-  }, [navigate, dispatch, solidRedirect]);
+  }, [navigate, dispatch, context, solidRedirect]);
 
   // session
+
+  const sessionLabel = () => {
+    if (solid) { return "Solid"; }
+  }
 
   const sessionAction = () => {
     dispatch(showPanel());
@@ -89,7 +108,7 @@ export default function SessionProvider():JSX.Element {
     <Box sx={{ position: "absolute", top: "10px", right: "10px", zIndex: 1000 }}>
       {!login
         ? <Box>
-            <SessionButton onClick={clickMenuAction} variant="outlined" color="primary">
+            <SessionButton variant="outlined" color="primary" onClick={clickMenuAction}>
               Log in
             </SessionButton>
             <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={closeMenuAction}>
@@ -103,8 +122,8 @@ export default function SessionProvider():JSX.Element {
               </MenuItem>
             </Menu>
           </Box>
-        : <SessionButton onClick={sessionAction} variant="outlined" color="success">
-            Session
+        : <SessionButton variant="outlined" color="success" onClick={sessionAction}>
+            {sessionLabel()}
           </SessionButton>
       }
       {solidLoginDialog && <SolidLoginDialog onHide={() => { setSolidLoginDialog(false); }} />}

@@ -40,6 +40,7 @@ export const solidSlice = createSlice({
 });
 
 export const {
+  resetSolid,
   setSolidRedirect,
   setSolidWebId,
   setSolidSelectedPod,

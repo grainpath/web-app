@@ -36,7 +36,7 @@ export const favouritesSlice = createSlice({
   initialState: initialState(),
   reducers: {
 
-    clearFavourites: () => { return initialState(); },
+    resetFavourites: () => { return initialState(); },
 
     // custom place
 
@@ -88,7 +88,7 @@ export const favouritesSlice = createSlice({
 
 export const {
 
-  clearFavourites,
+  resetFavourites,
 
   // custom
 
