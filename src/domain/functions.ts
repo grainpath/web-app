@@ -18,3 +18,11 @@ export function replaceName({grainId, name, ...rest}: UiPlace, grains: Map<strin
   const n = grainId ? (grains.get(grainId)?.name ?? name) : name;
   return { ...rest, grainId: grainId, name: n };
 }
+
+export function camelCaseToKeyword(token: string): string {
+  const res = [];
+  for (const l of token) {
+    res.push((l === l.toLowerCase()) ? l : ` ${l.toLowerCase()}`);
+  }
+  return res.join('');
+}
