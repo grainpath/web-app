@@ -3,6 +3,9 @@ import { useAppSelector } from "../features/hooks";
 import { HomeCloseMenu } from "./shared/menus";
 import SolidContent from "./session/SolidContent";
 
+/**
+ * Panel corresponding to Solid storage provider.
+ */
 export default function SessionSolidPanel(): JSX.Element {
 
   const {

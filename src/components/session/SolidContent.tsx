@@ -42,6 +42,9 @@ import { SolidProvider } from "../../utils/solidProvider";
 import { FAVOURITES_ADDR } from "../../domain/routing";
 import SolidLoading from "./SolidLoading";
 
+/**
+ * The content of the Solid panel upon login.
+ */
 export default function SolidContent(): JSX.Element {
 
   const navigate = useNavigate();

@@ -20,6 +20,9 @@ type SolidLoginDialogProps = {
   onHide: () => void;
 };
 
+/**
+ * Dialog allowing to select a Solid Pod provider and log in against it.
+ */
 export default function SolidLoginDialog({ onHide }: SolidLoginDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();

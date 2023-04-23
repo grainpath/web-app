@@ -1,5 +1,8 @@
 import { Link } from "@mui/material";
 
+/**
+ * Standard link refering to the `Solid project / Get a pod`.
+ */
 export default function SolidPodLink(): JSX.Element {
   return (
     <Link

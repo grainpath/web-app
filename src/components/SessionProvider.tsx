@@ -27,6 +27,9 @@ const SessionButton = styled(Button)<ButtonProps>(() => ({
   }
 }));
 
+/**
+ * Menu and dialogs for supported remote storage providers.
+ */
 export default function SessionProvider():JSX.Element {
 
   const navigate = useNavigate();
