@@ -30,22 +30,21 @@ import {
   FreePlaceListItem,
   RemovablePlaceListItem,
 } from "./shared/list-items";
-import SelectPlaceModal from "./shared/SelectPlaceModal";
 import { LogoCloseMenu, MainMenu } from "./shared/menus";
+import SelectPlaceDialog from "./shared/SelectPlaceDialog";
 import DistanceSlider from "./search/DistanceSlider";
 import KeywordsBox from "./search/KeywordsBox";
 import BottomButtons from "./search/BottomButtons";
 
 export default function SearchRoutesPanel(): JSX.Element {
 
-  const [modS, setModS] = useState(false);
-  const [modT, setModT] = useState(false);
-
   const navigate = useNavigate();
-  const { map } = useContext(AppContext);
-
   const dispatch = useAppDispatch();
+  const { map } = useContext(AppContext);
   const { source, target, distance, conditions } = useAppSelector(state => state.searchRoutes);
+
+  const [sourceSelectDialog, setSourceSelectDialog] = useState(false);
+  const [targetSelectDialog, setTargetSelectDialog] = useState(false);
 
   useEffect(() => {
     map?.clear();
@@ -105,7 +104,7 @@ export default function SearchRoutesPanel(): JSX.Element {
               : <FreePlaceListItem
                   kind="source"
                   label="Select starting point..."
-                  onPlace={() => { setModS(true); }}
+                  onPlace={() => { setSourceSelectDialog(true); }}
                 />
             }
             {(target)
@@ -118,7 +117,7 @@ export default function SearchRoutesPanel(): JSX.Element {
               : <FreePlaceListItem
                   kind="target"
                   label="Select destination..."
-                  onPlace={() => { setModT(true); }}
+                  onPlace={() => { setTargetSelectDialog(true); }}
                 />
             }
           </Stack>
@@ -156,17 +155,17 @@ export default function SearchRoutesPanel(): JSX.Element {
           onClear={() => { dispatch(clearSearchRoutes()); }}
           onSearch={() => { searchAction(); }}
         />
-        {modS &&
-          <SelectPlaceModal
+        {sourceSelectDialog &&
+          <SelectPlaceDialog
             kind="source"
-            onHide={() => setModS(false)}
+            onHide={() => setSourceSelectDialog(false)}
             onSelect={(place) => dispatch(setSearchRoutesSource(place))}
           />
         }
-        {modT &&
-          <SelectPlaceModal
+        {targetSelectDialog &&
+          <SelectPlaceDialog
             kind="target"
-            onHide={() => setModT(false)}
+            onHide={() => setTargetSelectDialog(false)}
             onSelect={(place) => dispatch(setSearchRoutesTarget(place))}
           />
         }

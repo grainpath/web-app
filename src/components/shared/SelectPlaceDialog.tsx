@@ -26,19 +26,22 @@ import {
 import { PlaceKind } from "./types";
 import { AddPlaceButton } from "./buttons";
 
-type SelectPlaceModalProps = {
+type SelectPlaceDialogProps = {
 
   /** Place kind (source, target, etc.) */
   kind: PlaceKind;
 
-  /** Action hiding modal. */
+  /** Action hiding dialog. */
   onHide: () => void;
 
   /** Dispatch selected place to the state. */
   onSelect: (place: UiPlace) => void;
 };
 
-export default function SelectPlaceModal({ kind, onHide, onSelect }: SelectPlaceModalProps): JSX.Element {
+/**
+ * Component showing a dialog for selecting a place, either stored or user-defined.
+ */
+export default function SelectPlaceDialog({ kind, onHide, onSelect }: SelectPlaceDialogProps): JSX.Element {
 
   const dispatch = useAppDispatch();
   const { map, storage } = useContext(AppContext);

@@ -73,7 +73,7 @@ export default function SessionProvider():JSX.Element {
       );
       dispatch(setSolidRedirect());
     }
-  }, [solidRedirect]);
+  }, [navigate, dispatch, solidRedirect]);
 
   // session
 
@@ -93,7 +93,7 @@ export default function SessionProvider():JSX.Element {
               <MenuItem onClick={() => { setSolidLoginDialog(true); closeMenuAction(); }}>
                 <ListItemIcon>
                   <Icon sx={{ display: "flex" }}>
-                    <img src={SESSION_SOLID_ICON} />
+                    <img src={SESSION_SOLID_ICON} alt="Solid logo" />
                   </Icon>
                 </ListItemIcon>
                 <Typography>Solid</Typography>

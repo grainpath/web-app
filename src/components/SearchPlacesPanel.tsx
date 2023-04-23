@@ -25,20 +25,19 @@ import {
   FreePlaceListItem,
   RemovablePlaceListItem
 } from "./shared/list-items";
-import SelectPlaceModal from "./shared/SelectPlaceModal";
+import SelectPlaceDialog from "./shared/SelectPlaceDialog";
 import DistanceSlider from "./search/DistanceSlider";
 import KeywordsBox from "./search/KeywordsBox";
 import BottomButtons from "./search/BottomButtons";
 
 export default function SearchPlacesPanel(): JSX.Element {
 
-  const [modC, setModC] = useState(false);
-
   const navigate = useNavigate();
-  const map = useContext(AppContext).map;
-
   const dispatch = useAppDispatch();
+  const { map } = useContext(AppContext);
   const { center, radius, conditions } = useAppSelector(state => state.searchPlaces);
+
+  const [selectDialog, setSelectDialog] = useState(false);
 
   useEffect(() => {
     map?.clear();
@@ -89,7 +88,7 @@ export default function SearchPlacesPanel(): JSX.Element {
             : <FreePlaceListItem
                 kind="center"
                 label="Select point..."
-                onPlace={() => { setModC(true); }}
+                onPlace={() => { setSelectDialog(true); }}
               />
           }
         </Box>
@@ -120,10 +119,10 @@ export default function SearchPlacesPanel(): JSX.Element {
           onClear={() => { dispatch(clearSearchPlaces()); }}
           onSearch={() => { searchAction(); }}
         />
-        {modC &&
-          <SelectPlaceModal
+        {selectDialog &&
+          <SelectPlaceDialog
             kind="center"
-            onHide={() => { setModC(false); }}
+            onHide={() => { setSelectDialog(false); }}
             onSelect={(place) => { dispatch(setSearchPlacesCenter(place)) }}
           />
         }

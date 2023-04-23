@@ -30,7 +30,7 @@ import {
   SwapButton
 } from "../shared/buttons";
 import { ListItemLabel } from "../shared/list-items";
-import SelectPlaceModal from "../shared/SelectPlaceModal";
+import SelectPlaceDialog from "../shared/SelectPlaceDialog";
 
 /**
  * Hot fix for TypeScript strict mode support.
@@ -163,7 +163,7 @@ export default function SearchDirecsSequence({ sequence }: SearchDirecsSequenceP
         onRevers={() => { dispatch(setSearchDirecsSequence([...sequence].reverse())); }}
       />
       {modal &&
-        <SelectPlaceModal
+        <SelectPlaceDialog
           kind="custom"
           onHide={() => { setModal(false); }}
           onSelect={(place) => { dispatch(appendSearchDirecsPlace(place)); }}
