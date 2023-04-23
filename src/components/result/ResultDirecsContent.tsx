@@ -18,6 +18,9 @@ type ResultDirecsContentProps = {
   result: UiDirec;
 };
 
+/**
+ * Component presenting the content of a direction search result.
+ */
 export default function ResultDirecsContent({ result }: ResultDirecsContentProps): JSX.Element {
 
   const { map } = useContext(AppContext);

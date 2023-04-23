@@ -30,6 +30,9 @@ type ResultRoutesContentProps = {
   result: UiRoute[];
 };
 
+/**
+ * Component presenting the content of a route search result.
+ */
 export default function ResultRoutesContent({ result }: ResultRoutesContentProps): JSX.Element {
 
   const dispatch = useAppDispatch();
